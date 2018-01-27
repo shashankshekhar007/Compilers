@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char Identifier_Array[200][100], Int_Const_Array[200][15], Float_Const_Array[200][15], String_Const_Array[200][100];
+char Identifier_Array[200][100], Int_Const_Array[200][20], Float_Const_Array[200][20], String_Const_Array[200][100], Complex_Const_Array[200][20];
 
 int i;
 
@@ -18,7 +18,7 @@ int Identifiers=0;
 
 int SemiColon, Comma;
 
-int Int_Const, Float_Const, Complex_Const, Imaginary_Const, String_Const, Bool_True, Bool_False;
+int Int_Const, Float_Const, Complex_Const, String_Const, Bool_True, Bool_False;
 
 int Single_Line_Comment;
 int Multiple_Line_Comment; //iske sath deal karna hai. Kab tak ignore karna hai
@@ -105,21 +105,21 @@ boolean_false	"False"
 					else if (strcmp(yytext,"finally")==0) KEY_finally++;
 			}
 {type}			{if(strcmp(yytext, "int") T_Int++; 
-				else if (strcmp(yytext, "bool") T_Bool++;
-				else if (strcmp(yytext, "string") T_String++;
-				else if (strcmp(yytext, "int8") T_Int8++;
-				else if (strcmp(yytext, "int16") T_Int16++;
-				else if (strcmp(yytext, "int32") T_Int32++;
-				else if (strcmp(yytext, "int64") T_Int64++;
-				else if (strcmp(yytext, "uint") T_Uint++;
-				else if (strcmp(yytext, "uint16") T_Unit16++;
-				else if (strcmp(yytext, "uint32") T_Uint32++;
-				else if (strcmp(yytext, "uint64") T_Uint64++;
-				else if (strcmp(yytext, "uintptr") T_Uintptr++;
-				else if (strcmp(yytext, "float32") T_Float32++;
-				else if (strcmp(yytext, "float64") T_Float64++;
-				else if (strcmp(yytext, "complex64") T_Complex64++;
-				else if (strcmp(yytext, "complex128") T_Complex128++;
+				else if (strcmp(yytext, "bool")==0) T_Bool++;
+				else if (strcmp(yytext, "string")==0) T_String++;
+				else if (strcmp(yytext, "int8")==0 || strcmp(yytext, "byte")==0) T_Int8++;
+				else if (strcmp(yytext, "int16")==0) T_Int16++;
+				else if (strcmp(yytext, "int32")==0 || strcmp(yytext, "rune")==0) T_Int32++;
+				else if (strcmp(yytext, "int64")==0) T_Int64++;
+				else if (strcmp(yytext, "uint")==0) T_Uint++;
+				else if (strcmp(yytext, "uint16")==0) T_Unit16++;
+				else if (strcmp(yytext, "uint32")==0) T_Uint32++;
+				else if (strcmp(yytext, "uint64")==0) T_Uint64++;
+				else if (strcmp(yytext, "uintptr")==0) T_Uintptr++;
+				else if (strcmp(yytext, "float32")==0) T_Float32++;
+				else if (strcmp(yytext, "float64")==0) T_Float64++;
+				else if (strcmp(yytext, "complex64")==0) T_Complex64++;
+				else if (strcmp(yytext, "complex128")==0) T_Complex128++;
 			}
 {semi_colon}		{SemiColon++;}
 {comma}			{Comma++;}
@@ -144,12 +144,12 @@ boolean_false	"False"
 {not}			{OP_unary_not++;}
 {relational_and}	{OP_relational_and++;}
 {relational_or}		{OP_relational_or++;}
-{int_lit}		{ Int_Const++;}
-{float_lit}		{Float_Const++;}
-{imaginary_lit}		{Complex_Const++;}
+{int_lit}		{strcpy(Int_Const_Array[Int_Const++],yytext);}
+{float_lit}		{strcpy(Float_Const_Array[Float_Const++], yytext);}
+{imaginary_lit}		{strcpy(Complex_Const_Array[Complex_Const++], yytext);}
 {boolean_true}		{Bool_True++;}
 {boolean_false}		{Bool_False++;}
-{string_lit}		{String_Const++;}
+{string_lit}		{strcpy(String_Const_Array[String_Const++], yytext);}
 {identifier}		{strcpy(Identifier_Array[Identifiers++],yytext);
 			}
 
