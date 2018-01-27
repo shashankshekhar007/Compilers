@@ -100,7 +100,7 @@ boolean_false	"False"
 				}
 {semi_colon}		{SemiColon++;}
 {comma}			{Comma++;}
-{equality}		{OP_equality++;}
+{binary_eq}		{OP_equality++;}
 {assign}		{OP_assign++;}
 {plusplus}		{OP_unary_add++;}
 {minusminus}		{OP_unary_sub++;}
@@ -111,21 +111,20 @@ boolean_false	"False"
 {mod}			{OP_Mod++;}
 {curly_open}		{L_Curly++;}
 {curly_close}		{R_Curly++;}
-{open_paran}		{L_Paran++;}
-{close_paran}		{R_Paran++;}
+{open_paren}		{L_Paran++;}
+{close_paren}		{R_Paran++;}
 {left_sqbracket}	{L_SqBracket++;}
 {right_sqbracket}	{R_SqBracket++;}
 {power}			{OP_Pow++;}
 {unary_and}		{OP_unary_and++;}
 {unary_or}		{OP_unary_or++;}
-{unary_not}		{OP_unary_not++;}
+{not}			{OP_unary_not++;}
 {relational_and}	{OP_relational_and++;}
 {relational_or}		{OP_relational_or++;}
 {int_lit}		{//Int_Const_Ar[Int_Const]=int_lit;
 			 Int_Const++;}
-{float_lit}		{//Float_Const_Ar[Float_Const]=float_lit;
-			 Float_Const++;}
-{complex_lit}		{//Complex_Const_Ar[Complex_Const]=complex_lit;
+{float_lit}		{Float_Const++;}
+{imaginary_lit}		{//Complex_Const_Ar[Complex_Const]=complex_lit;
 			 Complex_Const++;}
 {boolean_true}		{Bool_True++;}
 {boolean_false}		{Bool_False++;}
