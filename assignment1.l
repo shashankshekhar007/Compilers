@@ -17,8 +17,6 @@ int Int_Const, Float_Const, Complex_Const, Imaginary_Const, String_Const;
 
 int Single_Line_Comment;
 int Multiple_Line_Comment; //iske sath deal karna hai. Kab tak ignore karna hai
-
-//keyword ko complete karo
 %}
 
 digit		[0-9]
@@ -42,13 +40,16 @@ close_paren	[)]
 left_sqbracket	[\[]
 right_sqbracket	[\]]
 mod		[%]
+<<<<<<< HEAD
 not		[!]
 unary_and	[&]
 unary_or	[|]
 binary_and	[&&]
-binary_or	[|][\]
+binary_or	[|][|]
 binary_eq	[=][=]
 keyword		"break"|[case]|[const]| )  //complete this
+=======
+keyword		("break"|"case"|"const"|"continue"|"default"|"else"|"fallthrough"|"for"|"func"|"if"|"import"|"interface"|"map"|"package"|"range"|"return"|"select"|"struct"|"switch"|"type"|"var"|"class"|"private"|"protected"|"public"|"static"|"try"|"catch"|"finally" )  //complete this
 
 identifier	{letter}+({letter}|{digit}|under_score)*
 
@@ -70,12 +71,36 @@ boolean_false	"False"
 
 {single_comment}	{Single_Line_Comment++;}
 {multi_comment}		{Multiple_Line_Comment++;}
-{keyword}		{ if (keyword == "break")
-				KEY_break++;
-		 	 else if (keyword == "case")
-		  		KEY_case++;
-				//finish this;
-			}
+{keyword}		{if (keyword == "break") KEY_break++;
+					else if (keyword == "case") KEY_case++;
+					else if (keyword == "const") KEY_const++;
+					else if (keyword == "continue") KEY_continue++;
+					else if (keyword == "default") KEY_default++;
+					else if (keyword == "else") KEY_else++;
+					else if (keyword == "fallthrough") KEY_fallthrough++;
+					else if (keyword == "for") KEY_for++;
+					else if (keyword == "func") KEY_func++;
+					else if (keyword == "if") KEY_if++;
+					else if (keyword == "import") KEY_import++;
+					else if (keyword == "interface") KEY_interface++;
+					else if (keyword == "map") KEY_map++;
+					else if (keyword == "package") KEY_package++;
+					else if (keyword == "range") KEY_range++;
+					else if (keyword == "return") KEY_return++;
+					else if (keyword == "select") KEY_select++;
+					else if (keyword == "struct") KEY_struct++;
+					else if (keyword == "switch") KEY_switch++;
+					else if (keyword == "type") KEY_type++;
+					else if (keyword == "var") KEY_var++;
+					else if (keyword == "class") KEY_class++;
+					else if (keyword == "private") KEY_private++;
+					else if (keyword == "protected") KEY_protected++;
+					else if (keyword == "public") KEY_public++;
+					else if (keyword == "static") KEY_static++;
+					else if (keyword == "try") KEY_try++;
+					else if (keyword == "catch") KEY_catch++;
+					else if (keyword == "finally") KEY_finally++;
+				}
 {semi_colon}		
 {assign}		{OP_assign++;}
 {plusplus}		{OP_unary_add++;}
