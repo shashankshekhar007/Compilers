@@ -1,6 +1,11 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+
+char Identifier_Array[200][100], Int_Const_Array[200][15], Float_Const_Array[200][15], String_Const_Array[200][100];
+
+int i;
+
 int OP_Assign, OP_Add, OP_Sub, OP_Mult, OP_Div, OP_Mod, OP_unary_add, OP_unary_sub, OP_unary_and, OP_unary_or, OP_unary_not, OP_Pow, OP_relational_and, OP_relational_or, OP_equality ; //operators. Ternary is yet to be included. How to differentiate unary add and binary add? 
 
 int KEY_break, KEY_case, KEY_const, KEY_continue, KEY_default, KEY_else, KEY_fallthrough, KEY_for, KEY_func, KEY_if, KEY_import, KEY_interface, KEY_map, KEY_package, KEY_range, KEY_return, KEY_select, KEY_struct, KEY_switch, KEY_type, KEY_var, KEY_class, KEY_private, KEY_protected, KEY_public, KEY_static, KEY_try, KEY_catch, KEY_finally; //all keywords
@@ -9,7 +14,7 @@ int  L_Paran, R_Paran, L_Curly, R_Curly, L_SqBracket, R_SqBracket;
 
 int  T_Int, T_Bool, T_String, T_Int8, T_Int16, T_Int32, T_Int64, T_Uint, T_Unit16, T_Uint32, T_Uint64, T_Unitptr,  T_Float32, T_Float64, T_Complex64, T_Complex128; //remember byte is an alias for U_Int8 and rune is an alias for int32
 
-int Identifiers;
+int Identifiers=0;
 
 int SemiColon, Comma;
 
@@ -128,7 +133,7 @@ boolean_false	"False"
 {boolean_true}		{Bool_True++;}
 {boolean_false}		{Bool_False++;}
 {string_lit}		{String_Const++;}
-{identifier}		{Identifiers++;
+{identifier}		{strcpy(Identifier_Array[Identifiers++],yytext);
 			}
 
 
@@ -138,6 +143,6 @@ return 1;
 }
 int main(void){
 	yylex();
-	printf("%d\t%d\t%d\t\n", Bool_True, Bool_False, KEY_finally);
+	printf("%s\t%d\t%d\n", Identifier_Array[0], Bool_False, KEY_finally);
 	return 0;
 }
