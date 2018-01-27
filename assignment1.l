@@ -47,7 +47,7 @@ relational_and	[&][&]
 relational_or	[|][|]
 binary_eq	[=][=]
 keyword		"break"|"case"|"const"|"continue"|"default"|"else"|"fallthrough"|"for"|"func"|"if"|"import"|"interface"|"map"|"package"|"range"|"return"|"select"|"struct"|"switch"|"type"|"var"|"class"|"private"|"protected"|"public"|"static"|"try"|"catch"|"finally"
-
+type		"int"|
 identifier	{letter}+({letter}|{digit}|under_score)*
 
 decimal_int	(plus|minus)?[1-9]+{digit}*
@@ -98,6 +98,9 @@ boolean_false	"False"
 					else if (yytext == "catch") KEY_catch++;
 					else if (yytext == "finally") KEY_finally++;
 				}
+{type}			{if(yytext == "int") T_Int++;
+			
+			}
 {semi_colon}		{SemiColon++;}
 {comma}			{Comma++;}
 {binary_eq}		{OP_equality++;}
