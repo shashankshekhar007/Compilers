@@ -46,7 +46,7 @@ unary_or	[|]
 relational_and	[&&]
 relational_or	[|][|]
 binary_eq	[=][=]
-keyword		("break"|"case"|"const"|"continue"|"default"|"else"|"fallthrough"|"for"|"func"|"if"|"import"|"interface"|"map"|"package"|"range"|"return"|"select"|"struct"|"switch"|"type"|"var"|"class"|"private"|"protected"|"public"|"static"|"try"|"catch"|"finally" )  //complete this
+keyword		"break"|"case"|"const"|"continue"|"default"|"else"|"fallthrough"|"for"|"func"|"if"|"import"|"interface"|"map"|"package"|"range"|"return"|"select"|"struct"|"switch"|"type"|"var"|"class"|"private"|"protected"|"public"|"static"|"try"|"catch"|"finally"
 
 identifier	{letter}+({letter}|{digit}|under_score)*
 
@@ -57,8 +57,8 @@ int_lit		{decimal_int}|{octal_int}|{hex_int}
 decimals	{digit}+
 exponent	[eE][plus|minus]decimals
 float_lit	({decimals}[\.]{decimals}{exponent} | {decimals}{exponent} | [\.]{decimals}{exponent})
-imaginary_lit	({decimals}|{float_lit})[i]
-string_lit	["][^"]*["]"
+imaginary_lit	({decimals}|{float_lit})["i"]
+string_lit	["][^"]*["]
 
 single_comment	[/][/][.]*
 multi_comment	[/][*][^*]*[*][/]
@@ -121,22 +121,20 @@ boolean_false	"False"
 {not}			{OP_unary_not++;}
 {relational_and}	{OP_relational_and++;}
 {relational_or}		{OP_relational_or++;}
-{int_lit}		{//Int_Const_Ar[Int_Const]=int_lit;
-			 Int_Const++;}
+{int_lit}		{ Int_Const++;}
 {float_lit}		{Float_Const++;}
-{imaginary_lit}		{//Complex_Const_Ar[Complex_Const]=complex_lit;
-			 Complex_Const++;}
+{imaginary_lit}		{Complex_Const++;}
 {boolean_true}		{Bool_True++;}
 {boolean_false}		{Bool_False++;}
-{string_lit}		{//String_Const_Ar[String_Const]=string_lit;
-			 String_Const++;}
-{identifier}		{ //Identifier_Ar[Identifiers]= identifier;
-		 	  Identifiers++;
-			}
+{string_lit}		{String_Const++;}
+{identifier}		{Identifiers++;}
 
 %%
+int yywrap(void) {
+return 1;
+}
 int main(void){
 	yylex();
-	printf("%d\t%d\t%d\t", Single_Line_Comment, Multi_Line_Comment, Identifier);
+	printf("%d\t%d\t%d\t\n", Single_Line_Comment, Multi_Line_Comment, Identifier);
 	return 0;
 }
