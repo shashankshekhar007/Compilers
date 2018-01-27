@@ -40,7 +40,6 @@ close_paren	[)]
 left_sqbracket	[\[]
 right_sqbracket	[\]]
 mod		[%]
-<<<<<<< HEAD
 not		[!]
 unary_and	[&]
 unary_or	[|]
@@ -48,7 +47,6 @@ binary_and	[&&]
 binary_or	[|][|]
 binary_eq	[=][=]
 keyword		"break"|[case]|[const]| )  //complete this
-=======
 keyword		("break"|"case"|"const"|"continue"|"default"|"else"|"fallthrough"|"for"|"func"|"if"|"import"|"interface"|"map"|"package"|"range"|"return"|"select"|"struct"|"switch"|"type"|"var"|"class"|"private"|"protected"|"public"|"static"|"try"|"catch"|"finally" )  //complete this
 
 identifier	{letter}+({letter}|{digit}|under_score)*
