@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-int OP_Assign, OP_Add, OP_Sub, OP_Mult, OP_Div, OP_Mod, OP_unary_add, OP_unary_sub, OP_unary_and, OP_unary_or, OP_unary_not, OP_Pow, OP_ ; //operators. Ternary is yet to be included. How to differentiate unary add and binary add? 
+int OP_Assign, OP_Add, OP_Sub, OP_Mult, OP_Div, OP_Mod, OP_unary_add, OP_unary_sub, OP_unary_and, OP_unary_or, OP_unary_not, OP_Pow, OP_binary_and, OP_binary_or, OP_equality ; //operators. Ternary is yet to be included. How to differentiate unary add and binary add? 
 
 int KEY_break, KEY_case, KEY_const, KEY_continue, KEY_default, KEY_else, KEY_fallthrough, KEY_for, KEY_func, KEY_if, KEY_import, KEY_interface, KEY_map, KEY_package, KEY_range, KEY_return, KEY_select, KEY_struct, KEY_switch, KEY_type, KEY_var, KEY_class, KEY_private, KEY_protected, KEY_public, KEY_static, KEY_try, KEY_catch, KEY_finally; //all keywords
 
@@ -42,6 +42,12 @@ close_paren	[)]
 left_sqbracket	[\[]
 right_sqbracket	[\]]
 mod		[%]
+not		[!]
+unary_and	[&]
+unary_or	[|]
+binary_and	[&&]
+binary_or	[|][\]
+binary_eq	[=][=]
 keyword		"break"|[case]|[const]| )  //complete this
 
 identifier	{letter}+({letter}|{digit}|under_score)*
@@ -78,6 +84,14 @@ boolean_false	"False"
 {minus}			{OP_Sub++;}
 {mult}			{OP_Mult++;}
 {divide}		{OP_Div++;}
+{mod}			{OP_Mod++;}
+{curly_open}		{L_Curly++;}
+{curly_close}		{R_Curly++;}
+{open_paran}		{L_Paran++;}
+{close_paran}		{R_Paran++;}
+{left_sqbracket}	{L_SqBracket++;}
+{right_sqbracket}	{R_SqBracket++;}
+{power}			{OP_Pow++;}
 
 
 {identifier}		{ Identifier[Identifiers]= identifier;
