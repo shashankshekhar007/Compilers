@@ -7,7 +7,7 @@ int KEY_break, KEY_case, KEY_const, KEY_continue, KEY_default, KEY_else, KEY_fal
 
 int  L_Paran, R_Paran, L_Curly, R_Curly, L_SqBracket, R_SqBracket;
 
-int  T_Int, T_Bool, T_String, T_Int8, T_Int16, T_Int32, T_Int64, T_Uint, T_Unit16, T_Uint32, T_Uint64, T_Unitptr,  T_Float32, T_Float64, T_Complex64, T_Complex128; //remember byte is an alias for U_Int8 and rune is an alias for int32
+int  T_Int, T_Bool, T_String, T_Int8, T_Int16, T_Int32, T_Int64, T_Uint, T_Uint16, T_Uint32, T_Uint64, T_Uintptr,  T_Float32, T_Float64, T_Complex64, T_Complex128; //remember byte is an alias for U_Int8 and rune is an alias for int32
 
 int Identifiers;
 
@@ -47,7 +47,7 @@ relational_and	[&][&]
 relational_or	[|][|]
 binary_eq	[=][=]
 keyword		"break"|"case"|"const"|"continue"|"default"|"else"|"fallthrough"|"for"|"func"|"if"|"import"|"interface"|"map"|"package"|"range"|"return"|"select"|"struct"|"switch"|"type"|"var"|"class"|"private"|"protected"|"public"|"static"|"try"|"catch"|"finally"
-type		"int"|
+type		"int"|"bool"|"string"|"int8"|"int16"|"int32"|"int64"|"uint"|"uint16"|"uint32"|"uint64"|"uintptr"|"float32"|"float64"|"complex64"|"complex128"
 identifier	{letter}+({letter}|{digit}|under_score)*
 
 decimal_int	(plus|minus)?[1-9]+{digit}*
@@ -98,9 +98,23 @@ boolean_false	"False"
 					else if (strcmp(yytext,"try")==0) KEY_try++;
 					else if (strcmp(yytext,"catch")==0) KEY_catch++;
 					else if (strcmp(yytext,"finally")==0) KEY_finally++;
-				}
-{type}			{if(yytext == "int") T_Int++;
-			
+			}
+{type}			{if(strcmp(yytext, "int") T_Int++; 
+				else if (strcmp(yytext, "bool") T_Bool++;
+				else if (strcmp(yytext, "string") T_String++;
+				else if (strcmp(yytext, "int8") T_Int8++;
+				else if (strcmp(yytext, "int16") T_Int16++;
+				else if (strcmp(yytext, "int32") T_Int32++;
+				else if (strcmp(yytext, "int64") T_Int64++;
+				else if (strcmp(yytext, "uint") T_Uint++;
+				else if (strcmp(yytext, "uint16") T_Unit16++;
+				else if (strcmp(yytext, "uint32") T_Uint32++;
+				else if (strcmp(yytext, "uint64") T_Uint64++;
+				else if (strcmp(yytext, "uintptr") T_Uintptr++;
+				else if (strcmp(yytext, "float32") T_Float32++;
+				else if (strcmp(yytext, "float64") T_Float64++;
+				else if (strcmp(yytext, "complex64") T_Complex64++;
+				else if (strcmp(yytext, "complex128") T_Complex128++;
 			}
 {semi_colon}		{SemiColon++;}
 {comma}			{Comma++;}
@@ -142,5 +156,5 @@ return 1;
 int main(void){
 	yylex();
 	printf("%d\t%d\t%d\t\n", Bool_True, Bool_False, KEY_finally);
-	return 0;
+return 0;
 }
