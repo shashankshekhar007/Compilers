@@ -43,7 +43,7 @@ mod		[%]
 not		[!]
 unary_and	[&]
 unary_or	[|]
-relational_and	[&&]
+relational_and	[&][&]
 relational_or	[|][|]
 binary_eq	[=][=]
 keyword		"break"|"case"|"const"|"continue"|"default"|"else"|"fallthrough"|"for"|"func"|"if"|"import"|"interface"|"map"|"package"|"range"|"return"|"select"|"struct"|"switch"|"type"|"var"|"class"|"private"|"protected"|"public"|"static"|"try"|"catch"|"finally"
@@ -56,11 +56,11 @@ hex_int		(plus|minus)?[0][xX]([A-F]|{digit})+
 int_lit		{decimal_int}|{octal_int}|{hex_int}
 decimals	{digit}+
 exponent	[eE][plus|minus]decimals
-float_lit	({decimals}[\.]{decimals}{exponent} | {decimals}{exponent} | [\.]{decimals}{exponent})
-imaginary_lit	({decimals}|{float_lit})["i"]
+float_lit	({decimals}[\.]{decimals}{exponent}|{decimals}{exponent}|[\.]{decimals}{exponent})
+imaginary_lit	({decimals}|{float_lit})[i]
 string_lit	["][^"]*["]
 
-single_comment	[/][/][.]*
+single_comment	[/][/][^\n]*
 multi_comment	[/][*][^*]*[*][/]
 boolean_true	"True"
 boolean_false	"False"
@@ -68,40 +68,40 @@ boolean_false	"False"
 
 {single_comment}	{Single_Line_Comment++;}
 {multi_comment}		{Multiple_Line_Comment++;}
-{keyword}		{if (keyword == "break") KEY_break++;
-					else if (keyword == "case") KEY_case++;
-					else if (keyword == "const") KEY_const++;
-					else if (keyword == "continue") KEY_continue++;
-					else if (keyword == "default") KEY_default++;
-					else if (keyword == "else") KEY_else++;
-					else if (keyword == "fallthrough") KEY_fallthrough++;
-					else if (keyword == "for") KEY_for++;
-					else if (keyword == "func") KEY_func++;
-					else if (keyword == "if") KEY_if++;
-					else if (keyword == "import") KEY_import++;
-					else if (keyword == "interface") KEY_interface++;
-					else if (keyword == "map") KEY_map++;
-					else if (keyword == "package") KEY_package++;
-					else if (keyword == "range") KEY_range++;
-					else if (keyword == "return") KEY_return++;
-					else if (keyword == "select") KEY_select++;
-					else if (keyword == "struct") KEY_struct++;
-					else if (keyword == "switch") KEY_switch++;
-					else if (keyword == "type") KEY_type++;
-					else if (keyword == "var") KEY_var++;
-					else if (keyword == "class") KEY_class++;
-					else if (keyword == "private") KEY_private++;
-					else if (keyword == "protected") KEY_protected++;
-					else if (keyword == "public") KEY_public++;
-					else if (keyword == "static") KEY_static++;
-					else if (keyword == "try") KEY_try++;
-					else if (keyword == "catch") KEY_catch++;
-					else if (keyword == "finally") KEY_finally++;
+{keyword}		{if ( yytext == "break") KEY_break++;
+					else if (strcmp(yytext, "case")) KEY_case++;
+					else if (strcmp(yytext,"const")) KEY_const++;
+					else if (yytext == "continue") KEY_continue++;
+					else if (yytext == "default") KEY_default++;
+					else if (yytext == "else") KEY_else++;
+					else if (yytext == "fallthrough") KEY_fallthrough++;
+					else if (yytext == "for") KEY_for++;
+					else if (yytext == "func") KEY_func++;
+					else if (yytext == "if") KEY_if++;
+					else if (yytext == "import") KEY_import++;
+					else if (yytext == "interface") KEY_interface++;
+					else if (yytext == "map") KEY_map++;
+					else if (yytext == "package") KEY_package++;
+					else if (yytext == "range") KEY_range++;
+					else if (yytext == "return") KEY_return++;
+					else if (yytext == "select") KEY_select++;
+					else if (yytext == "struct") KEY_struct++;
+					else if (yytext == "switch") KEY_switch++;
+					else if (yytext == "type") KEY_type++;
+					else if (yytext == "var") KEY_var++;
+					else if (yytext == "class") KEY_class++;
+					else if (yytext == "private") KEY_private++;
+					else if (yytext == "protected") KEY_protected++;
+					else if (yytext == "public") KEY_public++;
+					else if (yytext == "static") KEY_static++;
+					else if (yytext == "try") KEY_try++;
+					else if (yytext == "catch") KEY_catch++;
+					else if (yytext == "finally") KEY_finally++;
 				}
 {semi_colon}		{SemiColon++;}
 {comma}			{Comma++;}
 {binary_eq}		{OP_equality++;}
-{assign}		{OP_assign++;}
+{assign}		{OP_Assign++;}
 {plusplus}		{OP_unary_add++;}
 {minusminus}		{OP_unary_sub++;}
 {plus}			{OP_Add++;}
@@ -127,7 +127,9 @@ boolean_false	"False"
 {boolean_true}		{Bool_True++;}
 {boolean_false}		{Bool_False++;}
 {string_lit}		{String_Const++;}
-{identifier}		{Identifiers++;}
+{identifier}		{Identifiers++;
+			printf("%s\n", yytext);}
+
 
 %%
 int yywrap(void) {
@@ -135,6 +137,6 @@ return 1;
 }
 int main(void){
 	yylex();
-	printf("%d\t%d\t%d\t\n", Single_Line_Comment, Multi_Line_Comment, Identifier);
+	printf("%d\t%d\t%d\t\n", Single_Line_Comment, Multiple_Line_Comment, Identifiers);
 	return 0;
 }
