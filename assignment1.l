@@ -21,8 +21,8 @@ int Multiple_Line_Comment; //iske sath deal karna hai. Kab tak ignore karna hai
 //keyword ko complete karo
 %}
 
-digit	[0-9]
-letter	[a-zA-Z]
+digit		[0-9]
+letter		[a-zA-Z]
 whitespace	[  \t\n]
 under_score	[_]
 plus		[\+]
@@ -41,7 +41,7 @@ open_paren	[(]
 close_paren	[)]
 left_sqbracket	[\[]
 right_sqbracket	[\]]
-
+mod		[%]
 keyword		"break"|[case]|[const]| )  //complete this
 
 identifier	{letter}+({letter}|{digit}|under_score)*
@@ -70,12 +70,15 @@ boolean_false	"False"
 		  		KEY_case++;
 				//finish this;
 			}
-
+{semi_colon}		
 {assign}		{OP_assign++;}
 {plusplus}		{OP_unary_add++;}
 {minusminus}		{OP_unary_sub++;}
-{plus}			{OP_add++;}
-{minus}			{OP_sub++;}
+{plus}			{OP_Add++;}
+{minus}			{OP_Sub++;}
+{mult}			{OP_Mult++;}
+{divide}		{OP_Div++;}
+
 
 {identifier}		{ Identifier[Identifiers]= identifier;
 		 	  Identifiers++;
