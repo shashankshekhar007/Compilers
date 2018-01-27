@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-int OP_Assign, OP_Add, OP_Sub, OP_Mult, OP_Div, OP_Mod, OP_unary_add, OP_unary_sub, OP_unary_and, OP_unary_or, OP_unary_not, OP_Pow, OP_binary_and, OP_binary_or, OP_equality ; //operators. Ternary is yet to be included. How to differentiate unary add and binary add? 
+int OP_Assign, OP_Add, OP_Sub, OP_Mult, OP_Div, OP_Mod, OP_unary_add, OP_unary_sub, OP_unary_and, OP_unary_or, OP_unary_not, OP_Pow, OP_relational_and, OP_relational_or, OP_equality ; //operators. Ternary is yet to be included. How to differentiate unary add and binary add? 
 
 int KEY_break, KEY_case, KEY_const, KEY_continue, KEY_default, KEY_else, KEY_fallthrough, KEY_for, KEY_func, KEY_if, KEY_import, KEY_interface, KEY_map, KEY_package, KEY_range, KEY_return, KEY_select, KEY_struct, KEY_switch, KEY_type, KEY_var, KEY_class, KEY_private, KEY_protected, KEY_public, KEY_static, KEY_try, KEY_catch, KEY_finally; //all keywords
 
@@ -11,9 +11,9 @@ int  T_Int, T_Bool, T_String, T_Int8, T_Int16, T_Int32, T_Int64, T_Uint, T_Unit1
 
 int Identifiers;
 
-int SemiColon, Comma, UnderScore;
+int SemiColon, Comma;
 
-int Int_Const, Float_Const, Complex_Const, Imaginary_Const, String_Const;
+int Int_Const, Float_Const, Complex_Const, Imaginary_Const, String_Const, Bool_True, Bool_False;
 
 int Single_Line_Comment;
 int Multiple_Line_Comment; //iske sath deal karna hai. Kab tak ignore karna hai
@@ -43,10 +43,9 @@ mod		[%]
 not		[!]
 unary_and	[&]
 unary_or	[|]
-binary_and	[&&]
-binary_or	[|][|]
+relational_and	[&&]
+relational_or	[|][|]
 binary_eq	[=][=]
-keyword		"break"|[case]|[const]| )  //complete this
 keyword		("break"|"case"|"const"|"continue"|"default"|"else"|"fallthrough"|"for"|"func"|"if"|"import"|"interface"|"map"|"package"|"range"|"return"|"select"|"struct"|"switch"|"type"|"var"|"class"|"private"|"protected"|"public"|"static"|"try"|"catch"|"finally" )  //complete this
 
 identifier	{letter}+({letter}|{digit}|under_score)*
@@ -54,7 +53,7 @@ identifier	{letter}+({letter}|{digit}|under_score)*
 decimal_int	(plus|minus)?[1-9]+{digit}*
 octal_int	(plus|minus)?[0]{digit}+
 hex_int		(plus|minus)?[0][xX]([A-F]|{digit})+
-
+int_lit		{decimal_int}|{octal_int}|{hex_int}
 decimals	{digit}+
 exponent	[eE][plus|minus]decimals
 float_lit	({decimals}[\.]{decimals}{exponent} | {decimals}{exponent} | [\.]{decimals}{exponent})
@@ -99,7 +98,9 @@ boolean_false	"False"
 					else if (keyword == "catch") KEY_catch++;
 					else if (keyword == "finally") KEY_finally++;
 				}
-{semi_colon}		
+{semi_colon}		{SemiColon++;}
+{comma}			{Comma++;}
+{equality}		{OP_equality++;}
 {assign}		{OP_assign++;}
 {plusplus}		{OP_unary_add++;}
 {minusminus}		{OP_unary_sub++;}
@@ -115,9 +116,28 @@ boolean_false	"False"
 {left_sqbracket}	{L_SqBracket++;}
 {right_sqbracket}	{R_SqBracket++;}
 {power}			{OP_Pow++;}
-
-
-{identifier}		{ Identifier[Identifiers]= identifier;
+{unary_and}		{OP_unary_and++;}
+{unary_or}		{OP_unary_or++;}
+{unary_not}		{OP_unary_not++;}
+{relational_and}	{OP_relational_and++;}
+{relational_or}		{OP_relational_or++;}
+{int_lit}		{//Int_Const_Ar[Int_Const]=int_lit;
+			 Int_Const++;}
+{float_lit}		{//Float_Const_Ar[Float_Const]=float_lit;
+			 Float_Const++;}
+{complex_lit}		{//Complex_Const_Ar[Complex_Const]=complex_lit;
+			 Complex_Const++;}
+{boolean_true}		{Bool_True++;}
+{boolean_false}		{Bool_False++;}
+{string_lit}		{//String_Const_Ar[String_Const]=string_lit;
+			 String_Const++;}
+{identifier}		{ //Identifier_Ar[Identifiers]= identifier;
 		 	  Identifiers++;
 			}
 
+%%
+int main(void){
+	yylex();
+	printf("%d\t%d\t%d\t", Single_Line_Comment, Multi_Line_Comment, Identifier);
+	return 0;
+}
