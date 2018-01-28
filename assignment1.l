@@ -165,7 +165,6 @@ boolean_false	"False"
 {identifier}		{strcpy(Identifier_Array[Identifiers++],yytext);
 			}
 
-
 %%
 int yywrap(void) {
 return 1;
