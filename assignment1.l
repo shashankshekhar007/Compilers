@@ -69,7 +69,7 @@ boolean_false	"False"
 {single_comment}	{Single_Line_Comment++;}
 {multi_comment}		{Multiple_Line_Comment++;}
 {keyword}		{printf("%s", yytext);
-				if ( strcmp(yytext,"break")==0) KEY_break++;
+					if ( strcmp(yytext,"break")==0) KEY_break++;
 					else if (strcmp(yytext, "case")==0) KEY_case++;
 					else if (strcmp(yytext,"const")==0) KEY_const++;
 					else if (strcmp(yytext, "continue")==0) KEY_continue++;
@@ -99,22 +99,23 @@ boolean_false	"False"
 					else if (strcmp(yytext,"catch")==0) KEY_catch++;
 					else if (strcmp(yytext,"finally")==0) KEY_finally++;
 			}
-{type}			{if(strcmp(yytext, "int") T_Int++; 
-				else if (strcmp(yytext, "bool") T_Bool++;
-				else if (strcmp(yytext, "string") T_String++;
-				else if (strcmp(yytext, "int8") T_Int8++;
-				else if (strcmp(yytext, "int16") T_Int16++;
-				else if (strcmp(yytext, "int32") T_Int32++;
-				else if (strcmp(yytext, "int64") T_Int64++;
-				else if (strcmp(yytext, "uint") T_Uint++;
-				else if (strcmp(yytext, "uint16") T_Unit16++;
-				else if (strcmp(yytext, "uint32") T_Uint32++;
-				else if (strcmp(yytext, "uint64") T_Uint64++;
-				else if (strcmp(yytext, "uintptr") T_Uintptr++;
-				else if (strcmp(yytext, "float32") T_Float32++;
-				else if (strcmp(yytext, "float64") T_Float64++;
-				else if (strcmp(yytext, "complex64") T_Complex64++;
-				else if (strcmp(yytext, "complex128") T_Complex128++;
+{type}			{printf("%s",yytext);
+				if(strcmp(yytext, "int")) T_Int++; 
+				else if (strcmp(yytext, "bool")) T_Bool++;
+				else if (strcmp(yytext, "string")) T_String++;
+				else if (strcmp(yytext, "int8")) T_Int8++;
+				else if (strcmp(yytext, "int16")) T_Int16++;
+				else if (strcmp(yytext, "int32")) T_Int32++;
+				else if (strcmp(yytext, "int64")) T_Int64++;
+				else if (strcmp(yytext, "uint")) T_Uint++;
+				else if (strcmp(yytext, "uint16")) T_Uint16++;
+				else if (strcmp(yytext, "uint32")) T_Uint32++;
+				else if (strcmp(yytext, "uint64")) T_Uint64++;
+				else if (strcmp(yytext, "uintptr")) T_Uintptr++;
+				else if (strcmp(yytext, "float32")) T_Float32++;
+				else if (strcmp(yytext, "float64")) T_Float64++;
+				else if (strcmp(yytext, "complex64")) T_Complex64++;
+				else if (strcmp(yytext, "complex128")) T_Complex128++;
 			}
 {semi_colon}		{SemiColon++;}
 {comma}			{Comma++;}
@@ -145,9 +146,7 @@ boolean_false	"False"
 {boolean_true}		{Bool_True++;}
 {boolean_false}		{Bool_False++;}
 {string_lit}		{String_Const++;}
-{identifier}		{Identifiers++;
-			}
-
+{identifier}		{Identifiers++;}
 
 %%
 int yywrap(void) {
