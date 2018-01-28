@@ -14,7 +14,7 @@ int  L_Paran, R_Paran, L_Curly, R_Curly, L_SqBracket, R_SqBracket;
 
 int  T_Int, T_Bool, T_String, T_Int8, T_Int16, T_Int32, T_Int64, T_Uint, T_Uint16, T_Uint32, T_Uint64, T_Uintptr,  T_Float32, T_Float64, T_Complex64, T_Complex128; //remember byte is an alias for U_Int8 and rune is an alias for int32
 
-int Identifiers=0;
+int Identifiers = 0;
 
 int SemiColon, Comma;
 
@@ -160,6 +160,79 @@ return 1;
 }
 int main(void){
 	yylex();
+	printf("Token\tOccureneces\tLexemes\n");
+	if(OP_Assign > 0){
+		printf("OP_Assign\t%d\t=\n",OP_Assign);
+	}
+ 	if(OP_Add > 0){
+		printf("OP_Add\t%d\t+\n",OP_Add);
+	}
+	if(OP_Sub > 0){
+		printf("OP_Sub\t%d\t-\n",OP_Sub);
+	}
+	if(OP_Mult > 0){
+		printf("OP_Mult\t%d\t*\n",OP_Mult);
+	}
+	if(OP_Div > 0){
+		printf("OP_Div\t%d\t/\n",OP_Div);
+	}
+	if(OP_Mod > 0){
+		printf("OP_Mod\t%d\t%%\n",OP_Mod);
+	}
+	if(OP_unary_add > 0){
+		printf("OP_unary_add\t%d\t+\n",OP_unary_add);  //unary add ka symbol
+	}
+	if(OP_unary_sub > 0){
+		printf("OP_unary_sub\t%d\t-\n",OP_unary_sub); 	//unary sub ka symbol
+	}
+	if(OP_unary_and > 0){
+		printf("OP_unary_and\t%d\t&\n",OP_unary_and);
+	}
+	if(OP_unary_or > 0){
+		printf("OP_unary_or\t%d\t|\n",OP_unary_or);
+	}
+	if(OP_unary_not > 0){
+		printf("OP_unary_not\t%d\t!\n",OP_unary_not);
+	}
+	if(OP_Pow > 0){
+		printf("OP_Pow\t%d\t^\n",OP_Pow);
+	}
+	if(OP_relational_and > 0){
+		printf("OP_relational_and\t%d\t&&\n",OP_relational_and);	
+	}
+	if(OP_relational_or > 0){
+		printf("OP_relational_or\t%d\t||\n",OP_relational_or);
+	}
+	if(OP_equality > 0){
+		printf("OP_equality\t%d\t==\n",OP_equality);
+	}
+	if(Identifiers > 0){
+		printf("Identifier\t%d\t%s\n", Identifiers, Identifier_Array[0]);
+		for( int i = 1; i < Identifiers; i++){
+			printf(" \t \t%s\n", Identifier_Array[i]);
+		}
+	}
+	if(L_Paran > 0){
+		printf("L_Paran\t%d\t(\n",L_Paran);
+	}
+	if(R_Paran > 0){
+		printf("R_Paran\t%d\t)\n",R_Paran);
+	}
+	if(L_Curly > 0){
+		printf("L_Curly\t%d\t{\n",L_Curly);
+	}
+	if(R_Curly > 0){
+		printf("R_Curly\t%d\t}\n",R_Curly);
+	}
+	if(L_SqBracket > 0){
+		printf("L_SqBracket\t%d\t[\n",L_SqBracket);
+	}
+	if(R_SqBracket > 0){
+		printf("R_SqBracket\t%d\t]\n",R_SqBracket);
+	}
+	
+
+	
 	printf("%s\t%d\t%d\n", Identifier_Array[0], Bool_False, KEY_finally);
 	printf("%d\t%d\t%d\t\n", Bool_True, Bool_False, KEY_finally);
 	return 0;
