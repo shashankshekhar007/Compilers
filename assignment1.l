@@ -6,7 +6,7 @@ char Identifier_Array[200][100], Int_Const_Array[200][20], Float_Const_Array[200
 
 int i;
 
-int OP_Assign, OP_Add, OP_Sub, OP_Mult, OP_Div, OP_Mod, OP_unary_add, OP_unary_sub, OP_unary_and, OP_unary_or, OP_unary_not, OP_Pow, OP_relational_and, OP_relational_or, OP_equality ; //operators. Ternary is yet to be included. How to differentiate unary add and binary add? 
+int OP_Assign, OP_Add, OP_Sub, OP_Mult, OP_Div, OP_Mod, OP_unary_add, OP_unary_sub, OP_unary_and, OP_unary_or, OP_unary_not, OP_Pow, OP_relational_and, OP_relational_or, OP_equality, OP_less, OP_greater, OP_less_less, OP_greater_greater ; //operators. Ternary is yet to be included. How to differentiate unary add and binary add? 
 
 int KEY_break, KEY_case, KEY_const, KEY_continue, KEY_default, KEY_else, KEY_fallthrough, KEY_for, KEY_func, KEY_if, KEY_import, KEY_interface, KEY_map, KEY_package, KEY_range, KEY_return, KEY_select, KEY_struct, KEY_switch, KEY_type, KEY_var, KEY_class, KEY_private, KEY_protected, KEY_public, KEY_static, KEY_try, KEY_catch, KEY_finally; //all keywords
 
@@ -16,7 +16,7 @@ int  T_Int, T_Bool, T_String, T_Int8, T_Int16, T_Int32, T_Int64, T_Uint, T_Uint1
 
 int Identifiers = 0;
 
-int SemiColon, Comma;
+int SemiColon, Comma, Question, Colon;
 
 int Int_Const, Float_Const, Complex_Const, String_Const, Bool_True, Bool_False;
 
@@ -28,10 +28,16 @@ digit		[0-9]
 letter		[a-zA-Z]
 whitespace	[  \t\n]
 under_score	[_]
+greatergreater	[>][>]
+lessless	[<][<]
+greater		[>]
+less		[<]
+question	[\?]
 plus		[\+]
 plusplus	[\+][\+]
 minus		[\-]
 minusminus	[\-][\-]
+colon 		[:]
 power		[\^]
 mult		[\*]
 assign		[=]
@@ -104,7 +110,7 @@ boolean_false	"False"
 					else if (strcmp(yytext,"catch")==0) KEY_catch++;
 					else if (strcmp(yytext,"finally")==0) KEY_finally++;
 			}
-{type}			{if(strcmp(yytext, "int") T_Int++; 
+{type}			{if(strcmp(yytext, "int")==0) T_Int++; 
 				else if (strcmp(yytext, "bool")==0) T_Bool++;
 				else if (strcmp(yytext, "string")==0) T_String++;
 				else if (strcmp(yytext, "int8")==0 || strcmp(yytext, "byte")==0) T_Int8++;
@@ -112,7 +118,7 @@ boolean_false	"False"
 				else if (strcmp(yytext, "int32")==0 || strcmp(yytext, "rune")==0) T_Int32++;
 				else if (strcmp(yytext, "int64")==0) T_Int64++;
 				else if (strcmp(yytext, "uint")==0) T_Uint++;
-				else if (strcmp(yytext, "uint16")==0) T_Unit16++;
+				else if (strcmp(yytext, "uint16")==0) T_Uint16++;
 				else if (strcmp(yytext, "uint32")==0) T_Uint32++;
 				else if (strcmp(yytext, "uint64")==0) T_Uint64++;
 				else if (strcmp(yytext, "uintptr")==0) T_Uintptr++;
@@ -121,7 +127,13 @@ boolean_false	"False"
 				else if (strcmp(yytext, "complex64")==0) T_Complex64++;
 				else if (strcmp(yytext, "complex128")==0) T_Complex128++;
 			}
+{greatergreater}	{OP_greater_greater++;}
+{lessless}		{OP_less_less++;}
+{question}		{Question++;}
+{greater}		{OP_greater++;}
+{less}			{OP_less++;}
 {semi_colon}		{SemiColon++;}
+{colon}			{Colon++;}
 {comma}			{Comma++;}
 {binary_eq}		{OP_equality++;}
 {assign}		{OP_Assign++;}
@@ -158,7 +170,10 @@ boolean_false	"False"
 int yywrap(void) {
 return 1;
 }
-int main(void){
+int main(int argc, char* argv[]){
+	FILE *fh;
+	if (argc == 2 && (fh = fopen(argv[1], "r")))
+        yyin = fh;
 	yylex();
 	printf("Token\tOccureneces\tLexemes\n");
 	if(OP_Assign > 0){
@@ -206,7 +221,18 @@ int main(void){
 	if(OP_equality > 0){
 		printf("OP_equality\t%d\t==\n",OP_equality);
 	}
-
+	if(OP_greater_greater > 0){
+		printf("OP_greater_greater\t%d\t>>\n",OP_greater_greater);
+	}
+	if(OP_greater > 0){
+		printf("OP_greater\t%d\t>\n",OP_greater);
+	}
+	if(OP_less_less > 0){
+		printf("OP_less_less\t%d\t<<\n",OP_less_less);
+	}
+	if(OP_less > 0){
+		printf("OP_less\t%d\t<\n",OP_less);
+	}
 	if(Identifiers > 0){
 		printf("Identifier\t%d\t%s\n", Identifiers, Identifier_Array[0]);
 		for( int i = 1; i < Identifiers; i++){
@@ -239,7 +265,12 @@ int main(void){
 	if(Comma > 0){
 		printf("Comma\t%d\t,\n",Comma);
 	}
-
+	if(Question > 0){
+		printf("Question\t%d\t?\n",Question);
+	}
+	if(Colon > 0){
+		printf("Colon\t%d\t:\n",Colon);
+	}
 	if(Int_Const > 0){
 		printf("Int_Const\t%d\t%s\n", Int_Const, Int_Const_Array[0]);
 		for( int i = 1; i < Int_Const; i++){
@@ -272,7 +303,7 @@ int main(void){
 		printf("Bool_False\t%d\tFalse\n",Bool_False);
 	}
 	
-	printf("%s\t%d\t%d\n", Identifier_Array[0], Bool_False, KEY_finally);
-	printf("%d\t%d\t%d\t\n", Bool_True, Bool_False, KEY_finally);
+//	printf("%s\t%d\t%d\n", Identifier_Array[0], Bool_False, KEY_finally);
+//	printf("%d\t%d\t%d\t\n", Bool_True, Bool_False, KEY_finally);
 	return 0;
 }
