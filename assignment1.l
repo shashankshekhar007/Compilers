@@ -79,36 +79,36 @@ boolean_false	"False"
 
 {single_comment}	{Single_Line_Comment++;}
 {multi_comment}		{Multiple_Line_Comment++;}
-{keyword}		{printf("%s", yytext);
-				if ( strcmp(yytext,"break")==0) KEY_break++;
-					else if (strcmp(yytext, "case")==0) KEY_case++;
-					else if (strcmp(yytext,"const")==0) KEY_const++;
-					else if (strcmp(yytext, "continue")==0) KEY_continue++;
-					else if (strcmp(yytext,"default")==0) KEY_default++;
-					else if (strcmp(yytext,"else")==0) KEY_else++;
-					else if (strcmp(yytext,"fallthrough")==0) KEY_fallthrough++;
-					else if (strcmp(yytext,"for")==0) KEY_for++;
-					else if (strcmp(yytext,"func")==0) KEY_func++;
-					else if (strcmp(yytext,"if")==0) KEY_if++;
-					else if (strcmp(yytext,"import")==0) KEY_import++;
-					else if (strcmp(yytext,"interface")==0) KEY_interface++;
-					else if (strcmp(yytext,"map")==0) KEY_map++;
-					else if (strcmp(yytext,"package")==0) KEY_package++;
-					else if (strcmp(yytext,"range")==0) KEY_range++;
-					else if (strcmp(yytext,"return")==0) KEY_return++;
-					else if (strcmp(yytext,"select")==0) KEY_select++;
-					else if (strcmp(yytext,"struct")==0) KEY_struct++;
-					else if (strcmp(yytext,"switch")==0) KEY_switch++;
-					else if (strcmp(yytext,"type")==0) KEY_type++;
-					else if (strcmp(yytext,"var")==0) KEY_var++;
-					else if (strcmp(yytext,"class")==0) KEY_class++;
-					else if (strcmp(yytext,"private")==0) KEY_private++;
-					else if (strcmp(yytext,"protected")==0) KEY_protected++;
-					else if (strcmp(yytext,"public")==0) KEY_public++;
-					else if (strcmp(yytext,"static")==0) KEY_static++;
-					else if (strcmp(yytext,"try")==0) KEY_try++;
-					else if (strcmp(yytext,"catch")==0) KEY_catch++;
-					else if (strcmp(yytext,"finally")==0) KEY_finally++;
+{whitespace}		{;}
+{keyword}		{if ( strcmp(yytext,"break")==0) KEY_break++;
+				else if (strcmp(yytext, "case")==0) KEY_case++;
+				else if (strcmp(yytext,"const")==0) KEY_const++;
+				else if (strcmp(yytext, "continue")==0) KEY_continue++;
+				else if (strcmp(yytext,"default")==0) KEY_default++;
+				else if (strcmp(yytext,"else")==0) KEY_else++;
+				else if (strcmp(yytext,"fallthrough")==0) KEY_fallthrough++;
+				else if (strcmp(yytext,"for")==0) KEY_for++;
+				else if (strcmp(yytext,"func")==0) KEY_func++;
+				else if (strcmp(yytext,"if")==0) KEY_if++;
+				else if (strcmp(yytext,"import")==0) KEY_import++;
+				else if (strcmp(yytext,"interface")==0) KEY_interface++;
+				else if (strcmp(yytext,"map")==0) KEY_map++;
+				else if (strcmp(yytext,"package")==0) KEY_package++;
+				else if (strcmp(yytext,"range")==0) KEY_range++;
+				else if (strcmp(yytext,"return")==0) KEY_return++;
+				else if (strcmp(yytext,"select")==0) KEY_select++;
+				else if (strcmp(yytext,"struct")==0) KEY_struct++;
+				else if (strcmp(yytext,"switch")==0) KEY_switch++;
+				else if (strcmp(yytext,"type")==0) KEY_type++;
+				else if (strcmp(yytext,"var")==0) KEY_var++;
+				else if (strcmp(yytext,"class")==0) KEY_class++;
+				else if (strcmp(yytext,"private")==0) KEY_private++;
+				else if (strcmp(yytext,"protected")==0) KEY_protected++;
+				else if (strcmp(yytext,"public")==0) KEY_public++;
+				else if (strcmp(yytext,"static")==0) KEY_static++;
+				else if (strcmp(yytext,"try")==0) KEY_try++;
+				else if (strcmp(yytext,"catch")==0) KEY_catch++;
+				else if (strcmp(yytext,"finally")==0) KEY_finally++;
 			}
 {type}			{if(strcmp(yytext, "int")==0) T_Int++; 
 				else if (strcmp(yytext, "bool")==0) T_Bool++;
