@@ -206,12 +206,14 @@ int main(void){
 	if(OP_equality > 0){
 		printf("OP_equality\t%d\t==\n",OP_equality);
 	}
+
 	if(Identifiers > 0){
 		printf("Identifier\t%d\t%s\n", Identifiers, Identifier_Array[0]);
 		for( int i = 1; i < Identifiers; i++){
 			printf(" \t \t%s\n", Identifier_Array[i]);
 		}
 	}
+	
 	if(L_Paran > 0){
 		printf("L_Paran\t%d\t(\n",L_Paran);
 	}
@@ -231,7 +233,44 @@ int main(void){
 		printf("R_SqBracket\t%d\t]\n",R_SqBracket);
 	}
 	
+	if(SemiColon > 0){
+		printf("SemiColon\t%d\t;\n",SemiColon);
+	}
+	if(Comma > 0){
+		printf("Comma\t%d\t,\n",Comma);
+	}
 
+	if(Int_Const > 0){
+		printf("Int_Const\t%d\t%s\n", Int_Const, Int_Const_Array[0]);
+		for( int i = 1; i < Int_Const; i++){
+			printf(" \t \t%s\n", Int_Const_Array[i]);
+		}
+	}
+	if(Float_Const > 0){
+		printf("Float_Const\t%d\t%s\n", Float_Const, Float_Const_Array[0]);
+		for( int i = 1; i < Float_Const; i++){
+			printf(" \t \t%s\n", Float_Const_Array[i]);
+		}
+	}
+	if(Complex_Const > 0){
+		printf("Complex_Const\t%d\t%s\n", Complex_Const, Complex_Const_Array[0]);
+		for( int i = 1; i < Complex_Const; i++){
+			printf(" \t \t%s\n", Complex_Const_Array[i]);
+		}
+	}
+	if(String_Const > 0){
+		printf("String_Const\t%d\t%s\n", String_Const, String_Const_Array[0]);
+		for( int i = 1; i < String_Const; i++){
+			printf(" \t \t%s\n", String_Const_Array[i]);
+		}
+	}
+	
+	if(Bool_True > 0){
+		printf("Bool_True\t%d\tTrue\n",Bool_True);	
+	}
+	if(Bool_False > 0){
+		printf("Bool_False\t%d\tFalse\n",Bool_False);
+	}
 	
 	printf("%s\t%d\t%d\n", Identifier_Array[0], Bool_False, KEY_finally);
 	printf("%d\t%d\t%d\t\n", Bool_True, Bool_False, KEY_finally);
