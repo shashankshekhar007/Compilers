@@ -1,0 +1,5 @@
+#this file will tell you what is to be added in the grammar later
+
+var a [3]int = {1,2,3};
+
+need to decide whether provide semicolon after package main, import statements etc.

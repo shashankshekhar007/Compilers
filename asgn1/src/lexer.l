@@ -7,7 +7,7 @@ char Identifier_Array[2000][100], Int_Const_Array[2000][20], Float_Const_Array[2
 int i;
 int yylineno;
 
-int OP_Assign, OP_Add, OP_Sub, OP_Mult, OP_Div, OP_Mod, OP_unary_add, OP_unary_sub, OP_unary_and, OP_unary_or, OP_unary_not, OP_Pow, OP_relational_and, OP_relational_or, OP_equality, OP_less, OP_greater, OP_less_less, OP_greater_greater ; //operators. Ternary is yet to be included. How to differentiate unary add and binary add? 
+int OP_Assign, OP_Add, OP_Sub, OP_Mult, OP_Div, OP_Mod, OP_unary_add, OP_unary_sub, OP_unary_and, OP_unary_or, OP_unary_not, OP_Pow, OP_relational_and, OP_relational_or, OP_equality, OP_less, OP_greater, OP_less_less, OP_greater_greater, OP_not_equal ; //operators. Ternary is yet to be included. How to differentiate unary add and binary add? 
 
 int KEY_break, KEY_case, KEY_const, KEY_continue, KEY_default, KEY_else, KEY_fallthrough, KEY_for, KEY_func, KEY_if, KEY_import, KEY_interface, KEY_map, KEY_package, KEY_range, KEY_return, KEY_select, KEY_struct, KEY_switch, KEY_type, KEY_var, KEY_class, KEY_private, KEY_protected, KEY_public, KEY_static, KEY_try, KEY_catch, KEY_finally; //all keywords
 
@@ -61,6 +61,7 @@ relational_and	[&][&]
 relational_or	[|][|]
 unary_and	[&]
 unary_or	[|]
+not_eq		[!][=]
 binary_eq	[=][=]
 keyword		"break"|"case"|"const"|"continue"|"default"|"else"|"fallthrough"|"for"|"func"|"if"|"import"|"interface"|"map"|"package"|"range"|"return"|"select"|"struct"|"switch"|"type"|"var"|"class"|"private"|"protected"|"public"|"static"|"try"|"catch"|"finally"
 type		"int"|"bool"|"string"|"int8"|"int16"|"int32"|"int64"|"uint"|"uint16"|"uint32"|"uint64"|"uintptr"|"float32"|"float64"|"complex64"|"complex128"
@@ -142,6 +143,7 @@ error			.
 {semi_colon}		{SemiColon++;}
 {colon}			{Colon++;}
 {comma}			{Comma++;}
+{not_eq}		{OP_not_equal++;}
 {binary_eq}		{OP_equality++;}
 {assign}		{OP_Assign++;}
 {plusplus}		{OP_unary_add++;}
@@ -260,6 +262,9 @@ int main(int argc, char* argv[]){
 	}
 	if(OP_unary_sub > 0){
 		printf("OP_unary_sub\t%d\t--\n",OP_unary_sub); 	//unary sub ka symbol
+	}
+	if(OP_not_equal > 0){
+		printf("OP_not_equal\t%d\t!=\n", OP_not_equal);
 	}
 	if(OP_unary_and > 0){
 		printf("OP_unary_and\t%d\t&\n",OP_unary_and);
