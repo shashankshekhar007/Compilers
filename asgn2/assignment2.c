@@ -5,6 +5,16 @@
 #define LIVE 1
 #define DEAD 2
 
+#define BINARYASSIGNMENT    1
+#define OPERATION 	    2
+#define GOTO	 	    3
+#define IFGOTO	  	    4
+#define FUNCTIONDECLARATION 5
+#define FUNCTIONCALL	    6
+#define RETURN 		    7
+#define PRINTSTATEMENT	    8
+#define ERROR		    9
+
 typedef struct variable_list {
 	char name[10];
 	int status;
@@ -17,8 +27,28 @@ int isNumber(char* c){
 	return 0;
 }
 
+int isOperator(char* c){
+	switch (c[0]){
+		case '+':
+		case '-':
+		case '*':
+		case '/':
+		case '=':
+		case '<':
+		case '>':
+		case '!':
+		case '&':
+		case '|':
+		case '%':
+		return 1;
+		break;
+		default:
+		return 0;
+	}
+}
+
 int isKeyword(char* c){
-	if(strcmp(c,"ifgoto")==0 || strcmp(c,"goto")==0)
+	if(strcmp(c,"ifgoto")==0 || strcmp(c,"goto")==0 || strcmp(c,"function")==0 || strcmp(c,"return")==0 || strcmp(c,"label")==0 || strcmp(c,"call")==0)
 		return 1;
 	return 0;
 }
@@ -130,7 +160,7 @@ int main(int argc, char** argv){
 	for(i=0;i<number_of_lines;i++){
 		for(j=0;j<number_of_words[i];j++){
 			int flag=1;
-			if(isKeyword(words[i][j]) || isNumber(words[i][j])){
+			if(isKeyword(words[i][j]) || isNumber(words[i][j]) || isOperator(words[i][j])){
 				continue;
 			}
 			for(k=0;k<number_of_variables;k++){
@@ -144,7 +174,33 @@ int main(int argc, char** argv){
 	}
 	for(i=0;i<number_of_variables;i++)
 		printf("%s\t",variables[i].name);
+	printf("\n");
+	//variables are now being recognized. 
 	//printf("variable 2 = %s and variable 10 = %s",variables[2].name, variables[10].name);
+	//Now we move on to identifying the types of instructions.
+	int type_of_instruction[number_of_lines];
+	for(i=0;i<number_of_lines;i++){
+		if(strcmp(words[i][0],"=")==0)
+			type_of_instruction[i]=BINARYASSIGNMENT;
+		else if(isOperator(words[i][0]))
+			type_of_instruction[i]=OPERATION;
+		else if(strcmp(words[i][0],"goto")==0)
+			type_of_instruction[i]=GOTO;
+		else if(strcmp(words[i][0],"ifgoto")==0)
+			type_of_instruction[i]=IFGOTO;
+		else if(strcmp(words[i][0],"return")==0)
+			type_of_instruction[i]=RETURN;
+		else if(strcmp(words[i][0],"label")==0)
+			type_of_instruction[i]=FUNCTIONDECLARATION;
+		else if(strcmp(words[i][0],"call")==0)
+			type_of_instruction[i]=FUNCTIONCALL;
+		else if(strcmp(words[i][0],"print")==0)
+			type_of_instruction[i]=PRINTSTATEMENT;
+		else
+			type_of_instruction[i]=ERROR;
+	}
+	for(i=0;i<number_of_lines;i++)
+		printf("%d\n",type_of_instruction[i]);
         return 0;
 }
 
