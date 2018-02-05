@@ -61,10 +61,11 @@ int main(int argc, char** argv){
                 c=lines[i-1][j];
                 if(c==','){
                     number_of_words[i-1]++;
+		    words[i-1][k][l]='\0';
 		    j++;
 		    k++;
                     l=0;
-		    printf("%s\t",words[i-1][k-1]);
+		    //printf("%s\t",words[i-1][k-1]);
 		    continue;
 		}
 		words[i-1][k][l]=c;
@@ -80,11 +81,11 @@ int main(int argc, char** argv){
 	int header_count = 1;
 	headers[0]=0;
 	int j;
-	for(i=0;i<number_of_lines;i++){
+	/*for(i=0;i<number_of_lines;i++){
                 for(j=0;j<number_of_words[i];j++){
                         printf("%s\n", words[i][j]);
                 }
-        }
+        }*/
 	for(i=0;i<number_of_lines;i++){
 		if(strcmp(words[i][0],"goto")!=0 && strcmp(words[i][0],"ifgoto")!=0){
 			continue;
@@ -98,12 +99,12 @@ int main(int argc, char** argv){
 	 	}
 	}
 	//all header lines have now been captured
-	for(i=0;i<number_of_lines;i++){
+	/*for(i=0;i<number_of_lines;i++){
 		for(j=0;j<number_of_words[i];j++){
 			printf("%s\n", words[i][j]);
 		}
-	}
-	for(i=0;i<=header_count;i++)
+	}*/
+	for(i=0;i<header_count;i++)
 		printf("%d\n",headers[i]);
         return 0;
 }
