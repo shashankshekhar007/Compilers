@@ -23,7 +23,6 @@ int main(int argc, char* argv[]){
 			number_of_lines++;
 		fclose(fp);
 	}
-	number_of_lines=10;
 	lines_of_a_file lines[number_of_lines];
 	printf("Number of lines = %d", number_of_lines); 
 	return 0;
