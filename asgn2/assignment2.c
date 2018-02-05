@@ -11,6 +11,18 @@ typedef struct variable_list {
 	int nextuse;
 } VL;
 
+int isNumber(char* c){
+	if(c[0]>='0' && c[0]<='9')
+		return 1;
+	return 0;
+}
+
+int isKeyword(char* c){
+	if(strcmp(c,"ifgoto")==0 || strcmp(c,"goto")==0)
+		return 1;
+	return 0;
+}
+
 int main(int argc, char** argv){
         //count the number of lines in the file
         FILE* fp;
@@ -56,8 +68,8 @@ int main(int argc, char** argv){
             read = getline(&lines[i], &len, copy_of_fp);
 	    i++;
             int j=0, k=0, l=0;
-            char c;
-            while (j!=strlen(lines[i-1])){
+            char c=' ';
+            while (j!=strlen(lines[i-1]) && c!='\n'){
                 c=lines[i-1][j];
                 if(c==','){
                     number_of_words[i-1]++;
@@ -68,15 +80,19 @@ int main(int argc, char** argv){
 		    //printf("%s\t",words[i-1][k-1]);
 		    continue;
 		}
+		if(c=='\n'){
+			number_of_words[i-1]++;
+			words[i-1][k][l]='\0';
+			l++;
+			j++;
+			printf("%d %s",number_of_words[i-1],lines[i-1]);	
+            	}
 		words[i-1][k][l]=c;
-		l++;
-		j++;	
-            }
-            number_of_words[i-1]++;
-            printf("%d %s", number_of_words[i-1], lines[i-1]);
+		j++; l++;
+    	    }
     	}
 
-	//preprocessing has been done. Now move on to the next part, i.e., identifying the type of sentence and symbol tables.
+	//preprocessing has been done. Moving on to find headers.
 	int headers[number_of_lines];
 	int header_count = 1;
 	headers[0]=0;
@@ -99,12 +115,36 @@ int main(int argc, char** argv){
 	 	}
 	}
 	//all header lines have now been captured
-	/*for(i=0;i<number_of_lines;i++){
+	for(i=0;i<number_of_lines;i++){
 		for(j=0;j<number_of_words[i];j++){
 			printf("%s\n", words[i][j]);
 		}
-	}*/
+	}
 	for(i=0;i<header_count;i++)
 		printf("%d\n",headers[i]);
+
+	//moving on to the next part of variable listing.
+	VL variables[number_of_lines];
+	int number_of_variables=0;
+	int k;
+	for(i=0;i<number_of_lines;i++){
+		for(j=0;j<number_of_words[i];j++){
+			int flag=1;
+			if(isKeyword(words[i][j]) || isNumber(words[i][j])){
+				continue;
+			}
+			for(k=0;k<number_of_variables;k++){
+				if(strcmp(words[i][j],variables[k].name)==0)
+					flag=0;
+			}
+			if(flag==1){
+				strcpy(variables[number_of_variables++].name,words[i][j]);
+			}
+		}
+	}
+	for(i=0;i<number_of_variables;i++)
+		printf("%s\t",variables[i].name);
+	//printf("variable 2 = %s and variable 10 = %s",variables[2].name, variables[10].name);
         return 0;
 }
+
