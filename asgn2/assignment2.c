@@ -4,6 +4,7 @@
 
 #define LIVE 1
 #define DEAD 2
+#define NONE -1
 
 #define BINARYASSIGNMENT    1
 #define OPERATION 	    2
@@ -20,6 +21,18 @@ typedef struct variable_list {
 	int status;
 	int nextuse;
 } VL;
+
+int get_variable_index(VL* variablelist, char* variable, int length){
+	int i;
+	for(i=0;i<length;i++){
+		if(strcmp(variablelist[i].name,variable)==0)
+			return i;
+	}
+}
+
+int cmpfnc (const void * a, const void * b) {
+   return ( *(int*)a - *(int*)b );
+}
 
 int isNumber(char* c){
 	if(c[0]>='0' && c[0]<='9')
@@ -122,34 +135,78 @@ int main(int argc, char** argv){
     	    }
     	}
 
+    	//Now we move on to identifying the types of instructions.
+	int type_of_instruction[number_of_lines];
+	for(i=0;i<number_of_lines;i++){
+		if(strcmp(words[i][0],"=")==0)
+			type_of_instruction[i]=BINARYASSIGNMENT;
+		else if(isOperator(words[i][0]))
+			type_of_instruction[i]=OPERATION;
+		else if(strcmp(words[i][0],"goto")==0)
+			type_of_instruction[i]=GOTO;
+		else if(strcmp(words[i][0],"ifgoto")==0)
+			type_of_instruction[i]=IFGOTO;
+		else if(strcmp(words[i][0],"return")==0)
+			type_of_instruction[i]=RETURN;
+		else if(strcmp(words[i][0],"label")==0)
+			type_of_instruction[i]=FUNCTIONDECLARATION;
+		else if(strcmp(words[i][0],"call")==0)
+			type_of_instruction[i]=FUNCTIONCALL;
+		else if(strcmp(words[i][0],"print")==0)
+			type_of_instruction[i]=PRINTSTATEMENT;
+		else
+			type_of_instruction[i]=ERROR;
+	}
+	/*for(i=0;i<number_of_lines;i++)
+		printf("%d\n",type_of_instruction[i]);
+	*/
 	//preprocessing has been done. Moving on to find headers.
 	int headers[number_of_lines];
 	int header_count = 1;
 	headers[0]=0;
 	int j;
-	/*for(i=0;i<number_of_lines;i++){
-                for(j=0;j<number_of_words[i];j++){
-                        printf("%s\n", words[i][j]);
-                }
-        }*/
 	for(i=0;i<number_of_lines;i++){
-		if(strcmp(words[i][0],"goto")!=0 && strcmp(words[i][0],"ifgoto")!=0){
+		if(strcmp(words[i][0],"goto")!=0 && strcmp(words[i][0],"ifgoto")!=0 && strcmp(words[i][0],"label")!=0){
 			continue;
 		}
 		else{
+			int flag = 0;
+			for(j=0;j<header_count;j++){
+				if(headers[j]==i+1)
+					flag=1;
+			}
+			if (flag ==1)
+				continue;
 			headers[header_count++]=i+1;
-			if(strcmp(words[i][0],"goto")==0)
+			if(strcmp(words[i][0],"goto")==0){
+				int flag2=0;
+				for(j=0;j<header_count;j++){
+					if(headers[j]==atoi(words[i][1]))
+						flag2=1;
+				}
+				if(flag2==1)
+					continue;
 				headers[header_count++]=atoi(words[i][1]);
-			else
+			}
+			else if(strcmp(words[i][0],"ifgoto")==0){
+				int flag2=0;
+				for(j=0;j<header_count;j++){
+					if(headers[j]==atoi(words[i][4]))
+						flag2=1;
+				}
+				if(flag2==1)
+					continue;
 				headers[header_count++]=atoi(words[i][4]);
+			}
 	 	}
 	}
+	qsort(headers, header_count, sizeof(int), cmpfnc);
 	//all header lines have now been captured
-	for(i=0;i<number_of_lines;i++){
+	/*for(i=0;i<number_of_lines;i++){
 		for(j=0;j<number_of_words[i];j++){
 			printf("%s\n", words[i][j]);
 		}
-	}
+	}*/
 	for(i=0;i<header_count;i++)
 		printf("%d\n",headers[i]);
 
@@ -175,34 +232,107 @@ int main(int argc, char** argv){
 	for(i=0;i<number_of_variables;i++)
 		printf("%s\t",variables[i].name);
 	printf("\n");
+	for(i=0;i<number_of_variables;i++){
+		printf("%d ",get_variable_index(variables,variables[i].name,number_of_variables));
+		//printf("%s\t",variables[i].name);
+	}
+	printf("\n");
 	//variables are now being recognized. 
 	//printf("variable 2 = %s and variable 10 = %s",variables[2].name, variables[10].name);
-	//Now we move on to identifying the types of instructions.
-	int type_of_instruction[number_of_lines];
-	for(i=0;i<number_of_lines;i++){
-		if(strcmp(words[i][0],"=")==0)
-			type_of_instruction[i]=BINARYASSIGNMENT;
-		else if(isOperator(words[i][0]))
-			type_of_instruction[i]=OPERATION;
-		else if(strcmp(words[i][0],"goto")==0)
-			type_of_instruction[i]=GOTO;
-		else if(strcmp(words[i][0],"ifgoto")==0)
-			type_of_instruction[i]=IFGOTO;
-		else if(strcmp(words[i][0],"return")==0)
-			type_of_instruction[i]=RETURN;
-		else if(strcmp(words[i][0],"label")==0)
-			type_of_instruction[i]=FUNCTIONDECLARATION;
-		else if(strcmp(words[i][0],"call")==0)
-			type_of_instruction[i]=FUNCTIONCALL;
-		else if(strcmp(words[i][0],"print")==0)
-			type_of_instruction[i]=PRINTSTATEMENT;
-		else
-			type_of_instruction[i]=ERROR;
-	}
-	for(i=0;i<number_of_lines;i++)
-		printf("%d\n",type_of_instruction[i]);
 
 	//type of instructions are now being identified. Now we need to generate the next use table.
+	VL symboltable[number_of_lines][number_of_variables];
+	for (i=0;i<number_of_lines;i++){
+		for(j=0;j<number_of_variables;j++){
+			strcpy(symboltable[i][j].name,variables[j].name);
+			symboltable[i][j].status = DEAD;
+			symboltable[i][j].nextuse = NONE;
+		}
+	}
+	int line_number;
+	for(line_number=number_of_lines-1;line_number>headers[header_count-1];line_number--){
+		if(line_number < number_of_lines-1){
+			for(k=0;k<number_of_variables;k++)
+				symboltable[line_number][k].nextuse=symboltable[line_number+1][k].nextuse;
+		}
+		switch(type_of_instruction[line_number]){
+			case BINARYASSIGNMENT:
+			if(!isNumber(words[line_number][2]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+			break;
+			case OPERATION:
+			if(!isNumber(words[line_number][2]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+			if(!isNumber(words[line_number][3]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].nextuse=line_number;
+			break;
+			case GOTO:
+			break;
+			case IFGOTO:
+			if(!isNumber(words[line_number][2]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+			if(!isNumber(words[line_number][3]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].nextuse=line_number;
+			break;
+			case FUNCTIONCALL:
+			break;
+			case FUNCTIONDECLARATION:
+			break;
+			case ERROR:
+			break;
+			case RETURN:
+			break;
+			case PRINTSTATEMENT:
+			if(!isNumber(words[line_number][1]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+			break;
+			
+		}
+	}
+	for(i=header_count-1;i>0;i--){
+		for(line_number=headers[i];line_number>=headers[i-1];line_number--){
+			for(k=0;k<number_of_variables;k++)
+				symboltable[line_number][k].nextuse=symboltable[line_number+1][k].nextuse;
+			switch (type_of_instruction[line_number]){
+			case BINARYASSIGNMENT:
+			if(!isNumber(words[line_number][2]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+			break;
+			case OPERATION:
+			if(!isNumber(words[line_number][2]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+			if(!isNumber(words[line_number][3]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].nextuse=line_number;
+			break;
+			case GOTO:
+			break;
+			case IFGOTO:
+			if(!isNumber(words[line_number][2]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+			if(!isNumber(words[line_number][3]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].nextuse=line_number;
+			break;
+			case FUNCTIONCALL:
+			break;
+			case FUNCTIONDECLARATION:
+			break;
+			case ERROR:
+			break;
+			case RETURN:
+			break;
+			case PRINTSTATEMENT:
+			if(!isNumber(words[line_number][1]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+			break;
+			
+		}
+		}
+	}
+	for(i=0;i<number_of_lines;i++){
+		for(j=0;j<number_of_variables;j++){
+			printf("%s\t%d\n",symboltable[i][j].name,symboltable[i][j].nextuse);
+		}
+	}
         return 0;
 }
 
