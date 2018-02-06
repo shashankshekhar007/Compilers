@@ -250,29 +250,41 @@ int main(int argc, char** argv){
 		}
 	}
 	int line_number;
-	for(line_number=number_of_lines-1;line_number>headers[header_count-1];line_number--){
+	for(line_number=number_of_lines-1;line_number>=headers[header_count-1];line_number--){
 		if(line_number < number_of_lines-1){
 			for(k=0;k<number_of_variables;k++)
 				symboltable[line_number][k].nextuse=symboltable[line_number+1][k].nextuse;
 		}
 		switch(type_of_instruction[line_number]){
 			case BINARYASSIGNMENT:
-			if(!isNumber(words[line_number][2]))
+			symboltable[line_number][get_variable_index(variables,words[line_number][1],number_of_variables)].status=LIVE;
+			if(!isNumber(words[line_number][2])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].status=LIVE;
+			}
 			break;
 			case OPERATION:
-			if(!isNumber(words[line_number][2]))
+			symboltable[line_number][get_variable_index(variables,words[line_number][1],number_of_variables)].status=LIVE;
+			if(!isNumber(words[line_number][2])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
-			if(!isNumber(words[line_number][3]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].status=LIVE;
+			}
+			if(!isNumber(words[line_number][3])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].nextuse=line_number;
+				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].status=LIVE;
+			}
 			break;
 			case GOTO:
 			break;
 			case IFGOTO:
-			if(!isNumber(words[line_number][2]))
+			if(!isNumber(words[line_number][2])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
-			if(!isNumber(words[line_number][3]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].status=LIVE;
+			}
+			if(!isNumber(words[line_number][3])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].nextuse=line_number;
+				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].status=LIVE;
+			}
 			break;
 			case FUNCTIONCALL:
 			break;
@@ -283,8 +295,10 @@ int main(int argc, char** argv){
 			case RETURN:
 			break;
 			case PRINTSTATEMENT:
-			if(!isNumber(words[line_number][1]))
+			if(!isNumber(words[line_number][1])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].status=LIVE;
+			}
 			break;
 			
 		}
@@ -295,22 +309,32 @@ int main(int argc, char** argv){
 				symboltable[line_number][k].nextuse=symboltable[line_number+1][k].nextuse;
 			switch (type_of_instruction[line_number]){
 			case BINARYASSIGNMENT:
-			if(!isNumber(words[line_number][2]))
+			if(!isNumber(words[line_number][2])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].status=LIVE;
+			}
 			break;
 			case OPERATION:
-			if(!isNumber(words[line_number][2]))
+			if(!isNumber(words[line_number][2])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
-			if(!isNumber(words[line_number][3]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].status=LIVE;
+			}
+			if(!isNumber(words[line_number][3])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].nextuse=line_number;
+				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].status=LIVE;
+			}
 			break;
 			case GOTO:
 			break;
 			case IFGOTO:
-			if(!isNumber(words[line_number][2]))
+			if(!isNumber(words[line_number][2])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
-			if(!isNumber(words[line_number][3]))
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].status=LIVE;
+			}
+			if(!isNumber(words[line_number][3])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].nextuse=line_number;
+				symboltable[line_number][get_variable_index(variables,words[line_number][3],number_of_variables)].status=LIVE;
+			}
 			break;
 			case FUNCTIONCALL:
 			break;
@@ -321,16 +345,19 @@ int main(int argc, char** argv){
 			case RETURN:
 			break;
 			case PRINTSTATEMENT:
-			if(!isNumber(words[line_number][1]))
+			if(!isNumber(words[line_number][1])){
 				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].nextuse=line_number;
+				symboltable[line_number][get_variable_index(variables,words[line_number][2],number_of_variables)].status=LIVE;
+			}
 			break;
 			
 		}
 		}
 	}
 	for(i=0;i<number_of_lines;i++){
+		printf("Symbol table for line %d is :\n",i);
 		for(j=0;j<number_of_variables;j++){
-			printf("%s\t%d\n",symboltable[i][j].name,symboltable[i][j].nextuse);
+			printf("%s\t%d\t%d\n",symboltable[i][j].name,symboltable[i][j].nextuse,symboltable[i][j].status);
 		}
 	}
         return 0;
