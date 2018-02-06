@@ -201,6 +201,8 @@ int main(int argc, char** argv){
 	}
 	for(i=0;i<number_of_lines;i++)
 		printf("%d\n",type_of_instruction[i]);
+
+	//type of instructions are now being identified. Now we need to generate the next use table.
         return 0;
 }
 
