@@ -119,13 +119,19 @@ int main(int argc, char** argv){
         //count the number of lines in the file
         FILE* fp;
         FILE*  copy_of_fp;
+        
+        if(argc !=2){
+        	printf("Usage: ./assignment2 <file-name>\n");
+        	return 0;
+        }
+        
         if (argc >= 2){
                 fp = fopen(argv[1], "r");
                 copy_of_fp = fopen (argv[1], "r");
         }
         int number_of_lines=0;
         if(fp == NULL)
-                printf("Couldn't find the desired file\n");
+                printf("Couldn't open the file. Either file does not exist or is corrupted.\n");
         char c;
         for(c=getc(fp); c!=EOF; c= getc(fp)){
                 if(c=='\n')
@@ -147,7 +153,7 @@ int main(int argc, char** argv){
 
 
         int i,j;
-        for(int i=0;i<number_of_lines;i++){
+        for(i=0;i<number_of_lines;i++){
             lines[i]= (char *)malloc(100*sizeof(char));
             number_of_words[i]=0;
         }
