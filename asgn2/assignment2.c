@@ -654,7 +654,6 @@ int main(int argc, char** argv){
 				else
 					ir[i].in2= NULL;
 				
-				//ir[i].target = words[i][4];
 				break;
 			
 //			case FUNCTIONDECLARATION:
@@ -692,6 +691,12 @@ int main(int argc, char** argv){
 			case BINARYASSIGNMENT:
 				var_index_out = get_variable_index(variables, ir[i].out->name, number_of_variables);
 				reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
+				if(registerdescriptor[reg_index_out].status==EMPTY){
+					registerdescriptor[reg_index_out].status = NONEMPTY;
+					registerdescriptor[reg_index_out].variableindex[var_index_out] = PRESENT;
+					addressdescriptor[var_index_out].name = ir[i].out->name;
+					addressdescriptor[var_index_out].location[reg_index_out] = PRESENT;
+				}
 				if(ir[i].in1==NULL){
 					fprintf(fp1,"addi $%d,$0,%d\n",reg_index_out,atoi(words[i][2]));
 					break;
