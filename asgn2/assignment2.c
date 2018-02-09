@@ -718,12 +718,15 @@ int main(int argc, char** argv){
 				reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
 				
 				for(x=0;x<number_of_variables;x++){
+					if(x==var_index_out)
+						continue;
 					if(registerdescriptor[reg_index_out].variableindex[x]==PRESENT){
 						addressdescriptor[j].location[reg_index_out]=NOTPRESENT;
 						registerdescriptor[reg_index_out].variableindex[x]=NOTPRESENT;
 						//write a line to move it to memory, if it is not present in any other register.
 					}
 				}
+				
 				registerdescriptor[reg_index_out].variableindex[var_index_out]= PRESENT;
 				registerdescriptor[reg_index_out].status=NONEMPTY;
 				addressdescriptor[var_index_out].location[reg_index_out]=PRESENT;
