@@ -557,7 +557,7 @@ int main(int argc, char** argv){
 					ir[i].in1= &(variables[in1]);
 				}
 				else
-					ir[1].in1= NULL;
+					ir[i].in1= NULL;
 				out = get_variable_index(variables,words[i][1],number_of_variables);
 				ir[i].instructiontype=BINARYASSIGNMENT;
 				ir[i].out= &(variables[out]);
@@ -568,13 +568,13 @@ int main(int argc, char** argv){
 					ir[i].in1 = &(variables[in1]);
 				}
 				else
-					ir[1].in1=NULL;
+					ir[i].in1=NULL;
 				if(!isNumber(words[i][3])){
 					in2 = get_variable_index(variables,words[i][3],number_of_variables);
 					ir[i].in2 = &(variables[in2]);
 				}
 				else
-					ir[1].in2=NULL;
+					ir[i].in2=NULL;
 				out = get_variable_index(variables,words[i][1],number_of_variables);
 				ir[i].instructiontype=OPERATION;
 				ir[i].out = &(variables[out]);
