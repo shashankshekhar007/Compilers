@@ -56,7 +56,7 @@ typedef struct address_descriptor{
 
 typedef struct register_descriptor{
 	int status;
-	int* variableindex = NULL;
+	int* variableindex;
 } RD;
 
 typedef struct symbol_table{
@@ -65,12 +65,12 @@ typedef struct symbol_table{
 } ST;
 
 typedef struct {
-	int instructiontype = NULL;
-	VL* in1 = NULL;
-	VL* in2 = NULL;
-	VL* out = NULL;
-	char* target = NULL;
-	int operator = NULL;
+	int instructiontype;
+	VL* in1 ;
+	VL* in2 ;
+	VL* out ;
+	char* target ;
+	int operator ;
 }Instruction3AC;
 
 
@@ -615,7 +615,32 @@ int main(int argc, char** argv){
 				break;
 			case IFGOTO:
 				ir[i].instructiontype = IFGOTO;
-				ir[i].operator = words[i][1];
+				if(strcmp(words[i][1],">=")==0)
+					ir[i].operator= GEQ;
+				else if(strcmp(words[i][1],"<=")==0)
+					ir[i].operator= LEQ;
+				else if(strcmp(words[i][1],"<")==0)
+					ir[i].operator= LT;
+				else if(strcmp(words[i][1],">")==0)
+					ir[i].operator= GT;
+				else if(strcmp(words[i][1],"+")==0)
+					ir[i].operator= ADD;
+				else if(strcmp(words[i][1],"-")==0)
+					ir[i].operator= SUBTRACT;
+				else if(strcmp(words[i][1],"*")==0)
+					ir[i].operator= MULTIPLY;
+				else if(strcmp(words[i][1],"/")==0)
+					ir[i].operator= DIVIDE;
+				else if(strcmp(words[i][1],"%")==0)
+					ir[i].operator= MODULUS;
+				else if(strcmp(words[i][1],"!=")==0)
+					ir[i].operator= NOTEQ;
+				else if(strcmp(words[i][1],"==")==0)
+					ir[i].operator= EQEQ;
+				else if(strcmp(words[i][1],"&")==0)
+					ir[i].operator= AND;
+				else if(strcmp(words[i][1],"|")==0)
+					ir[i].operator= OR;
 				if(!isNumber(words[i][2])){
 					in1 = get_variable_index(variables,words[i][2],number_of_variables);
 					ir[i].in1= &(variables[in1]);
@@ -644,29 +669,29 @@ int main(int argc, char** argv){
 		}
 	}
 	//the most important function, getreg
-	FILE* fp;
-	fp = fopen("assignment2.asm",'w');
-	if (fp == NULL)
-    {
-        printf("File does not exists \n");
-        return;
-    }
+	//FILE* fp;
+	// fp = fopen("assignment2.asm",'w');
+	// if (fp == NULL)
+ //    	{
+ //        	printf("File does not exists \n");
+ //        	return 0;
+ //    	}
 	printf("%d\n",get_register_for_operand(&variables[1],registerdescriptor,&addressdescriptor[1],addressdescriptor,variables, 1, nextusetable));
 	
 	// Getreg will do everything. It will update the addressdescriptor table, registerdescriptor table and any other tables or value in memory.
 	// Also we need to add an extra field like HIGH PRIORITY sth, for making sure that c does not get same register as that of b for a=b+c
 	
 	for(i=0;i<number_of_lines;i++){
-		switch ir[i].instructiontype{
+		switch (ir[i].instructiontype){
 			case BINARYASSIGNMENT:
-				int var_index_out = get_variable_index(variables, ir[i].out.name, number_of_variables);
+				int var_index_out = get_variable_index(variables, ir[i].out->name, number_of_variables);
 				int reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
 				if(ir[i].in1==NULL){
 					fprintf(fp,"addi $%d,$0,%d\n",reg_index_out,atoi(words[i][2]));
 					break;
 				}
 				else{
-					int var_index_in1 = get_variable_index(variables, ir[i].in1.name, number_of_variables);
+					int var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
 					int reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
 					fprintf(fp,"lw $%d %s\nadd $%d,$0,$%d\n",reg_index_in1,ir[i].in1.name,reg_index_out,reg_index_in1);
 					break;
@@ -701,6 +726,7 @@ int main(int argc, char** argv){
 					break;
 				}
 				
+		}
 	}
 
 
