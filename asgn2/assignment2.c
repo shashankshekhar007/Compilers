@@ -128,12 +128,16 @@ int number_of_lines = 0;
 int get_register_for_operand(VL* variable, RD registerdescriptor[32], AD* variabledescriptor, AD* addressdescriptor, VL* variables, int line, VL nextusetable[number_of_lines][number_of_variables]){
 	int i;
 	for(i=0;i<32;i++){
-		if(variabledescriptor->location[i]==PRESENT)
+		if(variabledescriptor->location[i]==PRESENT){
+			//printf("here check %d, %s\n",i,variable->name);
 			return i;
+		}
 	}
 	for(i=0;i<32;i++){
-		if(registerdescriptor[i].status == EMPTY)
+		if(registerdescriptor[i].status == EMPTY){
+			//printf("here check1 %d, %s\n",i,variable->name);
 			return i;
+		}
 	}
 	int max = 0, index = -1;
 	VL next_variable;
@@ -149,6 +153,7 @@ int get_register_for_operand(VL* variable, RD registerdescriptor[32], AD* variab
 			max=nextusetable[line][i].nextuse;
 			index = i;
 		}
+		//printf("Here you are\n");
 	}
 	return index;
 }
@@ -716,13 +721,14 @@ int main(int argc, char** argv){
 				printf("Here in binary assignment\n");
 				var_index_out = get_variable_index(variables, ir[i].out->name, number_of_variables);
 				reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
-				
+				//fprintf(fp1,"%d\n",reg_index_out);
 				for(x=0;x<number_of_variables;x++){
 					if(x==var_index_out)
 						continue;
 					if(registerdescriptor[reg_index_out].variableindex[x]==PRESENT){
 						addressdescriptor[x].location[reg_index_out]=NOTPRESENT;
 						registerdescriptor[reg_index_out].variableindex[x]=NOTPRESENT;
+						//fprintf(fp1,"here\n");
 						for(y=0;y<33;y++){
 							if(addressdescriptor[x].location[y]==PRESENT) break;
 						}
@@ -734,6 +740,7 @@ int main(int argc, char** argv){
 				registerdescriptor[reg_index_out].status=NONEMPTY;
 				addressdescriptor[var_index_out].location[reg_index_out]=PRESENT;
 				addressdescriptor[var_index_out].location[MEM]= NOTPRESENT;
+				strcpy(addressdescriptor[var_index_out].name,ir[i].out->name);
 				if(ir[i].in1==NULL){
 					fprintf(fp1,"addi $%d,$0,%d\n",reg_index_out,atoi(words[i][2]));
 					break;
@@ -747,15 +754,21 @@ int main(int argc, char** argv){
 						if(registerdescriptor[reg_index_in1].variableindex[x]==PRESENT){
 							addressdescriptor[x].location[reg_index_in1]=NOTPRESENT;
 							registerdescriptor[reg_index_in1].variableindex[x]=NOTPRESENT;
+							//fprintf(fp1,"here1\n");
 							//write a line to move it to memory, if it is not present in any other register.
+							for(y=0;y<33;y++){
+								if(addressdescriptor[x].location[y]==PRESENT) break;
+							}
+							fprintf(fp1,"sw $%d %s\n",reg_index_in1,addressdescriptor[x].name);
 						}
 					}
 					if(registerdescriptor[reg_index_in1].variableindex[var_index_in1]==NOTPRESENT)
 						fprintf(fp1,"lw $%d %s\n",reg_index_in1,ir[i].in1->name);
-					registerdescriptor[reg_index_in1].variableindex[var_index_out]= PRESENT;
+					registerdescriptor[reg_index_in1].variableindex[var_index_in1]= PRESENT;
 					registerdescriptor[reg_index_in1].status=NONEMPTY;
-					addressdescriptor[var_index_in1].location[reg_index_out]=PRESENT;
+					addressdescriptor[var_index_in1].location[reg_index_in1]=PRESENT;
 					addressdescriptor[var_index_in1].location[MEM]= NOTPRESENT;
+					//printf("here check3 %d, %s\n",reg_index_out,variables[var_index_out].name);
 					fprintf(fp1,"add $%d,$0,$%d\n",reg_index_out,reg_index_in1);
 					break;
 				}
@@ -764,6 +777,29 @@ int main(int argc, char** argv){
 			case OPERATION:
 				var_index_out = get_variable_index(variables, ir[i].out->name, number_of_variables);
 				reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
+				for(x=0;x<number_of_variables;x++){
+					if(x==var_index_out)
+						continue;
+					if(registerdescriptor[reg_index_out].variableindex[x]==PRESENT){
+						addressdescriptor[x].location[reg_index_out]=NOTPRESENT;
+						registerdescriptor[reg_index_out].variableindex[x]=NOTPRESENT;
+						//fprintf(fp1,"here\n");
+						for(y=0;y<33;y++){
+							if(addressdescriptor[x].location[y]==PRESENT) break;
+						}
+						fprintf(fp1,"sw $%d %s\n",reg_index_out,addressdescriptor[x].name);
+					}
+				}
+				
+				registerdescriptor[reg_index_out].variableindex[var_index_out]= PRESENT;
+				registerdescriptor[reg_index_out].status=NONEMPTY;
+				addressdescriptor[var_index_out].location[reg_index_out]=PRESENT;
+				addressdescriptor[var_index_out].location[MEM]= NOTPRESENT;
+				strcpy(addressdescriptor[var_index_out].name,ir[i].out->name);
+				switch(ir[i].operator){
+					case ADD:
+						
+				}
 				if(ir[i].in1==NULL && ir[i].in2==NULL){
 					fprintf(fp1,"addi $%d,%d,%d\n",reg_index_out,atoi(words[i][2]),atoi(words[i][3]));
 					break;
