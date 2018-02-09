@@ -40,6 +40,9 @@
 #define AND 		12
 #define OR 		13
 
+#define EMPTY		1
+#define NONEMPTY	2
+
 typedef struct variable_list {
 	char name[10];
 	int status;
@@ -52,6 +55,7 @@ typedef struct address_descriptor{
 } AD;
 
 typedef struct register_descriptor{
+	int status;
 	int* variableindex;
 } RD;
 
@@ -117,23 +121,52 @@ typedef struct {
 	int operator = NULL;
 }Instruction3AC;
 
+int number_of_variables = 0;
+int number_of_lines = 0;
+
+int get_register_for_operand(VL* variable, RD registerdescriptor[32], AD* variabledescriptor, AD* addressdescriptor, VL* variables, int line, VL nextusetable[number_of_lines][number_of_variables]){
+	int i;
+	for(i=0;i<32;i++){
+		if(variabledescriptor->location[i]==PRESENT)
+			return i;
+	}
+	for(i=0;i<32;i++){
+		if(registerdescriptor[i].status == EMPTY)
+			return i;
+	}
+	int max = 0, index = 0;
+	VL next_variable;
+	for(i=0;i<number_of_variables;i++){
+		if(nextusetable[line][i].nextuse > max){
+			max=nextusetable[line][i].nextuse;
+			index = i;
+		}
+		if(nextusetable[line][i].nextuse == NONE){
+			int j;
+			for(j=0;j<32;j++){
+				if(addressdescriptor[i].location[j]==PRESENT)
+					return j;
+			}
+		}
+	}
+	return index;
+}
+
+int getregister(){
+	
+}
+
 int main(int argc, char** argv){
         //count the number of lines in the file
         FILE* fp;
         FILE*  copy_of_fp;
-        
-        if(argc !=2){
-        	printf("Usage: ./assignment2 <file-name>\n");
-        	return 0;
-        }
-        
         if (argc >= 2){
                 fp = fopen(argv[1], "r");
                 copy_of_fp = fopen (argv[1], "r");
         }
-        int number_of_lines=0;
+        //int number_of_lines=0;
         if(fp == NULL)
-                printf("Couldn't open the file. Either file does not exist or is corrupted.\n");
+                printf("Couldn't find the desired file\n");
         char c;
         for(c=getc(fp); c!=EOF; c= getc(fp)){
                 if(c=='\n')
@@ -155,7 +188,7 @@ int main(int argc, char** argv){
 
 
         int i,j;
-        for(i=0;i<number_of_lines;i++){
+        for(int i=0;i<number_of_lines;i++){
             lines[i]= (char *)malloc(100*sizeof(char));
             number_of_words[i]=0;
         }
@@ -196,7 +229,7 @@ int main(int argc, char** argv){
     	//lines ka kaam khatam. Ab isko free kar diya.
 
     	VL variables[number_of_lines*3];
-	int number_of_variables=0;
+	//int number_of_variables=0;
 	int k;
 	for(i=0;i<number_of_lines;i++){
 		for(j=0;j<number_of_words[i];j++){
@@ -502,6 +535,7 @@ int main(int argc, char** argv){
 	RD registerdescriptor[32];
 	for(i=0;i<32;i++){
 		registerdescriptor[i].variableindex = (int *)malloc(number_of_variables*sizeof(int));
+		registerdescriptor[i].status = EMPTY;
 		for(j=0;j<number_of_variables;j++){
 			registerdescriptor[i].variableindex[j]=NOTPRESENT;
 		}
@@ -530,6 +564,7 @@ int main(int argc, char** argv){
 				ir[i].instructiontype=BINARYASSIGNMENT;
 				ir[i].out= &(variables[out]);
 				break;
+
 			case OPERATION:
 				if(!isNumber(words[i][2])){
 					in1 = get_variable_index(variables,words[i][2],number_of_variables);
@@ -599,11 +634,14 @@ int main(int argc, char** argv){
 			case FUNCTIONDECLARATION:
 				ir[i].instructiontype = FUNCTIONDECLARATION;
 				//ir[i].target = words[i][1];
+			break;
 			default:
 				ir[i].instructiontype=type_of_instruction[i];
 		}
 	}
 	//the most important function, getreg
+
+	printf("%d\n",get_register_for_operand(&variables[1],registerdescriptor,&addressdescriptor[1],addressdescriptor,variables, 1, nextusetable));
 
 
 
