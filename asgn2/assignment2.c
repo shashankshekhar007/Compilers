@@ -573,8 +573,8 @@ int main(int argc, char** argv){
 	for(i=0;i<number_of_lines;i++){
 		int in1,in2,out;
 		switch (type_of_instruction[i]){
-			printf("Here in BINARYASSIGNMENT\n");
 			case BINARYASSIGNMENT:
+				printf("Here in BINARYASSIGNMENT\n");
 				if(!isNumber(words[i][2])){
 					in1 = get_variable_index(variables,words[i][2],number_of_variables);
 					ir[i].in1= &(variables[in1]);
@@ -721,9 +721,12 @@ int main(int argc, char** argv){
 					if(x==var_index_out)
 						continue;
 					if(registerdescriptor[reg_index_out].variableindex[x]==PRESENT){
-						addressdescriptor[j].location[reg_index_out]=NOTPRESENT;
+						addressdescriptor[x].location[reg_index_out]=NOTPRESENT;
 						registerdescriptor[reg_index_out].variableindex[x]=NOTPRESENT;
-						//write a line to move it to memory, if it is not present in any other register.
+						for(y=0;y<33;y++){
+							if(addressdescriptor[x].location[y]==PRESENT) break;
+						}
+						fprintf(fp1,"sw $%d %s\n",reg_index_out,addressdescriptor[x].name);
 					}
 				}
 				
@@ -742,7 +745,7 @@ int main(int argc, char** argv){
 						if(x==var_index_in1)
 							continue;
 						if(registerdescriptor[reg_index_in1].variableindex[x]==PRESENT){
-							addressdescriptor[j].location[reg_index_in1]=NOTPRESENT;
+							addressdescriptor[x].location[reg_index_in1]=NOTPRESENT;
 							registerdescriptor[reg_index_in1].variableindex[x]=NOTPRESENT;
 							//write a line to move it to memory, if it is not present in any other register.
 						}
