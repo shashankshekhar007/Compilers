@@ -56,13 +56,23 @@ typedef struct address_descriptor{
 
 typedef struct register_descriptor{
 	int status;
-	int* variableindex;
+	int* variableindex = NULL;
 } RD;
 
 typedef struct symbol_table{
 	char name[10];
 	int type;
 } ST;
+
+typedef struct {
+	int instructiontype = NULL;
+	VL* in1 = NULL;
+	VL* in2 = NULL;
+	VL* out = NULL;
+	char* target = NULL;
+	int operator = NULL;
+}Instruction3AC;
+
 
 //get index of variable in variable list
 int get_variable_index(VL* variablelist, char* variable, int length){
@@ -112,15 +122,6 @@ int isKeyword(char* c){
 	return 0;
 }
 
-typedef struct {
-	int instructiontype = NULL;
-	VL* in1 = NULL;
-	VL* in2 = NULL;
-	VL* out = NULL;
-	int target = NULL;
-	int operator = NULL;
-}Instruction3AC;
-
 int number_of_variables = 0;
 int number_of_lines = 0;
 
@@ -137,10 +138,6 @@ int get_register_for_operand(VL* variable, RD registerdescriptor[32], AD* variab
 	int max = 0, index = 0;
 	VL next_variable;
 	for(i=0;i<number_of_variables;i++){
-		if(nextusetable[line][i].nextuse > max){
-			max=nextusetable[line][i].nextuse;
-			index = i;
-		}
 		if(nextusetable[line][i].nextuse == NONE){
 			int j;
 			for(j=0;j<32;j++){
@@ -148,9 +145,15 @@ int get_register_for_operand(VL* variable, RD registerdescriptor[32], AD* variab
 					return j;
 			}
 		}
+		if(nextusetable[line][i].nextuse > max){
+			max=nextusetable[line][i].nextuse;
+			index = i;
+		}
 	}
+	
 	return index;
 }
+
 
 int getregister(){
 	
@@ -263,7 +266,7 @@ int main(int argc, char** argv){
 	
 
 	//time to find out headers
-    	int headers[number_of_lines];
+	int headers[number_of_lines];
 	int header_count = 1;
 	headers[0]=0;
 	for(i=0;i<number_of_lines;i++){
@@ -306,8 +309,6 @@ int main(int argc, char** argv){
 	
 	for(i=0;i<header_count;i++)
 		printf("Headers = %d\n",headers[i]);
-
-    	
 
     	//Now we move on to identifying the types of instructions.
 	int type_of_instruction[number_of_lines];
@@ -610,7 +611,7 @@ int main(int argc, char** argv){
 				break;
 			case GOTO:
 				ir[i].instructiontype = GOTO;
-				//ir[i].target = words[i][1];
+				ir[i].target = words[i][1];
 				break;
 			case IFGOTO:
 				ir[i].instructiontype = IFGOTO;
@@ -631,19 +632,77 @@ int main(int argc, char** argv){
 				//ir[i].target = words[i][4];
 				break;
 			
-			case FUNCTIONDECLARATION:
-				ir[i].instructiontype = FUNCTIONDECLARATION;
-				//ir[i].target = words[i][1];
-			break;
+//			case FUNCTIONDECLARATION:
+//				ir[i].instructiontype = FUNCTIONDECLARATION;
+//				ir[i].target = words[i][1];
+//			break;
+//			case FUNCTIONCALL:
+//				ir[i].instructiontype = FUNCTIONCALL;
+//				ir[i].target = words[i][1];
 			default:
 				ir[i].instructiontype=type_of_instruction[i];
 		}
 	}
 	//the most important function, getreg
-
+	FILE* fp;
+	fp = fopen("assignment2.asm",'w');
+	if (fp == NULL)
+    {
+        printf("File does not exists \n");
+        return;
+    }
 	printf("%d\n",get_register_for_operand(&variables[1],registerdescriptor,&addressdescriptor[1],addressdescriptor,variables, 1, nextusetable));
+	
+	// Getreg will do everything. It will update the addressdescriptor table, registerdescriptor table and any other tables or value in memory.
+	// Also we need to add an extra field like HIGH PRIORITY sth, for making sure that c does not get same register as that of b for a=b+c
+	
+	for(i=0;i<number_of_lines;i++){
+		switch ir[i].instructiontype{
+			case BINARYASSIGNMENT:
+				int var_index_out = get_variable_index(variables, ir[i].out.name, number_of_variables);
+				int reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
+				if(ir[i].in1==NULL){
+					fprintf(fp,"addi $%d,$0,%d\n",reg_index_out,atoi(words[i][2]));
+					break;
+				}
+				else{
+					int var_index_in1 = get_variable_index(variables, ir[i].in1.name, number_of_variables);
+					int reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
+					fprintf(fp,"lw $%d %s\nadd $%d,$0,$%d\n",reg_index_in1,ir[i].in1.name,reg_index_out,reg_index_in1);
+					break;
+				}
+			// only support addition, subtraction etc.
+			// now only support addition.
+			case OPERATION:
+				int var_index_out = get_variable_index(variables, ir[i].out.name, number_of_variables);
+				int reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
+				if(ir[i].in1==NULL && ir[i].in2==NULL){
+					fprintf(fp,"addi $%d,%d,%d\n",reg_index_out,atoi(words[i][2]),atoi(words[i][3]));
+					break;
+				}
+				else if(ir[i].in1!=NULL && ir[i].in2==NULL){
+					int var_index_in1 = get_variable_index(variables, ir[i].in1.name, number_of_variables);
+					int reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
+					fprintf(fp,"lw $%d %s\naddi $%d,$%d,%d\n",reg_index_in1,ir[i].in1.name,reg_index_out,reg_index_in1,atoi(words[i][3]));
+					break;
+				}
+				else if(ir[i].in1==NULL && ir[i].in2!=NULL){
+					int var_index_in2 = get_variable_index(variables, ir[i].in2.name, number_of_variables);
+					int reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variables, i, nextusetable);
+					fprintf(fp,"lw $%d %s\naddi $%d,%d,$%d\n",reg_index_in2,ir[i].in2.name,reg_index_out,atoi(words[i][2],reg_index_in2));
+					break;
+				}
+				else{
+					int var_index_in1 = get_variable_index(variables, ir[i].in1.name, number_of_variables);
+					int reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
+					int var_index_in2 = get_variable_index(variables, ir[i].in2.name, number_of_variables);
+					int reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variables, i, nextusetable);
+					fprintf(fp,"lw $%d %s\nlw $%d %s\nadd $%d,$%d,$%d\n",reg_index_in1,ir[i].in1.name,reg_index_in2,ir[i].in2.name,reg_index_out,reg_index_in1,reg_index_in2);
+					break;
+				}
+				
+	}
 
 
-
-        return 0;
+	return 0;
 }
