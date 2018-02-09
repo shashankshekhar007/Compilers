@@ -67,6 +67,8 @@ int get_variable_index(VL* variablelist, char* variable, int length){
 		if(strcmp(variablelist[i].name,variable)==0)
 			return i;
 	}
+	// if variable not found.
+	return -1;
 }
 
 //copied from internet :p
@@ -107,12 +109,12 @@ int isKeyword(char* c){
 }
 
 typedef struct {
-	int instructiontype;
-	VL* in1;
-	VL* in2;
-	VL* out;
-	int target;
-	int operator;
+	int instructiontype = NULL;
+	VL* in1 = NULL;
+	VL* in2 = NULL;
+	VL* out = NULL;
+	int target = NULL;
+	int operator = NULL;
 }Instruction3AC;
 
 int main(int argc, char** argv){
@@ -518,59 +520,85 @@ int main(int argc, char** argv){
 		int in1,in2,out;
 		switch (type_of_instruction[i]){
 			case BINARYASSIGNMENT:
-			if(!isNumber(words[i][2])){
-				in1 = get_variable_index(variables,words[i][2],number_of_variables);
-				ir[i].in1= &(variables[in1]);
-			}
-			else
-				ir[i].in1= NULL;
-			out = get_variable_index(variables,words[i][1],number_of_variables);
-			ir[i].instructiontype=BINARYASSIGNMENT;
-			ir[i].out= &(variables[out]);
-			break;
+				if(!isNumber(words[i][2])){
+					in1 = get_variable_index(variables,words[i][2],number_of_variables);
+					ir[i].in1= &(variables[in1]);
+				}
+				else
+					ir[i].in1= NULL;
+				out = get_variable_index(variables,words[i][1],number_of_variables);
+				ir[i].instructiontype=BINARYASSIGNMENT;
+				ir[i].out= &(variables[out]);
+				break;
 			case OPERATION:
-			if(!isNumber(words[i][2])){
-				in1 = get_variable_index(variables,words[i][2],number_of_variables);
-				ir[i].in1 = &(variables[in1]);
-			}
-			else
-				ir[i].in1=NULL;
-			if(!isNumber(words[i][3])){
-				in2 = get_variable_index(variables,words[i][3],number_of_variables);
-				ir[i].in2 = &(variables[in2]);
-			}
-			else
-				ir[i].in2=NULL;
-			out = get_variable_index(variables,words[i][1],number_of_variables);
-			ir[i].instructiontype=OPERATION;
-			ir[i].out = &(variables[out]);
-			if(strcmp(words[i][0],">=")==0)
-				ir[i].operator= GEQ;
-			else if(strcmp(words[i][0],"<=")==0)
-				ir[i].operator= LEQ;
-			else if(strcmp(words[i][0],"<")==0)
-				ir[i].operator= LT;
-			else if(strcmp(words[i][0],">")==0)
-				ir[i].operator= GT;
-			else if(strcmp(words[i][0],"+")==0)
-				ir[i].operator= ADD;
-			else if(strcmp(words[i][0],"-")==0)
-				ir[i].operator= SUBTRACT;
-			else if(strcmp(words[i][0],"*")==0)
-				ir[i].operator= MULTIPLY;
-			else if(strcmp(words[i][0],"/")==0)
-				ir[i].operator= DIVIDE;
-			else if(strcmp(words[i][0],"%")==0)
-				ir[i].operator= MODULUS;
-			else if(strcmp(words[i][0],"!=")==0)
-				ir[i].operator= NOTEQ;
-			else if(strcmp(words[i][0],"==")==0)
-				ir[i].operator= EQEQ;
-			else if(strcmp(words[i][0],"&")==0)
-				ir[i].operator= AND;
-			else if(strcmp(words[i][0],"|")==0)
-				ir[i].operator= OR;
-			break;
+				if(!isNumber(words[i][2])){
+					in1 = get_variable_index(variables,words[i][2],number_of_variables);
+					ir[i].in1 = &(variables[in1]);
+				}
+				else
+					ir[i].in1=NULL;
+				if(!isNumber(words[i][3])){
+					in2 = get_variable_index(variables,words[i][3],number_of_variables);
+					ir[i].in2 = &(variables[in2]);
+				}
+				else
+					ir[i].in2=NULL;
+				out = get_variable_index(variables,words[i][1],number_of_variables);
+				ir[i].instructiontype=OPERATION;
+				ir[i].out = &(variables[out]);
+				if(strcmp(words[i][0],">=")==0)
+					ir[i].operator= GEQ;
+				else if(strcmp(words[i][0],"<=")==0)
+					ir[i].operator= LEQ;
+				else if(strcmp(words[i][0],"<")==0)
+					ir[i].operator= LT;
+				else if(strcmp(words[i][0],">")==0)
+					ir[i].operator= GT;
+				else if(strcmp(words[i][0],"+")==0)
+					ir[i].operator= ADD;
+				else if(strcmp(words[i][0],"-")==0)
+					ir[i].operator= SUBTRACT;
+				else if(strcmp(words[i][0],"*")==0)
+					ir[i].operator= MULTIPLY;
+				else if(strcmp(words[i][0],"/")==0)
+					ir[i].operator= DIVIDE;
+				else if(strcmp(words[i][0],"%")==0)
+					ir[i].operator= MODULUS;
+				else if(strcmp(words[i][0],"!=")==0)
+					ir[i].operator= NOTEQ;
+				else if(strcmp(words[i][0],"==")==0)
+					ir[i].operator= EQEQ;
+				else if(strcmp(words[i][0],"&")==0)
+					ir[i].operator= AND;
+				else if(strcmp(words[i][0],"|")==0)
+					ir[i].operator= OR;
+				break;
+			case GOTO:
+				ir[i].instructiontype = GOTO;
+				//ir[i].target = words[i][1];
+				break;
+			case IFGOTO:
+				ir[i].instructiontype = IFGOTO;
+				ir[i].operator = words[i][1];
+				if(!isNumber(words[i][2])){
+					in1 = get_variable_index(variables,words[i][2],number_of_variables);
+					ir[i].in1= &(variables[in1]);
+				}
+				else
+					ir[i].in1= NULL;
+				if(!isNumber(words[i][3])){
+					in2 = get_variable_index(variables,words[i][3],number_of_variables);
+					ir[i].in2= &(variables[in2]);
+				}
+				else
+					ir[i].in2= NULL;
+				
+				//ir[i].target = words[i][4];
+				break;
+			
+			case FUNCTIONDECLARATION:
+				ir[i].instructiontype = FUNCTIONDECLARATION;
+				//ir[i].target = words[i][1];
 			default:
 				ir[i].instructiontype=type_of_instruction[i];
 		}
