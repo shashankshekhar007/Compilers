@@ -739,17 +739,20 @@ int main(int argc, char** argv){
 					var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
 					reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
 					for(x=0;x<number_of_variables;x++){
+						if(x==var_index_in1)
+							continue;
 						if(registerdescriptor[reg_index_in1].variableindex[x]==PRESENT){
 							addressdescriptor[j].location[reg_index_in1]=NOTPRESENT;
 							registerdescriptor[reg_index_in1].variableindex[x]=NOTPRESENT;
 							//write a line to move it to memory, if it is not present in any other register.
 						}
 					}
+					if(registerdescriptor[reg_index_in1].variableindex[var_index_in1]==NOTPRESENT)
+						fprintf(fp1,"lw $%d %s\n",reg_index_in1,ir[i].in1->name);
 					registerdescriptor[reg_index_in1].variableindex[var_index_out]= PRESENT;
 					registerdescriptor[reg_index_in1].status=NONEMPTY;
 					addressdescriptor[var_index_in1].location[reg_index_out]=PRESENT;
 					addressdescriptor[var_index_in1].location[MEM]= NOTPRESENT;
-					fprintf(fp1,"lw $%d %s\n",reg_index_in1,ir[i].in1->name);
 					fprintf(fp1,"add $%d,$0,$%d\n",reg_index_out,reg_index_in1);
 					break;
 				}
