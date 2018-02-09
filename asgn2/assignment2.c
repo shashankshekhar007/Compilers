@@ -135,28 +135,47 @@ int get_register_for_operand(VL* variable, RD registerdescriptor[32], AD* variab
 		if(registerdescriptor[i].status == EMPTY)
 			return i;
 	}
-	int max = 0, index = 0;
+	int max = 0, index = -1;
 	VL next_variable;
 	for(i=0;i<number_of_variables;i++){
-		if(nextusetable[line][i].nextuse == NONE){
+		if(nextusetable[line][i].nextuse == NONE && nextusetable[line][i].status==DEAD){
 			int j;
 			for(j=0;j<32;j++){
 				if(addressdescriptor[i].location[j]==PRESENT)
 					return j;
 			}
 		}
-		if(nextusetable[line][i].nextuse > max){
+		if(nextusetable[line][i].nextuse > max && nextusetable[line][i].status==DEAD){
 			max=nextusetable[line][i].nextuse;
 			index = i;
 		}
 	}
-	
 	return index;
 }
 
 
-int getregister(){
-	
+int getregister(VL* variable, Instruction3AC* instruction, RD registerdescriptor[32], AD* variabledescriptor, AD* addressdescriptor, VL* variables, int line, VL nextusetable[number_of_lines][number_of_variables]){
+	int i;
+	for(i=0;i<32;i++){
+		if(variabledescriptor->location[i]==PRESENT)
+			return i;
+	}
+	if(instruction -> in1 != NULL){
+		int index_of_in1 = get_variable_index(variables, instruction->in1->name, number_of_variables);
+		if(line != number_of_lines-1 && nextusetable[line][i].nextuse==line && nextusetable[line+1][i].nextuse==NONE){
+			int j;
+			for(j=0;j<32;j++){
+				if(addressdescriptor[index_of_in1].location[j]==PRESENT)
+					return j;
+			}
+		}
+	}
+	for(i=0;i<32;i++){
+		if(registerdescriptor[i].status==EMPTY)
+			return i;
+	}
+	return get_register_for_operand(variable, registerdescriptor, variabledescriptor, addressdescriptor, variables, line, nextusetable);
+
 }
 
 int main(int argc, char** argv){
@@ -554,6 +573,7 @@ int main(int argc, char** argv){
 	for(i=0;i<number_of_lines;i++){
 		int in1,in2,out;
 		switch (type_of_instruction[i]){
+			printf("Here in BINARYASSIGNMENT\n");
 			case BINARYASSIGNMENT:
 				if(!isNumber(words[i][2])){
 					in1 = get_variable_index(variables,words[i][2],number_of_variables);
@@ -669,6 +689,9 @@ int main(int argc, char** argv){
 		}
 	}
 	//the most important function, getreg
+	for(i=0;i<number_of_lines;i++){
+		printf("%d\n", ir[i].instructiontype);
+	}
 	FILE* fp1;
 	fp1 = fopen("assignment2.asm","w");
 	if (fp1 == NULL)
@@ -689,9 +712,22 @@ int main(int argc, char** argv){
 			int var_index_in2;
 			int reg_index_in1;
 			int reg_index_in2;
+			int x,y;
 			case BINARYASSIGNMENT:
+				printf("Here in binary assignment\n");
 				var_index_out = get_variable_index(variables, ir[i].out->name, number_of_variables);
 				reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
+				for(x=0;x<number_of_variables;x++){
+					if(registerdescriptor[reg_index_out].variableindex[x]==PRESENT){
+						addressdescriptor[j].location[reg_index_out]=NOTPRESENT;
+						registerdescriptor[reg_index_out].variableindex[x]=NOTPRESENT;
+						//write a line to move it to memory, if it is not present in any other register.
+					}
+				}
+				registerdescriptor[reg_index_out].variableindex[var_index_out]= PRESENT;
+				registerdescriptor[reg_index_out].status=NONEMPTY;
+				addressdescriptor[var_index_out].location[reg_index_out]=PRESENT;
+				addressdescriptor[var_index_out].location[MEM]= NOTPRESENT;
 				if(ir[i].in1==NULL){
 					fprintf(fp1,"addi $%d,$0,%d\n",reg_index_out,atoi(words[i][2]));
 					break;
@@ -699,6 +735,17 @@ int main(int argc, char** argv){
 				else{
 					var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
 					reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
+					for(x=0;x<number_of_variables;x++){
+						if(registerdescriptor[reg_index_in1].variableindex[x]==PRESENT){
+							addressdescriptor[j].location[reg_index_in1]=NOTPRESENT;
+							registerdescriptor[reg_index_in1].variableindex[x]=NOTPRESENT;
+							//write a line to move it to memory, if it is not present in any other register.
+						}
+					}
+					registerdescriptor[reg_index_in1].variableindex[var_index_out]= PRESENT;
+					registerdescriptor[reg_index_in1].status=NONEMPTY;
+					addressdescriptor[var_index_in1].location[reg_index_out]=PRESENT;
+					addressdescriptor[var_index_in1].location[MEM]= NOTPRESENT;
 					fprintf(fp1,"lw $%d %s\nadd $%d,$0,$%d\n",reg_index_in1,ir[i].in1->name,reg_index_out,reg_index_in1);
 					break;
 				}
@@ -734,7 +781,7 @@ int main(int argc, char** argv){
 				
 		}
 	}
-
+	printf("Here\n");
 
 	return 0;
 }
