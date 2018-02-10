@@ -7,14 +7,14 @@
 #define NONE	-1
 
 #define BINARYASSIGNMENT	1
-#define OPERATION			2
-#define GOTO				3
-#define IFGOTO				4
+#define OPERATION		2
+#define GOTO			3
+#define IFGOTO			4
 #define FUNCTIONDECLARATION	5
 #define FUNCTIONCALL		6
-#define RETURN				7
+#define RETURN			7
 #define PRINTSTATEMENT		8
-#define ERROR				9
+#define ERROR			9
 
 #define TYPE_INT	1
 #define TYPE_FLOA 	2
@@ -31,14 +31,14 @@
 #define MULTIPLY	3
 #define DIVIDE		4
 #define MODULUS		5
-#define LEQ			6
-#define GEQ			7
+#define LEQ		6
+#define GEQ		7
 #define EQEQ		8
-#define LT 			9
-#define GT 			10
+#define LT 		9
+#define GT 		10
 #define NOTEQ		11
 #define AND 		12
-#define OR 			13
+#define OR 		13
 
 #define EMPTY		1
 #define NONEMPTY	2
