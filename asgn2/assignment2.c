@@ -16,7 +16,7 @@
 #define PRINTSTATEMENT		8
 #define ERROR			9
 
-#define TYPE_INT	1
+#define TYPE_INT 	1
 #define TYPE_FLOA 	2
 #define TYPE_CHAR	3
 #define TYPE_BOOL	4
