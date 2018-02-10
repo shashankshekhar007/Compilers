@@ -2,46 +2,46 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define LIVE 1
-#define DEAD 2
-#define NONE -1
+#define LIVE					1
+#define DEAD					2
+#define NONE					-1
 
-#define BINARYASSIGNMENT	1
-#define OPERATION		2
-#define GOTO			3
-#define IFGOTO			4
-#define FUNCTIONDECLARATION	5
-#define FUNCTIONCALL		6
-#define RETURN			7
-#define PRINTSTATEMENT		8
-#define ERROR			9
+#define BINARYASSIGNMENT		1
+#define OPERATION				2
+#define GOTO					3
+#define IFGOTO					4
+#define FUNCTIONDECLARATION		5
+#define FUNCTIONCALL			6
+#define RETURN					7
+#define PRINTSTATEMENT			8
+#define ERROR					9
 
-#define TYPE_INT 		1
-#define TYPE_FLOAT 		2
-#define TYPE_CHAR 		3
-#define TYPE_BOOL 		4
+#define TYPE_INT				1
+#define TYPE_FLOA 				2
+#define TYPE_CHAR				3
+#define TYPE_BOOL				4
 
-#define MEM			32
+#define MEM						32
 
-#define PRESENT 		1
-#define NOTPRESENT 		2
+#define PRESENT					1
+#define NOTPRESENT				2
 
-#define ADD 			1
-#define SUBTRACT		2
-#define MULTIPLY		3
-#define DIVIDE			4
-#define MODULUS			5
-#define LEQ			6
-#define GEQ			7
-#define EQEQ			8
-#define LT 			9
-#define GT 			10
-#define NOTEQ			11
-#define AND 			12
-#define OR 			13
+#define ADD 					1
+#define SUBTRACT				2
+#define MULTIPLY				3
+#define DIVIDE					4
+#define MODULUS					5
+#define LEQ						6
+#define GEQ						7
+#define EQEQ					8
+#define LT 						9
+#define GT 						10
+#define NOTEQ					11
+#define AND 					12
+#define OR 						13
 
-#define EMPTY			1
-#define NONEMPTY		2
+#define EMPTY					1
+#define NONEMPTY				2
 
 typedef struct variable_list {
 	char name[10];
