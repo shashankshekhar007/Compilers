@@ -6,7 +6,7 @@
 #define DEAD	2
 #define NONE	-1
 
-#define BINARYASSIGNMENT	1
+#define BINARYASSIGNMENT 	1
 #define OPERATION		2
 #define GOTO			3
 #define IFGOTO			4
@@ -41,7 +41,7 @@
 #define OR 		13
 
 #define EMPTY		1
-#define NONEMPTY	2
+#define NONEMPTY 	2
 
 typedef struct variable_list {
 	char name[10];
