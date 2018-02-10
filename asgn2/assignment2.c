@@ -27,8 +27,8 @@
 #define NOTPRESENT	2
 
 #define ADD 		1
-#define SUBTRACT	2
-#define MULTIPLY	3
+#define SUBTRACT 	2
+#define MULTIPLY 	3
 #define DIVIDE		4
 #define MODULUS		5
 #define LEQ		6
