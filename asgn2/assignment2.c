@@ -773,8 +773,6 @@ int main(int argc, char** argv){
 					fprintf(fp1,"	move $%d,$%d\n",reg_index_out,reg_index_in1);
 					break;
 				}
-			// only support addition, subtraction etc.
-			// now only support addition.
 			case OPERATION:
 				var_index_out = get_variable_index(variables, ir[i].out->name, number_of_variables);
 				reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
@@ -1051,7 +1049,10 @@ int main(int argc, char** argv){
 						break;
 				}
 			case GOTO:
-				
+				fprintf(fp1,"	j %s\n",ir[i].target);
+				break;
+			case IFGOTO:
+				switch(ir[i].operator)
 				
 		}
 	}
