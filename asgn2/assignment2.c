@@ -31,12 +31,14 @@
 #define MULTIPLY 	3
 #define DIVIDE		4
 #define MODULUS		5
+
 #define LEQ		6
 #define GEQ		7
 #define EQEQ		8
 #define LT 		9
 #define GT 		10
 #define NOTEQ		11
+
 #define AND 		12
 #define OR 		13
 
@@ -1052,7 +1054,7 @@ int main(int argc, char** argv){
 				fprintf(fp1,"	j %s\n",ir[i].target);
 				break;
 			case IFGOTO:
-				switch(ir[i].operator)
+				switch(ir[i].operator){}
 				
 		}
 	}
