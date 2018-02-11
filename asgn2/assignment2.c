@@ -1050,7 +1050,7 @@ int main(int argc, char** argv){
 						}
 						break;
 				}
-			case GOTO:
+			//case GOTO:
 				
 				
 		}
