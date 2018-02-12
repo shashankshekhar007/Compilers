@@ -15,6 +15,7 @@
 #define RETURN			7
 #define PRINTSTATEMENT		8
 #define ERROR			9
+#define LABEL 			10
 
 #define TYPE_INT 	1
 #define TYPE_FLOA 	2
@@ -75,6 +76,7 @@ typedef struct {
 	int operator;
 }Instruction3AC;
 
+int flagforending = 0;
 
 //get index of variable in variable list
 int get_variable_index(VL* variablelist, char* variable, int length){
@@ -119,7 +121,7 @@ int isOperator(char* c){
 }
 // added print as a keyword
 int isKeyword(char* c){
-	if(strcmp(c,"ifgoto")==0 || strcmp(c,"goto")==0 || strcmp(c,"function")==0 || strcmp(c,"return")==0 || strcmp(c,"label")==0 || strcmp(c,"call")==0 || strcmp(c,"print")==0)
+	if(strcmp(c,"ifgoto")==0 || strcmp(c,"goto")==0 || strcmp(c,"function")==0 || strcmp(c,"return")==0 || strcmp(c,"label")==0 || strcmp(c,"call")==0 || strcmp(c,"print")==0 || strcmp(c,"func")==0)
 		return 1;
 	return 0;
 }
@@ -374,7 +376,7 @@ int main(int argc, char** argv){
 	int header_count = 1;
 	headers[0]=0;
 	for(i=0;i<number_of_lines;i++){
-		if(strcmp(words[i][0],"goto")!=0 && strcmp(words[i][0],"ifgoto")!=0 && strcmp(words[i][0],"label")!=0){
+		if(strcmp(words[i][0],"goto")!=0 && strcmp(words[i][0],"ifgoto")!=0 && strcmp(words[i][0],"label")!=0 && strcmp(words[i][0],"func")!=0){
 			continue;
 		}
 		else{
@@ -428,6 +430,8 @@ int main(int argc, char** argv){
 		else if(strcmp(words[i][0],"return")==0)
 			type_of_instruction[i]=RETURN;
 		else if(strcmp(words[i][0],"label")==0)
+			type_of_instruction[i]=LABEL;
+		else if(strcmp(words[i][0],"func")==0)
 			type_of_instruction[i]=FUNCTIONDECLARATION;
 		else if(strcmp(words[i][0],"call")==0)
 			type_of_instruction[i]=FUNCTIONCALL;
@@ -499,6 +503,8 @@ int main(int argc, char** argv){
 			case FUNCTIONCALL:
 			break;
 			case FUNCTIONDECLARATION:
+			break;
+			case LABEL:
 			break;
 			case ERROR:
 			break;
@@ -696,6 +702,10 @@ int main(int argc, char** argv){
 				printf("%s\n",words[i][4]);
 				strcpy(ir[i].target,words[i][4]);
 				printf("here19\n");
+				break;
+			case LABEL:
+				ir[i].instructiontype=LABEL;
+				strcpy(ir[i].target,words[i][1]);
 				break;
 			case FUNCTIONDECLARATION:
 				ir[i].instructiontype = FUNCTIONDECLARATION;
@@ -1372,7 +1382,15 @@ int main(int argc, char** argv){
 						break;
 				}
 				break;
+			case LABEL:
+				fprintf(fp1,"\n%s:\n",words[i][1]);
+				break;
 			case FUNCTIONDECLARATION:
+				if(flagforending==0){
+					fprintf(fp1,"	li $v0,10\n");
+					fprintf(fp1,"	syscall\n" );
+					flagforending=1;
+				}
 				fprintf(fp1,"\n%s:\n",words[i][1]);
 				break;
 			case FUNCTIONCALL:
@@ -1381,6 +1399,7 @@ int main(int argc, char** argv){
 				break;
 			case RETURN:
 				fprintf(fp1,"	jr $ra\n");
+				break;
 			// only variables will be printed with a newline.
 			case PRINTSTATEMENT:
 				var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
@@ -1398,6 +1417,12 @@ int main(int argc, char** argv){
 				break;
 		}
 	}
+	if(flagforending==0){
+		fprintf(fp1,"	li $v0,10\n");
+		fprintf(fp1,"	syscall\n" );
+		flagforending=1;
+	}
+
 	fprintf(fp1,"\n");
 	fclose(fp1);
 	printf("Here\n");
