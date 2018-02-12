@@ -16,6 +16,7 @@
 #define PRINTSTATEMENT		8
 #define ERROR			9
 #define LABEL 			10
+#define INPUT 			11
 
 #define TYPE_INT 	1
 #define TYPE_FLOA 	2
@@ -121,7 +122,7 @@ int isOperator(char* c){
 }
 // added print as a keyword
 int isKeyword(char* c){
-	if(strcmp(c,"ifgoto")==0 || strcmp(c,"goto")==0 || strcmp(c,"function")==0 || strcmp(c,"return")==0 || strcmp(c,"label")==0 || strcmp(c,"call")==0 || strcmp(c,"print")==0 || strcmp(c,"func")==0)
+	if(strcmp(c,"ifgoto")==0 || strcmp(c,"goto")==0 || strcmp(c,"function")==0 || strcmp(c,"return")==0 || strcmp(c,"label")==0 || strcmp(c,"call")==0 || strcmp(c,"print")==0 || strcmp(c,"func")==0 || strcmp(c,"input")==0)
 		return 1;
 	return 0;
 }
@@ -437,6 +438,8 @@ int main(int argc, char** argv){
 			type_of_instruction[i]=FUNCTIONCALL;
 		else if(strcmp(words[i][0],"print")==0)
 			type_of_instruction[i]=PRINTSTATEMENT;
+		else if(strcmp(words[i][0],"input")==0)
+			type_of_instruction[i]=INPUT;
 		else
 			type_of_instruction[i]=ERROR;
 	}
@@ -717,6 +720,11 @@ int main(int argc, char** argv){
 				break;
 			case RETURN:
 				ir[i].instructiontype = RETURN;
+				break;
+			case INPUT:
+				ir[i].instructiontype = INPUT;
+				out = get_variable_index(variables,words[i][1],number_of_variables);
+				ir[i].out = &(variables[out]);
 				break;
 			case PRINTSTATEMENT:
 			printf("here16\n");
@@ -1384,6 +1392,16 @@ int main(int argc, char** argv){
 				break;
 			case LABEL:
 				fprintf(fp1,"\n%s:\n",words[i][1]);
+				break;
+			case INPUT:
+				fprintf(fp1,"	li $v0,5\n");
+				fprintf(fp1,"	syscall\n");
+				var_index_out=get_variable_index(variables, ir[i].out->name, number_of_variables);
+				reg_index_out=get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
+				printf("Yahan sahi hai\n");
+				printf("%d\t%d\n",var_index_out,reg_index_out);
+				update(var_index_out,reg_index_out,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].out->name,0,0);
+				fprintf(fp1,"	move $s%d,$v0\n", reg_index_out);
 				break;
 			case FUNCTIONDECLARATION:
 				if(flagforending==0){
