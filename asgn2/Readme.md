@@ -10,8 +10,6 @@ To build and run our assignment, please follow the following steps :
 About the Code Generator build:
 1. The current build of the code generator supports minimal library implementations like reading input from the user and printing output to the console.
 2. It also supports array implementations and recursive functions implementations.
-3. 
-
 
 Note :
 While implementing recursion, we have added return addresses ($ra) to the stack, and not the return values. However, the return values can also be added by changing the stack pointer by 8 bytes.
