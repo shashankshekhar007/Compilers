@@ -1,0 +1,5 @@
+=,a,4
+array,B,10
+sta,a,B,4
+lfa,c,B,4
+print,c

@@ -1,0 +1,6 @@
+=,a,4
+=,b,5
+ifgoto,<,a,4,l1
+array,e,10
++,c,b,a
+label,l1
