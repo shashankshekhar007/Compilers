@@ -1451,11 +1451,17 @@ int main(int argc, char** argv){
 		fprintf(fp1,"	syscall\n" );
 		flagforending=1;
 	}
-
-	fprintf(fp1,"\n");
+	//fptr = fopen(assignment2.asm, "r");
 	fclose(fp1);
 	//printf("Here\n");
-	
+	fp = fopen("assignment2.asm", "r");
+	if(fp == NULL){
+		printf("Could not open the file assignment2.asm");
+	}
+	for(c=getc(fp); c!=EOF; c= getc(fp)){
+		printf("%c",c);
+	}
+	fclose(fp);
 
 	return 0;
 }
