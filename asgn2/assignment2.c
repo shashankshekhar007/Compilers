@@ -720,6 +720,8 @@ int main(int argc, char** argv){
 				break;
 			case RETURN:
 				ir[i].instructiontype = RETURN;
+				out=get_variable_index(variables,words[i][1],number_of_variables);
+				ir[i].out=&(variables[out]);
 				break;
 			case INPUT:
 				ir[i].instructiontype = INPUT;
@@ -1410,12 +1412,20 @@ int main(int argc, char** argv){
 					flagforending=1;
 				}
 				fprintf(fp1,"\n%s:\n",words[i][1]);
+				fprintf(fp1,"	subu $sp, $sp, 4\n");
+				fprintf(fp1,"	sw $ra, ($sp)\n");
 				break;
 			case FUNCTIONCALL:
 				fprintf(fp1,"	jal %s\n",ir[i].target);
 				fprintf(fp1,"	sll $0,$0,0\n");
 				break;
 			case RETURN:
+				var_index_out=get_variable_index(variables, ir[i].out->name, number_of_variables);
+				reg_index_out=get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
+				update(var_index_out,reg_index_out,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].out->name,0,0);
+				fprintf(fp1,"	move $v0, $s%d\n",reg_index_out);
+				fprintf(fp1,"	lw $ra, ($sp)\n");
+				fprintf(fp1,"	addiu $sp, $sp, 4\n");
 				fprintf(fp1,"	jr $ra\n");
 				break;
 			// only variables will be printed with a newline.
