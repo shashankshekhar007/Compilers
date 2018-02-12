@@ -31,12 +31,14 @@
 #define MULTIPLY 	3
 #define DIVIDE		4
 #define MODULUS		5
+
 #define LEQ		6
 #define GEQ		7
 #define EQEQ		8
 #define LT 		9
 #define GT 		10
 #define NOTEQ		11
+
 #define AND 		12
 #define OR 		13
 
@@ -633,15 +635,7 @@ int main(int argc, char** argv){
 				out = get_variable_index(variables,words[i][1],number_of_variables);
 				ir[i].instructiontype=OPERATION;
 				ir[i].out = &(variables[out]);
-				if(strcmp(words[i][0],">=")==0)
-					ir[i].operator= GEQ;
-				else if(strcmp(words[i][0],"<=")==0)
-					ir[i].operator= LEQ;
-				else if(strcmp(words[i][0],"<")==0)
-					ir[i].operator= LT;
-				else if(strcmp(words[i][0],">")==0)
-					ir[i].operator= GT;
-				else if(strcmp(words[i][0],"+")==0)
+				if(strcmp(words[i][0],"+")==0)
 					ir[i].operator= ADD;
 				else if(strcmp(words[i][0],"-")==0)
 					ir[i].operator= SUBTRACT;
@@ -651,10 +645,6 @@ int main(int argc, char** argv){
 					ir[i].operator= DIVIDE;
 				else if(strcmp(words[i][0],"%")==0)
 					ir[i].operator= MODULUS;
-				else if(strcmp(words[i][0],"!=")==0)
-					ir[i].operator= NOTEQ;
-				else if(strcmp(words[i][0],"==")==0)
-					ir[i].operator= EQEQ;
 				else if(strcmp(words[i][0],"&")==0)
 					ir[i].operator= AND;
 				else if(strcmp(words[i][0],"|")==0)
@@ -674,24 +664,10 @@ int main(int argc, char** argv){
 					ir[i].operator= LT;
 				else if(strcmp(words[i][1],">")==0)
 					ir[i].operator= GT;
-				else if(strcmp(words[i][1],"+")==0)
-					ir[i].operator= ADD;
-				else if(strcmp(words[i][1],"-")==0)
-					ir[i].operator= SUBTRACT;
-				else if(strcmp(words[i][1],"*")==0)
-					ir[i].operator= MULTIPLY;
-				else if(strcmp(words[i][1],"/")==0)
-					ir[i].operator= DIVIDE;
-				else if(strcmp(words[i][1],"%")==0)
-					ir[i].operator= MODULUS;
 				else if(strcmp(words[i][1],"!=")==0)
 					ir[i].operator= NOTEQ;
 				else if(strcmp(words[i][1],"==")==0)
 					ir[i].operator= EQEQ;
-				else if(strcmp(words[i][1],"&")==0)
-					ir[i].operator= AND;
-				else if(strcmp(words[i][1],"|")==0)
-					ir[i].operator= OR;
 				if(!isNumber(words[i][2])){
 					in1 = get_variable_index(variables,words[i][2],number_of_variables);
 					ir[i].in1= &(variables[in1]);
@@ -704,16 +680,9 @@ int main(int argc, char** argv){
 				}
 				else
 					ir[i].in2= NULL;
-				
+				strcpy(ir[i].target,word[i][4]);
 				break;
-			
-//			case FUNCTIONDECLARATION:
-//				ir[i].instructiontype = FUNCTIONDECLARATION;
-//				ir[i].target = words[i][1];
-//			break;
-//			case FUNCTIONCALL:
-//				ir[i].instructiontype = FUNCTIONCALL;
-//				ir[i].target = words[i][1];
+			case FUNCTIONDECLARATION:
 			default:
 				ir[i].instructiontype=type_of_instruction[i];
 		}
@@ -773,8 +742,6 @@ int main(int argc, char** argv){
 					fprintf(fp1,"	move $%d,$%d\n",reg_index_out,reg_index_in1);
 					break;
 				}
-			// only support addition, subtraction etc.
-			// now only support addition.
 			case OPERATION:
 				var_index_out = get_variable_index(variables, ir[i].out->name, number_of_variables);
 				reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
@@ -1050,8 +1017,325 @@ int main(int argc, char** argv){
 						}
 						break;
 				}
-			//case GOTO:
-				
+			case GOTO:
+				fprintf(fp1,"	j %s\n",ir[i].target);
+				//no-op instruction
+				fprintf(fp1,"	sll $0,$0,0\n");
+				break;
+			case IFGOTO:
+				switch(ir[i].operator){
+					case EQEQ:
+						if(ir[i].in1==NULL && ir[i].in2==NULL){
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][2],1,1);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	beq $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1!=NULL && ir[i].in2==NULL){
+							var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in1->name,1,0);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	beq $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1==NULL && ir[i].in2!=NULL){
+							var_index_in2 = get_variable_index(variables, ir[i].in2->name, number_of_variables);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in2->name,1,0);
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][2],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	beq $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							break;
+						}
+						else{
+							var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in1->name,1,0);
+
+							var_index_in2 = get_variable_index(variables, ir[i].in2->name, number_of_variables);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in2->name,1,0);
+							fprintf(fp1,"	beq $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							break;
+						}
+						break;
+					case NOTEQ:
+						if(ir[i].in1==NULL && ir[i].in2==NULL){
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][2],1,1);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	bne $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1!=NULL && ir[i].in2==NULL){
+							var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in1->name,1,0);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	bne $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1==NULL && ir[i].in2!=NULL){
+							var_index_in2 = get_variable_index(variables, ir[i].in2->name, number_of_variables);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in2->name,1,0);
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][2],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	bne $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							break;
+						}
+						else{
+							var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in1->name,1,0);
+
+							var_index_in2 = get_variable_index(variables, ir[i].in2->name, number_of_variables);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in2->name,1,0);
+							fprintf(fp1,"	bne $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							break;
+						}
+						break;
+					case LEQ:
+						if(ir[i].in1==NULL && ir[i].in2==NULL){
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][2],1,1);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	ble $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1!=NULL && ir[i].in2==NULL){
+							var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in1->name,1,0);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	ble $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1==NULL && ir[i].in2!=NULL){
+							var_index_in2 = get_variable_index(variables, ir[i].in2->name, number_of_variables);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in2->name,1,0);
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetable);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,words[i][2],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	ble $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							break;
+						}
+						else{
+							var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in1->name,1,0);
+
+							var_index_in2 = get_variable_index(variables, ir[i].in2->name, number_of_variables);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variables, i, nextusetable);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in2->name,1,0);
+							fprintf(fp1,"	ble $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							break;
+						}
+						break;
+					case GEQ:
+						if(ir[i].in1==NULL && ir[i].in2==NULL){
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetabge);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variabges,fp1,words[i][2],1,1);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetabge);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variabges,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	bge $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1!=NULL && ir[i].in2==NULL){
+							var_index_in1 = get_variabge_index(variabges, ir[i].in1->name, number_of_variabges);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variabges, i, nextusetabge);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variabges,fp1,ir[i].in1->name,1,0);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetabge);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variabges,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	bge $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1==NULL && ir[i].in2!=NULL){
+							var_index_in2 = get_variabge_index(variabges, ir[i].in2->name, number_of_variabges);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variabges, i, nextusetabge);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variabges,fp1,ir[i].in2->name,1,0);
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetabge);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variabges,fp1,words[i][2],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	bge $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							break;
+						}
+						else{
+							var_index_in1 = get_variabge_index(variabges, ir[i].in1->name, number_of_variabges);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variabges, i, nextusetabge);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variabges,fp1,ir[i].in1->name,1,0);
+
+							var_index_in2 = get_variabge_index(variabges, ir[i].in2->name, number_of_variabges);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variabges, i, nextusetabge);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variabges,fp1,ir[i].in2->name,1,0);
+							fprintf(fp1,"	bge $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							break;
+						}
+						break;
+					case LT:
+						if(ir[i].in1==NULL && ir[i].in2==NULL){
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetablt);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variablts,fp1,words[i][2],1,1);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetablt);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variablts,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	blt $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1!=NULL && ir[i].in2==NULL){
+							var_index_in1 = get_variablt_index(variablts, ir[i].in1->name, number_of_variablts);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variablts, i, nextusetablt);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variablts,fp1,ir[i].in1->name,1,0);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetablt);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variablts,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	blt $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1==NULL && ir[i].in2!=NULL){
+							var_index_in2 = get_variablt_index(variablts, ir[i].in2->name, number_of_variablts);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variablts, i, nextusetablt);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variablts,fp1,ir[i].in2->name,1,0);
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetablt);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variablts,fp1,words[i][2],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	blt $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							break;
+						}
+						else{
+							var_index_in1 = get_variablt_index(variablts, ir[i].in1->name, number_of_variablts);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variablts, i, nextusetablt);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variablts,fp1,ir[i].in1->name,1,0);
+
+							var_index_in2 = get_variablt_index(variablts, ir[i].in2->name, number_of_variablts);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variablts, i, nextusetablt);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variablts,fp1,ir[i].in2->name,1,0);
+							fprintf(fp1,"	blt $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							break;
+						}
+						break;
+					case GT:
+						if(ir[i].in1==NULL && ir[i].in2==NULL){
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetabgt);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variabgts,fp1,words[i][2],1,1);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetabgt);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variabgts,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	bgt $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1!=NULL && ir[i].in2==NULL){
+							var_index_in1 = get_variabgt_index(variabgts, ir[i].in1->name, number_of_variabgts);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variabgts, i, nextusetabgt);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variabgts,fp1,ir[i].in1->name,1,0);
+							reg_index_in2 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetabgt);
+							update(-1,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variabgts,fp1,words[i][3],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in2,atoi(words[i][3]));
+							fprintf(fp1,"	bgt $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in2);
+							break;
+						}
+						else if(ir[i].in1==NULL && ir[i].in2!=NULL){
+							var_index_in2 = get_variabgt_index(variabgts, ir[i].in2->name, number_of_variabgts);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variabgts, i, nextusetabgt);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variabgts,fp1,ir[i].in2->name,1,0);
+							reg_index_in1 = get_register_for_word(registerdescriptor,addressdescriptor,i,nextusetabgt);
+							update(-1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variabgts,fp1,words[i][2],1,1);
+							fprintf(fp1,"	li $%d,%d\n",reg_index_in1,atoi(words[i][2]));
+							fprintf(fp1,"	bgt $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							return_update_for_word(registerdescriptor,reg_index_in1);
+							break;
+						}
+						else{
+							var_index_in1 = get_variabgt_index(variabgts, ir[i].in1->name, number_of_variabgts);
+							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variabgts, i, nextusetabgt);
+							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variabgts,fp1,ir[i].in1->name,1,0);
+
+							var_index_in2 = get_variabgt_index(variabgts, ir[i].in2->name, number_of_variabgts);
+							reg_index_in2 = get_register_for_operand(ir[i].in2, registerdescriptor, &addressdescriptor[var_index_in2], addressdescriptor, variabgts, i, nextusetabgt);
+							update(var_index_in2,reg_index_in2,registerdescriptor,addressdescriptor,number_of_variabgts,fp1,ir[i].in2->name,1,0);
+							fprintf(fp1,"	bgt $%d,$%d,%s\n",reg_index_in1,reg_index_in2,ir[i].target);
+							fprintf(fp1,"	sll $0,$0,0\n");
+							break;
+						}
+						break;
+				}
+				break;
+			case FUNCTIONDECLARATION:
+				fprintf(fp1,"%s:\n",words[i][1]);
+				break;
+			case FUNCTIONCALL:
 				
 		}
 	}
