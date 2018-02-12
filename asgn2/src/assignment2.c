@@ -304,7 +304,7 @@ int main(int argc, char** argv){
 		number_of_words[i]=0;
 	}
 
-	printf("Number of lines = %d\n", number_of_lines);
+	//printf("Number of lines = %d\n", number_of_lines);
 
 	i=0;
 	ssize_t read;
@@ -330,7 +330,7 @@ int main(int argc, char** argv){
 			words[i-1][k][l]='\0';
 			l++;
 			j++;
-			printf("%d %s",number_of_words[i-1],lines[i-1]);	
+			//printf("%d %s",number_of_words[i-1],lines[i-1]);	
 		}
 		words[i-1][k][l]=c;
 		j++; l++;
@@ -366,11 +366,11 @@ int main(int argc, char** argv){
 		strcpy(symboltable[i].name,variables[i].name);
 		symboltable[i].type=TYPE_INT;
 	}
-	printf("Symbol Table\n");
-	for(i=0;i<number_of_variables;i++){
-		printf("%s\t%d\n",symboltable[i].name,symboltable[i].type);
-	}
-	printf("\n");
+	//printf("Symbol Table\n");
+	//for(i=0;i<number_of_variables;i++){
+	//	printf("%s\t%d\n",symboltable[i].name,symboltable[i].type);
+	//}
+	//printf("\n");
 	
 
 	//time to find out headers
@@ -415,8 +415,8 @@ int main(int argc, char** argv){
 	qsort(headers, header_count, sizeof(int), cmpfnc);
 	//all header lines have now been captured
 	
-	for(i=0;i<header_count;i++)
-		printf("Headers = %d\n",headers[i]);
+	//for(i=0;i<header_count;i++)
+	//	printf("Headers = %d\n",headers[i]);
 
 	//Now we move on to identifying the types of instructions.
 	int type_of_instruction[number_of_lines];
@@ -444,16 +444,16 @@ int main(int argc, char** argv){
 		else
 			type_of_instruction[i]=ERROR;
 	}
-	for(i=0;i<number_of_lines;i++)
-		printf("type_of_instruction of line %d\t%d\n",i,type_of_instruction[i]);
+	//for(i=0;i<number_of_lines;i++)
+	//	printf("type_of_instruction of line %d\t%d\n",i,type_of_instruction[i]);
 	
 	
 
 	//type of instructions are now being identified. Now we need to generate the next use table and symbol table.
 	VL nextusetable[number_of_lines][number_of_variables];
-	printf("header_count = %d\n",header_count);
-	for(i=0;i<header_count;i++)
-		printf("Headers = %d\n",headers[i]);
+	//printf("header_count = %d\n",header_count);
+	//for(i=0;i<header_count;i++)
+	//	printf("Headers = %d\n",headers[i]);
 
 	for (i=0;i<number_of_lines;i++){
 		for(j=0;j<number_of_variables;j++){
@@ -470,7 +470,7 @@ int main(int argc, char** argv){
 				for(k=0;k<number_of_variables;k++)
 					nextusetable[line_number][k].nextuse=nextusetable[line_number+1][k].nextuse;
 			}
-			printf("At line number %d \n", line_number);
+			//printf("At line number %d \n", line_number);
 			for(k=0;k<number_of_variables;k++)
 				nextusetable[line_number][k].nextuse=nextusetable[line_number+1][k].nextuse;
 			switch (type_of_instruction[line_number]){
@@ -525,7 +525,7 @@ int main(int argc, char** argv){
 		}
 	}
 	for(line_number=number_of_lines-1;line_number>=headers[header_count-1];line_number--){
-		printf("At line number %d \n", line_number);
+		//printf("At line number %d \n", line_number);
 		if(line_number < number_of_lines-1){
 			for(k=0;k<number_of_variables;k++)
 				nextusetable[line_number][k].nextuse=nextusetable[line_number+1][k].nextuse;
@@ -578,12 +578,12 @@ int main(int argc, char** argv){
 			
 		}
 	}
-	for(i=0;i<number_of_lines;i++){
+	/*for(i=0;i<number_of_lines;i++){
 		printf("Next use table for line %d is :\n",i);
 		for(j=0;j<number_of_variables;j++){
 			printf("%s\t%d\t%d\n",nextusetable[i][j].name,nextusetable[i][j].nextuse,nextusetable[i][j].status);
 		}
-	}
+	}*/
 
 	//next use table is up and working. Now we move on to the address descriptor table.
 	AD addressdescriptor[number_of_variables];
@@ -604,21 +604,21 @@ int main(int argc, char** argv){
 		}
 	}
 
-	printf("Address descriptor table\n");
+	/*printf("Address descriptor table\n");
 	for(i=0;i<number_of_variables;i++){
 		printf("%s\t",addressdescriptor[i].name);
 		for(j=0;j<33;j++)
 			printf("%d\t",addressdescriptor[i].location[j]);
 		printf("\n");
-	}
+	}*/
 
 	Instruction3AC ir[number_of_lines];
 	for(i=0;i<number_of_lines;i++){
 		int in1,in2,out;
 		switch (type_of_instruction[i]){
 			case BINARYASSIGNMENT:
-				printf("Here in BINARYASSIGNMENT\n");
-				printf("here12\n");
+				//printf("Here in BINARYASSIGNMENT\n");
+				//printf("here12\n");
 				if(!isNumber(words[i][2])){
 					in1 = get_variable_index(variables,words[i][2],number_of_variables);
 					ir[i].in1= &(variables[in1]);
@@ -628,11 +628,11 @@ int main(int argc, char** argv){
 				out = get_variable_index(variables,words[i][1],number_of_variables);
 				ir[i].instructiontype=BINARYASSIGNMENT;
 				ir[i].out= &(variables[out]);
-				printf("here11\n");
+				//printf("here11\n");
 				break;
 
 			case OPERATION:
-			printf("here13\n");
+			//printf("here13\n");
 				if(!isNumber(words[i][2])){
 					in1 = get_variable_index(variables,words[i][2],number_of_variables);
 					ir[i].in1 = &(variables[in1]);
@@ -662,19 +662,19 @@ int main(int argc, char** argv){
 					ir[i].operator= AND;
 				else if(strcmp(words[i][0],"|")==0)
 					ir[i].operator= OR;
-				printf("here14\n");
+				//printf("here14\n");
 				break;
 			case GOTO:
 				ir[i].instructiontype = GOTO;
 				strcpy(ir[i].target, words[i][1]);
 				break;
 			case IFGOTO:
-				printf("here18\n");
+				//printf("here18\n");
 				ir[i].instructiontype = IFGOTO;
 				if(strcmp(words[i][1],">=")==0)
 					ir[i].operator= GEQ;
 				else if(strcmp(words[i][1],"<=")==0){
-					printf("here111\n");
+					//printf("here111\n");
 					ir[i].operator= LEQ;
 				}
 				else if(strcmp(words[i][1],"<")==0)
@@ -686,26 +686,26 @@ int main(int argc, char** argv){
 				else if(strcmp(words[i][1],"==")==0)
 					ir[i].operator= EQEQ;
 				if(!isNumber(words[i][2])){
-					printf("here21\n");
+					//printf("here21\n");
 					in1 = get_variable_index(variables,words[i][2],number_of_variables);
 					ir[i].in1= &(variables[in1]);
-					printf("here22\n");
+					//printf("here22\n");
 				}
 				else
 					ir[i].in1= NULL;
 				if(!isNumber(words[i][3])){
-					printf("here23\n");
+					//printf("here23\n");
 					in2 = get_variable_index(variables,words[i][3],number_of_variables);
 					ir[i].in2= &(variables[in2]);
 				}
 				else{
-					printf("here24\n");
+					//printf("here24\n");
 					ir[i].in2= NULL;
 				}
-				printf("here25\n");
-				printf("%s\n",words[i][4]);
+				//printf("here25\n");
+				//printf("%s\n",words[i][4]);
 				strcpy(ir[i].target,words[i][4]);
-				printf("here19\n");
+				//printf("here19\n");
 				break;
 			case LABEL:
 				ir[i].instructiontype=LABEL;
@@ -730,22 +730,22 @@ int main(int argc, char** argv){
 				ir[i].out = &(variables[out]);
 				break;
 			case PRINTSTATEMENT:
-			printf("here16\n");
+			//printf("here16\n");
 				ir[i].instructiontype = PRINTSTATEMENT;
 				in1 = get_variable_index(variables,words[i][1],number_of_variables);
 				ir[i].in1 = &(variables[in1]);
-				printf("here17\n");
+				//printf("here17\n");
 				break;
 			default:
 				ir[i].instructiontype=type_of_instruction[i];
 
 		}
 	}
-	printf("here15\n");
+	//printf("here15\n");
 	//code generation begins
-	for(i=0;i<number_of_lines;i++){
+	/*for(i=0;i<number_of_lines;i++){
 		printf("%d\n", ir[i].instructiontype);
-	}
+	}*/
 	FILE* fp1;
 	fp1 = fopen("assignment2.asm","w");
 	if (fp1 == NULL)
@@ -775,20 +775,20 @@ int main(int argc, char** argv){
 			int x,y;
 			int flag1;
 			case BINARYASSIGNMENT:
-				printf("Here in binary assignment\n");
-				printf("here2\n");
+				//printf("Here in binary assignment\n");
+				//printf("here2\n");
 				var_index_out = get_variable_index(variables, ir[i].out->name, number_of_variables);
 				reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
 
 				update(var_index_out,reg_index_out,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].out->name,0,0);
-				printf("here4\n");
+				//printf("here4\n");
 				if(ir[i].in1==NULL){
 					//remember for assignment we can do any of the following:-
 					//li $s0,c (for 32bit)
 					//ori $s0,$0,c (for 16bit)
 					//addi $s0,$0,c
 					//let's use li
-					printf("here3\n");
+					//printf("here3\n");
 					fprintf(fp1,"	li $s%d,%d\n",reg_index_out,atoi(words[i][2]));
 					
 				}
@@ -802,26 +802,26 @@ int main(int argc, char** argv){
 				}
 				break;
 			case OPERATION:
-				printf("here1\n");
+				//printf("here1\n");
 				var_index_out = get_variable_index(variables, ir[i].out->name, number_of_variables);
 				reg_index_out = get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
 				update(var_index_out,reg_index_out,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].out->name,0,0);
 				switch(ir[i].operator){
 					case ADD:
-						printf("here1\n");
+						//printf("here1\n");
 						if(ir[i].in1==NULL && ir[i].in2==NULL){
-							printf("here1\n");
+							//printf("here1\n");
 							fprintf(fp1,"	li $s%d,%d\n",reg_index_out,atoi(words[i][2]));
 							fprintf(fp1,"	addiu $s%d,$s%d,%d\n",reg_index_out,reg_index_out,atoi(words[i][3]));
 							
 						}
 						else if(ir[i].in1!=NULL && ir[i].in2==NULL){
-							printf("here1\n");
+							//printf("here1\n");
 							var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
 							reg_index_in1 = get_register_for_operand(ir[i].in1, registerdescriptor, &addressdescriptor[var_index_in1], addressdescriptor, variables, i, nextusetable);
 							update(var_index_in1,reg_index_in1,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].in1->name,1,0);
 							fprintf(fp1,"	addiu $s%d,$s%d,%d\n",reg_index_out,reg_index_in1,atoi(words[i][3]));
-							printf("here1\n");
+							//printf("here1\n");
 						}
 						else if(ir[i].in1==NULL && ir[i].in2!=NULL){
 							var_index_in2 = get_variable_index(variables, ir[i].in2->name, number_of_variables);
@@ -1401,8 +1401,8 @@ int main(int argc, char** argv){
 				fprintf(fp1,"	syscall\n");
 				var_index_out=get_variable_index(variables, ir[i].out->name, number_of_variables);
 				reg_index_out=get_register_for_operand(ir[i].out, registerdescriptor, &addressdescriptor[var_index_out], addressdescriptor, variables, i, nextusetable);
-				printf("Yahan sahi hai\n");
-				printf("%d\t%d\n",var_index_out,reg_index_out);
+				//printf("Yahan sahi hai\n");
+				//printf("%d\t%d\n",var_index_out,reg_index_out);
 				update(var_index_out,reg_index_out,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].out->name,0,0);
 				fprintf(fp1,"	move $s%d,$v0\n", reg_index_out);
 				break;
@@ -1454,7 +1454,7 @@ int main(int argc, char** argv){
 
 	fprintf(fp1,"\n");
 	fclose(fp1);
-	printf("Here\n");
+	//printf("Here\n");
 	
 
 	return 0;
