@@ -701,6 +701,13 @@ int main(int argc, char** argv){
 				ir[i].instructiontype = FUNCTIONDECLARATION;
 				strcpy(ir[i].target,words[i][1]);
 				break;
+			case FUNCTIONCALL:
+				ir[i].instructiontype = FUNCTIONCALL;
+				strcpy(ir[i].target,words[i][1]);
+				break;
+			case RETURN:
+				ir[i].instructiontype = RETURN;
+				break;
 			case PRINTSTATEMENT:
 			printf("here16\n");
 				ir[i].instructiontype = PRINTSTATEMENT;
@@ -734,7 +741,7 @@ int main(int argc, char** argv){
 	for(i=0;i<number_of_variables;i++){
 		fprintf(fp1,"%s:	.word	0\n", variables[i].name);
 	}
-	fprintf(fp1,"\n	.text\n	.globl main\nmain:\n");
+	fprintf(fp1,"\n	.text\n	.globl main\n\nmain:\n");
 	for(i=0;i<number_of_lines;i++){
 		switch (ir[i].instructiontype){
 			int var_index_out;
@@ -1366,9 +1373,14 @@ int main(int argc, char** argv){
 				}
 				break;
 			case FUNCTIONDECLARATION:
-				fprintf(fp1,"%s:\n",words[i][1]);
+				fprintf(fp1,"\n%s:\n",words[i][1]);
 				break;
-			//case FUNCTIONCALL:
+			case FUNCTIONCALL:
+				fprintf(fp1,"	jal %s\n",ir[i].target);
+				fprintf(fp1,"	sll $0,$0,0\n");
+				break;
+			case RETURN:
+				fprintf(fp1,"	jr $ra\n");
 			// only variables will be printed with a newline.
 			case PRINTSTATEMENT:
 				var_index_in1 = get_variable_index(variables, ir[i].in1->name, number_of_variables);
