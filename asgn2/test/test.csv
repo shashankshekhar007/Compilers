@@ -1,7 +1,0 @@
-=,a,3
-+,a,a,a
-call,foo
-print,a
-func,foo
-+,a,a,a
-return
