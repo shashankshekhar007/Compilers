@@ -1,0 +1,30 @@
+<<<<<<< HEAD:asgn2/assignment2.csv
+=,a,3
++,a,a,a
+call,foo
+print,a
+label,foo
++,a,a,a
+return
+=======
+=,a,b
++,c,a,3
++,e,f,a
++,g,h,i
+=,i,j
+=,k,l
+=,l,m
+=,n,o
+=,p,q
+=,r,s
+=,s,t
+=,u,v
+=,w,x
+=,y,z
+=,a1,a2
+=,a3,a4
+=,a5,a6
+=,a7,a8
+=,a9,a10
+=,a11,a12
+>>>>>>> 7519f155dbba50bd796b8e75367b09136c8b9224:asgn2/test/test1.csv

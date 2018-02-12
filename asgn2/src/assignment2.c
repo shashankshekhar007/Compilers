@@ -22,6 +22,7 @@
 #define TYPE_FLOA 	2
 #define TYPE_CHAR	3
 #define TYPE_BOOL	4
+#define TYPE_ARRAY	5
 
 #define MEM		32
 

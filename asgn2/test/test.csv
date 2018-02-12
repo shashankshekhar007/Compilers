@@ -2,6 +2,6 @@
 +,a,a,a
 call,foo
 print,a
-label,foo
+func,foo
 +,a,a,a
 return

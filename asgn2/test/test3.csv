@@ -1,0 +1,8 @@
+=,a,3
+label,l1
+input,a
++,a,a,a
+print,a
+ifgoto,<,a,15,l1
+=,a,16
+print,a
