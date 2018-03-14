@@ -1,14 +1,13 @@
-/* A Bison parser, made by GNU Bison 2.3.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
-/* Skeleton interface for Bison's Yacc-like parsers in C
+/* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
-   Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,9 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -33,104 +30,113 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Tokens.  */
+#ifndef YY_YY_Y_TAB_H_INCLUDED
+# define YY_YY_Y_TAB_H_INCLUDED
+/* Debug traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 0
+#endif
+#if YYDEBUG
+extern int yydebug;
+#endif
+
+/* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     Keyword = 258,
-     Identifier = 259,
-     Single_line_comment = 260,
-     Multi_line_comment = 261,
-     T_int = 262,
-     T_bool = 263,
-     T_string = 264,
-     T_int8 = 265,
-     T_int16 = 266,
-     T_int32 = 267,
-     T_int64 = 268,
-     T_uint = 269,
-     T_uint16 = 270,
-     T_uint32 = 271,
-     T_uint64 = 272,
-     T_uintptr = 273,
-     T_float32 = 274,
-     T_float64 = 275,
-     T_complex64 = 276,
-     T_complex128 = 277,
-     Key_break = 278,
-     Key_case = 279,
-     Key_const = 280,
-     Key_continue = 281,
-     Key_default = 282,
-     Key_else = 283,
-     Key_fallthrough = 284,
-     Key_for = 285,
-     Key_func = 286,
-     Key_if = 287,
-     Key_import = 288,
-     Key_interface = 289,
-     Key_map = 290,
-     Key_package = 291,
-     Key_range = 292,
-     Key_return = 293,
-     Key_select = 294,
-     Key_struct = 295,
-     Key_switch = 296,
-     Key_type = 297,
-     Key_var = 298,
-     Key_class = 299,
-     Key_private = 300,
-     Key_protected = 301,
-     Key_public = 302,
-     Key_static = 303,
-     Key_try = 304,
-     Key_catch = 305,
-     Key_finally = 306,
-     Imaginary_lit = 307,
-     Float_lit = 308,
-     Int_lit = 309,
-     String_lit = 310,
-     Op_greater_greater = 311,
-     Op_less_less = 312,
-     Op_greater = 313,
-     Op_less = 314,
-     Op_greater_eq = 315,
-     Op_less_eq = 316,
-     Op_not_equal = 317,
-     Op_equality = 318,
-     Op_assign = 319,
-     Op_unary_add = 320,
-     Op_unary_sub = 321,
-     Op_add = 322,
-     Op_sub = 323,
-     Op_mult = 324,
-     Op_divide = 325,
-     Op_mod = 326,
-     Op_pow = 327,
-     Op_relational_and = 328,
-     Op_relational_or = 329,
-     Op_unary_and = 330,
-     Op_unary_or = 331,
-     Op_unary_not = 332,
-     M_question = 333,
-     M_semicolon = 334,
-     M_colon = 335,
-     M_comma = 336,
-     M_lcurly = 337,
-     M_rcurly = 338,
-     M_lparan = 339,
-     M_rparan = 340,
-     M_lsqbracket = 341,
-     M_rsqbracket = 342,
-     M_dot = 343,
-     M_doublequotes = 344,
-     M_singlequotes = 345,
-     M_underscore = 346,
-     Bool_true = 347,
-     Bool_false = 348
-   };
+  enum yytokentype
+  {
+    Keyword = 258,
+    Identifier = 259,
+    Single_line_comment = 260,
+    Multi_line_comment = 261,
+    T_int = 262,
+    T_bool = 263,
+    T_string = 264,
+    T_int8 = 265,
+    T_int16 = 266,
+    T_int32 = 267,
+    T_int64 = 268,
+    T_uint = 269,
+    T_uint16 = 270,
+    T_uint32 = 271,
+    T_uint64 = 272,
+    T_uintptr = 273,
+    T_float32 = 274,
+    T_float64 = 275,
+    T_complex64 = 276,
+    T_complex128 = 277,
+    Key_break = 278,
+    Key_case = 279,
+    Key_const = 280,
+    Key_continue = 281,
+    Key_default = 282,
+    Key_else = 283,
+    Key_fallthrough = 284,
+    Key_for = 285,
+    Key_func = 286,
+    Key_if = 287,
+    Key_import = 288,
+    Key_interface = 289,
+    Key_map = 290,
+    Key_package = 291,
+    Key_range = 292,
+    Key_return = 293,
+    Key_select = 294,
+    Key_struct = 295,
+    Key_switch = 296,
+    Key_type = 297,
+    Key_var = 298,
+    Key_class = 299,
+    Key_private = 300,
+    Key_protected = 301,
+    Key_public = 302,
+    Key_static = 303,
+    Key_try = 304,
+    Key_catch = 305,
+    Key_finally = 306,
+    Imaginary_lit = 307,
+    Float_lit = 308,
+    Int_lit = 309,
+    String_lit = 310,
+    Op_greater_greater = 311,
+    Op_less_less = 312,
+    Op_greater = 313,
+    Op_less = 314,
+    Op_greater_eq = 315,
+    Op_less_eq = 316,
+    Op_not_equal = 317,
+    Op_equality = 318,
+    Op_assign = 319,
+    Op_unary_add = 320,
+    Op_unary_sub = 321,
+    Op_add = 322,
+    Op_sub = 323,
+    Op_mult = 324,
+    Op_divide = 325,
+    Op_mod = 326,
+    Op_pow = 327,
+    Op_relational_and = 328,
+    Op_relational_or = 329,
+    Op_unary_and = 330,
+    Op_unary_or = 331,
+    Op_unary_not = 332,
+    M_question = 333,
+    M_semicolon = 334,
+    M_colon = 335,
+    M_comma = 336,
+    M_lcurly = 337,
+    M_rcurly = 338,
+    M_lparan = 339,
+    M_rparan = 340,
+    M_lsqbracket = 341,
+    M_rsqbracket = 342,
+    M_dot = 343,
+    M_doublequotes = 344,
+    M_singlequotes = 345,
+    M_underscore = 346,
+    Bool_true = 347,
+    Bool_false = 348
+  };
 #endif
 /* Tokens.  */
 #define Keyword 258
@@ -225,15 +231,16 @@
 #define Bool_true 347
 #define Bool_false 348
 
-
-
-
+/* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef int YYSTYPE;
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
 #endif
+
 
 extern YYSTYPE yylval;
 
+int yyparse (void);
+
+#endif /* !YY_YY_Y_TAB_H_INCLUDED  */

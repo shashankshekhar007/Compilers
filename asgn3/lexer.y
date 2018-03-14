@@ -3,6 +3,7 @@
 #include <stdlib.h>
 int yylex(void);
 void yyerror (char *);
+FILE *yyin;
 %}
 
 %token Keyword Identifier Single_line_comment Multi_line_comment T_int T_bool T_string T_int8 T_int16 T_int32 T_int64 T_uint T_uint16 T_uint32 T_uint64 T_uintptr T_float32 T_float64 T_complex64 T_complex128
@@ -24,7 +25,7 @@ zom_importDecl_eos : importDecl eos zom_importDecl_eos
 zom_topLevelDecl_eos : topLevelDecl eos zom_topLevelDecl_eos
 		     | ;
 
-packageClause : Key_package Identifier
+packageClause : Key_package Identifier {printf("checking");}
 	      ;
 
 importDecl : Key_import importSpec
@@ -585,7 +586,7 @@ void yyerror (char * s){
 	fprintf(stderr, "%s\n", s);
 }
 
-int main(void){
+int main(int argc, char **argv){
 //	FILE * fp;
 //	if (argc == 2 && (fp = fopen (argv[1], "r")))
 //		yyin = fp;
@@ -593,6 +594,8 @@ int main(void){
 //		printf("Unable to open file \n");
 //		return 1;
 //	}
+	yyin = fopen(argv[1],"r");
 	yyparse();
+	fclose(yyin);
 	return 0;
 }
