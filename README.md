@@ -7,4 +7,4 @@ This is the github repository for the CS335 aka COMPILER DESIGN course project. 
 3. Piyush Bansal
 
 This project aims to implement a compiler for Golang for the MIPS architecture. The language that has been used to implement this is C.
-C is a low level language and provides very high performance.
+C is a high level language(let us just assume that it's the truth) and provides very high performance.
