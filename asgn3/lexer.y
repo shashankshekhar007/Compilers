@@ -19,279 +19,280 @@ FILE *yyin;
 %%
 
 SourceFile:
-    PackageClause M_semicolon ImportDeclList TopLevelDeclList {printf("Inside the SourceFile\n");}
+    PackageClause M_semicolon ImportDeclList TopLevelDeclList	{fprintf(f, "SourceFile: PackageClause M_semicolon ImportDeclList TopLevelDeclList \n");}
     ;
 
 Block:
-    M_lcurly OPENB StatementList CLOSEB M_rcurly
+    M_lcurly OPENB StatementList CLOSEB M_rcurly		{fprintf(f, "Block: M_lcurly OPENB StatementList CLOSEB M_rcurly \n");}
     ;
 
-OPENB:
-    /* empty */ {printf("Inside the OPENB-empty\n");}
+OPENB:								{fprintf(f, "OPENB: \n");}
+    /* empty */ 
     ;
 
-CLOSEB:
-    /* empty */ {printf("Inside the CLOSEB-empty\n");}
+CLOSEB:								{fprintf(f, "CLOSEB: \n");}
+    /* empty */ 
     ;
 
-BrkBlk:
+BrkBlk:								{fprintf(f, "BrkBlk: \n");}
     ;
 
-BrkBlkEnd:
+BrkBlkEnd:							{fprintf(f, "BrkBlkEnd: \n");}
     ;
 
 StatementList:
-    StatementList Statement M_semicolon
-    | Statement M_semicolon
+    StatementList Statement M_semicolon				{fprintf(f, "StatementList: StatementList Statement M_semicolon \n");}
+    | Statement M_semicolon					{fprintf(f, "StatementList: Statement M_semicolon \n");}
     ;
 
 Statement:
-    Declaration
-    | LabeledStmt
-    | SimpleStmt
-    | ReturnStmt
-    | BreakStmt
-    | ContinueStmt
+    Declaration							{fprintf(f, "Statement: Declaration \n");}
+    | LabeledStmt						{fprintf(f, "Statement: LabeledStmt \n");}
+    | SimpleStmt						{fprintf(f, "Statement: SimpleStmt \n");}
+    | ReturnStmt						{fprintf(f, "Statement: ReturnStmt \n");}
+    | BreakStmt							{fprintf(f, "Statement: BreakStmt \n");}
+    | ContinueStmt						{fprintf(f, "Statement: ContinueStmt \n");}
     /*| GotoStmt*/
-    | Block
-    | IfStmt
+    | Block							{fprintf(f, "Statement: Block \n");}
+    | IfStmt							{fprintf(f, "Statement: IfStmt \n");}
     //| SwitchStmt
     /* | SelectStmt      { $$ = &(init() << $1 >> "Statement"); } */
-    | ForStmt
+    | ForStmt							{fprintf(f, "Statement: ForStmt \n");}
     ;
 
 SimpleStmt:
-    EmptyStmt
-    | ExpressionStmt
+    EmptyStmt							{fprintf(f, "SimpleStmt: EmptyStmt \n");}
+    | ExpressionStmt						{fprintf(f, "SimpleStmt: ExpressionStmt \n");}
 //    | SendStmt
-    | IncDecStmt
-    | Assignment
-    | ShortVarDecl
+    | IncDecStmt						{fprintf(f, "SimpleStmt: IncDecStmt \n");}
+    | Assignment						{fprintf(f, "SimpleStmt: Assignment \n");}
+    | ShortVarDecl						{fprintf(f, "SimpleStmt: ShortVarDecl \n");}
     ;
 
-EmptyStmt:
+EmptyStmt:							{fprintf(f, "EmptyStmt: \n");}
     /* blank */
     ;
 
+
 ExpressionStmt:
-    Expression
+    Expression							{fprintf(f, "ExpressionStmt: Expression\n");}
     ;
 
 IncDecStmt:
-    Expression Op_unary_add
-    | Expression Op_unary_sub
-    | Expression Op_add Op_assign Expression
-    | Expression Op_sub Op_assign Expression
+    Expression Op_unary_add					{fprintf(f, "IncDecStmt: Expression Op_unary_add \n");}
+    | Expression Op_unary_sub					{fprintf(f, "IncDecStmt: Expression Op_unary_sub\n");}
+    | Expression Op_add Op_assign Expression			{fprintf(f, "IncDecStmt: Expression Op_add Op_assign Expression \n");}
+    | Expression Op_sub Op_assign Expression			{fprintf(f, "IncDecStmt: Expression Op_sub Op_assign Expression \n");}
     ;
 
 Assignment:
-    ExpressionList ASN_OP ExpressionList 
+    ExpressionList ASN_OP ExpressionList 			{fprintf(f, "Assignment: ExpressionList ASN_OP ExpressionList \n");}
     ;
 
 ADD_OP:
-	Op_add
-	|Op_sub
-	|Op_unary_or
-	|Op_pow
+	Op_add							{fprintf(f, "ADD_OP: Op_add \n");}
+	|Op_sub							{fprintf(f, "ADD_OP: Op_sub \n");}
+	|Op_unary_or						{fprintf(f, "ADD_OP: Op_unary_or \n");}
+	|Op_pow							{fprintf(f, "ADD_OP: Op_pow \n");}
 	;
 
 ASN_OP:
-	ADD_OP Op_assign
-	|MUL_OP Op_assign
-	|Op_assign
+	ADD_OP Op_assign					{fprintf(f, "ASN_OP: ADD_OP Op_assign \n");}
+	|MUL_OP Op_assign					{fprintf(f, "ASN_OP: MUL_OP Op_assign \n");}
+	|Op_assign						{fprintf(f, "ASN_OP: Op_assign \n");}
 	;
 
 ShortVarDecl:
-    ExpressionList Op_equality ExpressionList
+    ExpressionList Op_equality ExpressionList			{fprintf(f, "ShortVarDecl: ExpressionList Op_equality ExpressionList\n");}
     ;
 
 VarDecl:
-    Key_var VarSpec
+    Key_var VarSpec						{fprintf(f, "VarDecl: Key_var VarSpec \n");}
     ;
 
 VarSpec:
-    IdentifierList Type
-    | IdentifierList Type ASN_OP ExpressionList
-    | IdentifierList ASN_OP ExpressionList
+    IdentifierList Type						{fprintf(f, "VarSpec: IdentifierList Type \n");}
+    | IdentifierList Type ASN_OP ExpressionList			{fprintf(f, "VarSpec: IdentifierList Type ASN_OP ExpressionList \n");}
+    | IdentifierList ASN_OP ExpressionList			{fprintf(f, "VarSpec: IdentifierList ASN_OP ExpressionList \n");}
     ;
 
 Declaration:
-    TypeDecl
-    | VarDecl
+    TypeDecl							{fprintf(f, "Declaration: TypeDecl \n");}
+    | VarDecl							{fprintf(f, "Declaration: VarDecl \n");}
     ;
 
 FunctionDecl:
-    Key_func Identifier OPENB Signature CLOSEB {printf("Inside the FunctionDecl- Key_func Identifier OPENB Signature CLOSEB\n");}
-    | Key_func Identifier OPENB Signature Block CLOSEB {printf("Inside the FunctionDecl- Key_func Identifier Signature\n");}
+    Key_func Identifier OPENB Signature CLOSEB 			{fprintf(f, "FunctionDecl: Key_func Identifier OPENB Signature CLOSEB\n");}
+    | Key_func Identifier OPENB Signature Block CLOSEB		{fprintf(f, "FunctionDecl: Key_func Identifier OPENB Signature Block CLOSEB \n");}
     ;
 
 Signature:
-    Parameters {printf("Inside the Signature- Parameteres\n");}
-    | Parameters Result {printf("Inside the Signature- Parameteres Result\n");}
+    Parameters							{fprintf(f, "Signature: Parameters\n");}
+    | Parameters Result						{fprintf(f, "Signature: Parameters Result \n");}
     ;
 
 Result:
-    M_lparan TypeList M_rparan {printf("Inside the Result- Typelist\n");}
-    | Type {printf("Inside the Result- Type\n");}
+    M_lparan TypeList M_rparan					{fprintf(f, "Result: M_lparan TypeList M_rparan\n");}
+    | Type							{fprintf(f, "Result: Type \n");}
     ;
 
 Parameters:
-    M_lparan M_rparan {printf("Inside the Parameters- only brackets\n");}
-    | M_lparan ParameterList  M_rparan {printf("Inside the Parameters- ParameterList without commas\n");}
-    | M_lparan ParameterList M_comma M_rparan {printf("Inside the Parametes- parameterList with commas\n");}
+    M_lparan M_rparan						{fprintf(f, "Parameters: M_lparan M_rparan \n");}
+    | M_lparan ParameterList  M_rparan				{fprintf(f, "Parameters: M_lparan ParameterList M_rparan \n");}
+    | M_lparan ParameterList M_comma M_rparan			{fprintf(f, "Parameters: M_lparan ParameterList M_comma M_rparan \n");}
     ;
 
 ParameterList:
-    ParameterDecl {printf("Inside the ParameterList- ParameterDecl\n");}
-    | ParameterList M_comma ParameterDecl {printf("Inside the ParameterList- ParameterList M_comma ParameterDecl\n");}
+    ParameterDecl						{fprintf(f, "ParameterList: ParameterDecl \n");}
+    | ParameterList M_comma ParameterDecl			{fprintf(f, "ParameterList: ParameterList M_comma ParameterDecl \n");}
     ;
 
 ParameterDecl:
-    IdentifierList Type {printf("Inside the ParameterDecl- IdentifierList Type\n");}
+    IdentifierList Type						{fprintf(f, "ParameterDecl: IdentifierList Type \n");}
     ;
 
 TypeList:
-    TypeList M_comma Type
-    | Type
+    TypeList M_comma Type					{fprintf(f, "TypeList: TypeList M_comma Type \n");}
+    | Type							{fprintf(f, "TypeList: Type \n");}
     ;
 
 IdentifierList:
-    Identifier
-    | IdentifierList M_comma Identifier
+    Identifier							{fprintf(f, " \n");}
+    | IdentifierList M_comma Identifier				{fprintf(f, " \n");}
     ;
 
 QualifiedIdent:
-    Identifier M_dot Identifier
+    Identifier M_dot Identifier					{fprintf(f, " \n");}
     ;
 
 MethodDecl:
-    Key_func Receiver Identifier Signature
+    Key_func Receiver Identifier Signature			{fprintf(f, " \n");}
     ;
 
 Receiver:
-    Parameters
+    Parameters							{fprintf(f, " \n");}
     ;
 
 TopLevelDeclList:
-    TopLevelDeclList TopLevelDecl M_semicolon {printf("Inside the 1st of TopLevelDeclList\n");}
-    | TopLevelDecl M_semicolon{printf("Inside the 2nd of TopLevelDeclList\n");}
+    TopLevelDeclList TopLevelDecl M_semicolon			{fprintf(f, " \n");}
+    | TopLevelDecl M_semicolon					{fprintf(f, " \n");}
     ;
 
 CompositeLit:
-    LiteralType LiteralValue
+    LiteralType LiteralValue					{fprintf(f, " \n");}
 ;
 
 LiteralType:
-    StructType
-    | ArrayType
-    | PointerType
-    | M_lsqbracket DOTS M_rsqbracket Operand
-    | SliceType
-    | MapType
+    StructType							{fprintf(f, " \n");}
+    | ArrayType							{fprintf(f, " \n");}
+    | PointerType						{fprintf(f, " \n");}
+    | M_lsqbracket DOTS M_rsqbracket Operand			{fprintf(f, " \n");}
+    | SliceType							{fprintf(f, " \n");}
+    | MapType							{fprintf(f, " \n");}
     ;
 
 Type:
-    LiteralType
-    | OperandName
+    LiteralType							{fprintf(f, " \n");}
+    | OperandName						{fprintf(f, " \n");}
     ;
 
 Operand:
-    Literal
-    | OperandName
-    | M_lparan Expression M_rparan
+    Literal							{fprintf(f, " \n");}
+    | OperandName						{fprintf(f, " \n");}
+    | M_lparan Expression M_rparan				{fprintf(f, " \n");}
     ;
 
 OperandName:
-    Identifier
+    Identifier							{fprintf(f, " \n");}
     ;
 
 LiteralValue:
-    M_lcurly M_rcurly
-    | M_semicolon M_rcurly
-    | M_lcurly ElementList M_rcurly
-    | M_semicolon ElementList M_rcurly
-    | M_lcurly ElementList M_comma M_rcurly
-    | M_semicolon ElementList M_comma M_rcurly
+    M_lcurly M_rcurly						{fprintf(f, " \n");}
+    | M_semicolon M_rcurly					{fprintf(f, " \n");}
+    | M_lcurly ElementList M_rcurly				{fprintf(f, " \n");}
+    | M_semicolon ElementList M_rcurly				{fprintf(f, " \n");}
+    | M_lcurly ElementList M_comma M_rcurly			{fprintf(f, " \n");}
+    | M_semicolon ElementList M_comma M_rcurly			{fprintf(f, " \n");}
     ;
 
 SliceType:
-    M_lsqbracket M_rsqbracket Type
+    M_lsqbracket M_rsqbracket Type				{fprintf(f, " \n");}
     ;
 
 ElementList:
-    KeyedElement
-    | ElementList M_comma KeyedElement
+    KeyedElement						{fprintf(f, " \n");}
+    | ElementList M_comma KeyedElement				{fprintf(f, " \n");}
     ;
 
 KeyedElement:
-    Element
-    | Key M_colon Element
+    Element							{fprintf(f, " \n");}
+    | Key M_colon Element					{fprintf(f, " \n");}
     ;
 
 Key:
-    Expression
-    | LiteralValue
+    Expression							{fprintf(f, " \n");}
+    | LiteralValue						{fprintf(f, " \n");}
     ;
 
 Element:
-    Expression
-    | LiteralValue
+    Expression							{fprintf(f, " \n");}
+    | LiteralValue						{fprintf(f, " \n");}
     ;
 
 TopLevelDecl:
-    Declaration {printf("Inside the TopLevelDecl- Declaration\n");}
-    | FunctionDecl {printf("Inside the TopLevelDecl- FunctionDecl\n");}
-    | MethodDecl {printf("Inside the TopLevelDecl- MethodDecl\n");}
+    Declaration							{fprintf(f, " \n");}
+    | FunctionDecl						{fprintf(f, " \n");}
+    | MethodDecl						{fprintf(f, " \n");}
     ;
 
 LabeledStmt:
-    Identifier M_colon Statement
+    Identifier M_colon Statement				{fprintf(f, " \n");}
     ;
 
 ReturnStmt:
-    Key_return
-    | Key_return ExpressionList
+    Key_return							{fprintf(f, " \n");}
+    | Key_return ExpressionList					{fprintf(f, " \n");}
     ;
 
 BreakStmt:
-    Key_break
-    | Key_break Identifier
+    Key_break							{fprintf(f, " \n");}
+    | Key_break Identifier					{fprintf(f, " \n");}
     ;
 
 ContinueStmt:
-    Key_continue
-    | Key_continue Identifier
+    Key_continue						{fprintf(f, " \n");}
+    | Key_continue Identifier					{fprintf(f, " \n");}
     ;
 
 IfStmt:
-    Key_if OPENB Expression Block CLOSEB
-    | Key_if OPENB SimpleStmt M_semicolon Expression Block CLOSEB
-    | Key_if OPENB Expression Block Key_else Block CLOSEB
-    | Key_if OPENB Expression Block Key_else IfStmt CLOSEB
-    | Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else IfStmt CLOSEB
-    | Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else Block CLOSEB
+    Key_if OPENB Expression Block CLOSEB				{fprintf(f, " \n");}
+    | Key_if OPENB SimpleStmt M_semicolon Expression Block CLOSEB	{fprintf(f, " \n");}
+    | Key_if OPENB Expression Block Key_else Block CLOSEB		{fprintf(f, " \n");}
+    | Key_if OPENB Expression Block Key_else IfStmt CLOSEB		{fprintf(f, " \n");}
+    | Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else IfStmt CLOSEB	{fprintf(f, " \n");}
+    | Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else Block CLOSEB	{fprintf(f, " \n");}
     ;
 
 EmptyExpr:
-     /*empty*/
+     /*empty*/							{fprintf(f, "EmptyExpr: \n");}
      ;
      
 Empty:
-     /**/
+     /**/							{fprintf(f, "Empty: \n");}
      ;
      
 ForStmt:
-       Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB
-       | Key_for OPENB Expression BrkBlk Block BrkBlkEnd CLOSEB 
-       | Key_for BrkBlk Block BrkBlkEnd 
-       | Key_for OPENB SimpleStmt M_semicolon BrkBlk EmptyExpr M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB 
-       | Key_for OPENB EmptyStmt Empty BrkBlk Expression Empty EmptyStmt Block BrkBlkEnd CLOSEB 
+       Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB						{fprintf(f, " \n");}
+       | Key_for OPENB Expression BrkBlk Block BrkBlkEnd CLOSEB	{fprintf(f, " \n");}
+       | Key_for BrkBlk Block BrkBlkEnd				{fprintf(f, " \n");}
+       | Key_for OPENB SimpleStmt M_semicolon BrkBlk EmptyExpr M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB								{fprintf(f, " \n");}
+       | Key_for OPENB EmptyStmt Empty BrkBlk Expression Empty EmptyStmt Block BrkBlkEnd CLOSEB								{fprintf(f, " \n");}
        ;
 
 RangeClause:
-    Key_range Expression
-    | ExpressionList Op_equality Key_range Expression
-    | ExpressionList Op_assign Key_range Expression
+    Key_range Expression					{fprintf(f, " \n");}
+    | ExpressionList Op_equality Key_range Expression		{fprintf(f, " \n");}
+    | ExpressionList Op_assign Key_range Expression		{fprintf(f, " \n");}
     ;
 
 Expression:
@@ -488,9 +489,9 @@ PackageClause:
     ;
 
 ImportDeclList:
-    /* empty */ {printf("Inside the ImportDeclList-empty\n");}
-    | ImportDeclList ImportDecl M_semicolon {printf("Inside the ImportDeclList- ImportDeclList ImportDecl M_semicolon\n");}
-    | ImportDecl M_semicolon {printf("Inside the ImportDeclList- ImportDecl M_semicolon\n");}
+    /* empty */
+    | ImportDeclList ImportDecl M_semicolon
+    | ImportDecl M_semicolon
     ;
 
 ImportDecl:
