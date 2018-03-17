@@ -473,7 +473,7 @@ Assignment:
         scopeExpr($$->code);
     }
     ;
-
+'
 ShortVarDecl:
     ExpressionList DECL ExpressionList   {
         $$ = &(init() << $1  << $3 >> "ShortVarDecl");

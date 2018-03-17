@@ -12,24 +12,26 @@ FILE *yyin;
 %token Op_greater_greater Op_less_less Op_greater Op_less Op_greater_eq Op_less_eq Op_not_equal Op_equality Op_assign Op_unary_add Op_unary_sub Op_add Op_sub Op_mult Op_divide Op_mod Op_pow Op_relational_and Op_relational_or Op_unary_and Op_unary_or Op_unary_not
 %token M_question M_semicolon M_colon M_comma M_lcurly M_rcurly M_lparan M_rparan M_lsqbracket M_rsqbracket M_dot M_doublequotes M_singlequotes M_underscore
 %token Bool_true Bool_false
-%start SourceFile
+
+
+//%start SourceFile
 
 %%
 
 SourceFile:
-    PackageClause M_semicolon ImportDeclList TopLevelDeclList
+    PackageClause M_semicolon ImportDeclList TopLevelDeclList {printf("Inside the SourceFile\n");}
     ;
 
 Block:
-    M_semicolon OPENB StatementList CLOSEB M_rcurly
+    M_lcurly OPENB StatementList CLOSEB M_rcurly
     ;
 
 OPENB:
-    /* empty */
+    /* empty */ {printf("Inside the OPENB-empty\n");}
     ;
 
 CLOSEB:
-    /* empty */
+    /* empty */ {printf("Inside the CLOSEB-empty\n");}
     ;
 
 BrkBlk:
@@ -83,8 +85,21 @@ IncDecStmt:
     ;
 
 Assignment:
-    ExpressionList Op_assign ExpressionList 
+    ExpressionList ASN_OP ExpressionList 
     ;
+
+ADD_OP:
+	Op_add
+	|Op_sub
+	|Op_unary_or
+	|Op_pow
+	;
+
+ASN_OP:
+	ADD_OP Op_assign
+	|MUL_OP Op_assign
+	|Op_assign
+	;
 
 ShortVarDecl:
     ExpressionList Op_equality ExpressionList
@@ -96,8 +111,8 @@ VarDecl:
 
 VarSpec:
     IdentifierList Type
-    | IdentifierList Type Op_assign ExpressionList
-    | IdentifierList Op_assign ExpressionList
+    | IdentifierList Type ASN_OP ExpressionList
+    | IdentifierList ASN_OP ExpressionList
     ;
 
 Declaration:
@@ -106,47 +121,47 @@ Declaration:
     ;
 
 FunctionDecl:
-    Key_func Identifier OPENB Signature CLOSEB
-    | Key_func Identifier OPENB Signature
+    Key_func Identifier OPENB Signature CLOSEB {printf("Inside the FunctionDecl- Key_func Identifier OPENB Signature CLOSEB\n");}
+    | Key_func Identifier OPENB Signature Block CLOSEB {printf("Inside the FunctionDecl- Key_func Identifier Signature\n");}
     ;
 
 Signature:
-    Parameters
-    | Parameters Result
+    Parameters {printf("Inside the Signature- Parameteres\n");}
+    | Parameters Result {printf("Inside the Signature- Parameteres Result\n");}
     ;
 
 Result:
-    '(' TypeList ')'
-    | Type
+    M_lparan TypeList M_rparan {printf("Inside the Result- Typelist\n");}
+    | Type {printf("Inside the Result- Type\n");}
     ;
 
 Parameters:
-    '('  ')'
-    | '(' ParameterList  ')'
-    | '(' ParameterList ',' ')'
+    M_lparan M_rparan {printf("Inside the Parameters- only brackets\n");}
+    | M_lparan ParameterList  M_rparan {printf("Inside the Parameters- ParameterList without commas\n");}
+    | M_lparan ParameterList M_comma M_rparan {printf("Inside the Parametes- parameterList with commas\n");}
     ;
 
 ParameterList:
-    ParameterDecl
-    | ParameterList ',' ParameterDecl
+    ParameterDecl {printf("Inside the ParameterList- ParameterDecl\n");}
+    | ParameterList M_comma ParameterDecl {printf("Inside the ParameterList- ParameterList M_comma ParameterDecl\n");}
     ;
 
 ParameterDecl:
-    IdentifierList Type
+    IdentifierList Type {printf("Inside the ParameterDecl- IdentifierList Type\n");}
     ;
 
 TypeList:
-    TypeList ',' Type
+    TypeList M_comma Type
     | Type
     ;
 
 IdentifierList:
     Identifier
-    | IdentifierList ',' Identifier
+    | IdentifierList M_comma Identifier
     ;
 
 QualifiedIdent:
-    Identifier '.' Identifier
+    Identifier M_dot Identifier
     ;
 
 MethodDecl:
@@ -158,8 +173,8 @@ Receiver:
     ;
 
 TopLevelDeclList:
-    TopLevelDeclList TopLevelDecl M_semicolon
-    | TopLevelDecl M_semicolon
+    TopLevelDeclList TopLevelDecl M_semicolon {printf("Inside the 1st of TopLevelDeclList\n");}
+    | TopLevelDecl M_semicolon{printf("Inside the 2nd of TopLevelDeclList\n");}
     ;
 
 CompositeLit:
@@ -170,7 +185,7 @@ LiteralType:
     StructType
     | ArrayType
     | PointerType
-    | '[' DOTS ']' Operand
+    | M_lsqbracket DOTS M_rsqbracket Operand
     | SliceType
     | MapType
     ;
@@ -183,7 +198,7 @@ Type:
 Operand:
     Literal
     | OperandName
-    | '(' Expression ')'
+    | M_lparan Expression M_rparan
     ;
 
 OperandName:
@@ -191,26 +206,26 @@ OperandName:
     ;
 
 LiteralValue:
-    '{' '}'
-    | M_semicolon '}'
-    | '{' ElementList '}'
-    | M_semicolon ElementList '}'
-    | '{' ElementList ',' '}'
-    | M_semicolon ElementList ',' '}'
+    M_lcurly M_rcurly
+    | M_semicolon M_rcurly
+    | M_lcurly ElementList M_rcurly
+    | M_semicolon ElementList M_rcurly
+    | M_lcurly ElementList M_comma M_rcurly
+    | M_semicolon ElementList M_comma M_rcurly
     ;
 
 SliceType:
-    '[' ']' Type
+    M_lsqbracket M_rsqbracket Type
     ;
 
 ElementList:
     KeyedElement
-    | ElementList ',' KeyedElement
+    | ElementList M_comma KeyedElement
     ;
 
 KeyedElement:
     Element
-    | Key ':' Element
+    | Key M_colon Element
     ;
 
 Key:
@@ -224,9 +239,9 @@ Element:
     ;
 
 TopLevelDecl:
-    Declaration
-    | FunctionDecl
-    | MethodDecl
+    Declaration {printf("Inside the TopLevelDecl- Declaration\n");}
+    | FunctionDecl {printf("Inside the TopLevelDecl- FunctionDecl\n");}
+    | MethodDecl {printf("Inside the TopLevelDecl- MethodDecl\n");}
     ;
 
 LabeledStmt:
@@ -250,11 +265,11 @@ ContinueStmt:
 
 IfStmt:
     Key_if OPENB Expression Block CLOSEB
-    | Key_if OPENB SimpleStmt ';' Expression Block CLOSEB
+    | Key_if OPENB SimpleStmt M_semicolon Expression Block CLOSEB
     | Key_if OPENB Expression Block Key_else Block CLOSEB
     | Key_if OPENB Expression Block Key_else IfStmt CLOSEB
-    | Key_if OPENB SimpleStmt ';' Expression Block Key_else IfStmt CLOSEB
-    | Key_if OPENB SimpleStmt ';' Expression Block Key_else Block CLOSEB
+    | Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else IfStmt CLOSEB
+    | Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else Block CLOSEB
     ;
 
 EmptyExpr:
@@ -266,17 +281,17 @@ Empty:
      ;
      
 ForStmt:
-       Key_for OPENB SimpleStmt ';' BrkBlk ExpressionStmt ';' SimpleStmt Block BrkBlkEnd CLOSEB
+       Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB
        | Key_for OPENB Expression BrkBlk Block BrkBlkEnd CLOSEB 
        | Key_for BrkBlk Block BrkBlkEnd 
-       | Key_for OPENB SimpleStmt ';' BrkBlk EmptyExpr ';' SimpleStmt Block BrkBlkEnd CLOSEB 
+       | Key_for OPENB SimpleStmt M_semicolon BrkBlk EmptyExpr M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB 
        | Key_for OPENB EmptyStmt Empty BrkBlk Expression Empty EmptyStmt Block BrkBlkEnd CLOSEB 
        ;
 
 RangeClause:
     Key_range Expression
     | ExpressionList Op_equality Key_range Expression
-    | ExpressionList '=' Key_range Expression
+    | ExpressionList Op_assign Key_range Expression
     ;
 
 Expression:
@@ -352,30 +367,30 @@ PrimaryExpr:
     ;
 
 StructLiteral:
-    '{' KeyValList '}'
+    M_lcurly KeyValList M_rcurly
     ;
 
 KeyValList:
     /* empty */
-    | Expression ':' Expression
-    | Expression ':' Expression ',' KeyValList
+    | Expression M_colon Expression
+    | Expression M_colon Expression M_comma KeyValList
     ;
 
 Selector:
-    '.' Identifier
+    M_dot Identifier
     ;
 
 Index:
-	'[' Expression ']'
+	M_lsqbracket Expression M_rsqbracket
     ;
 
 Slice:
-    '[' ':' ']'
-    | '[' ':' Expression ']'
-    | '[' Expression ':' ']'
-    | '[' Expression ':' Expression ']'
-    | '[' ':' Expression ':' Expression ']'
-    | '[' Expression ':' Expression ':' Expression ']'
+    M_lsqbracket M_colon M_rsqbracket
+    | M_lsqbracket M_colon Expression M_rsqbracket
+    | M_lsqbracket Expression M_colon M_rsqbracket
+    | M_lsqbracket Expression M_colon Expression M_rsqbracket
+    | M_lsqbracket M_colon Expression M_colon Expression M_rsqbracket
+    | M_lsqbracket Expression M_colon Expression M_colon Expression M_rsqbracket
     ;
 
 TypeDecl:
@@ -387,13 +402,13 @@ TypeSpec:
     ;
 
 TypeAssertion:
-    '.' '(' Type ')'
+    M_dot M_lparan Type M_rparan
     ;
 
 Arguments:
-    '(' ')'
-    | '(' ExpressionList ')'
-    | '(' ExpressionList DOTS ')'
+    M_lparan M_rparan
+    | M_lparan ExpressionList M_rparan
+    | M_lparan ExpressionList DOTS M_rparan
     ;
 
 DOTS:
@@ -402,23 +417,23 @@ DOTS:
 
 ExpressionList:
     Expression
-    | ExpressionList ',' Expression
+    | ExpressionList M_comma Expression
     ;
 
 MapType:
-    Key_map '[' Type ']' Type
+    Key_map M_lsqbracket Type M_rsqbracket Type
     ;
 
 StructType:
-    Key_struct '{' FieldDeclList '}'
-    | Key_struct M_semicolon FieldDeclList '}'
-    | Key_struct '{' '}'
-    | Key_struct M_semicolon '}'
+    Key_struct M_lcurly FieldDeclList M_rcurly
+    | Key_struct M_semicolon FieldDeclList M_rcurly
+    | Key_struct M_lcurly M_rcurly
+    | Key_struct M_semicolon M_rcurly
     ;
 
 FieldDeclList:
-    FieldDecl ';'
-    | FieldDeclList FieldDecl ';'
+    FieldDecl M_semicolon
+    | FieldDeclList FieldDecl M_semicolon
     ;
 
 FieldDecl:
@@ -431,7 +446,7 @@ PointerType:
     ;
 
 ArrayType:
-    '[' Expression ']' Type
+    M_lsqbracket Expression M_rsqbracket Type
     ;
 
 Literal:
@@ -463,7 +478,7 @@ UN_OP:
 	|Op_mult
 	|Op_unary_and
 	;
-
+	
 String:
 	String_lit
 	;
@@ -473,13 +488,13 @@ PackageClause:
     ;
 
 ImportDeclList:
-    /* empty */
-    | ImportDeclList ImportDecl M_semicolon
-    | ImportDecl M_semicolon
+    /* empty */ {printf("Inside the ImportDeclList-empty\n");}
+    | ImportDeclList ImportDecl M_semicolon {printf("Inside the ImportDeclList- ImportDeclList ImportDecl M_semicolon\n");}
+    | ImportDecl M_semicolon {printf("Inside the ImportDeclList- ImportDecl M_semicolon\n");}
     ;
 
 ImportDecl:
-    Key_import '(' ImportSpecList ')'
+    Key_import M_lparan ImportSpecList M_rparan
     | Key_import ImportSpec
     ;
 
@@ -491,7 +506,7 @@ ImportSpecList:
 
 ImportSpec:
     Identifier ImportPath
-    | '.' ImportPath
+    | M_dot ImportPath
     | ImportPath
     ;
 
