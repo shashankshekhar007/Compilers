@@ -157,120 +157,120 @@ TypeList:
     ;
 
 IdentifierList:
-    Identifier							{fprintf(f, " \n");}
-    | IdentifierList M_comma Identifier				{fprintf(f, " \n");}
+    Identifier							{fprintf(f, "IdentifierList: Identifier \n");}
+    | IdentifierList M_comma Identifier				{fprintf(f, "IdentifierList: IdentifierList M_comma Identifier \n");}
     ;
 
 QualifiedIdent:
-    Identifier M_dot Identifier					{fprintf(f, " \n");}
+    Identifier M_dot Identifier					{fprintf(f, "QualifiedIdent: Identifier M_dot Identifier \n");}
     ;
 
 MethodDecl:
-    Key_func Receiver Identifier Signature			{fprintf(f, " \n");}
+    Key_func Receiver Identifier Signature			{fprintf(f, "MethodDecl: Key_func Receiver Identifier Signature \n");}
     ;
 
 Receiver:
-    Parameters							{fprintf(f, " \n");}
+    Parameters							{fprintf(f, "Receiver: Parameters \n");}
     ;
 
 TopLevelDeclList:
-    TopLevelDeclList TopLevelDecl M_semicolon			{fprintf(f, " \n");}
-    | TopLevelDecl M_semicolon					{fprintf(f, " \n");}
+    TopLevelDeclList TopLevelDecl M_semicolon			{fprintf(f, "TopLevelDeclList: TopLevelDeclList TopLevelDecl M_semicolon \n");}
+    | TopLevelDecl M_semicolon					{fprintf(f, "TopLevelDeclList: TopLevelDecl M_semicolon \n");}
     ;
 
 CompositeLit:
-    LiteralType LiteralValue					{fprintf(f, " \n");}
+    LiteralType LiteralValue					{fprintf(f, "CompositeLit: LiteralType LiteralValue \n");}
 ;
 
 LiteralType:
-    StructType							{fprintf(f, " \n");}
-    | ArrayType							{fprintf(f, " \n");}
-    | PointerType						{fprintf(f, " \n");}
-    | M_lsqbracket DOTS M_rsqbracket Operand			{fprintf(f, " \n");}
-    | SliceType							{fprintf(f, " \n");}
-    | MapType							{fprintf(f, " \n");}
+    StructType							{fprintf(f, "LiteralType: StructType\n");}
+    | ArrayType							{fprintf(f, "LiteralType: ArrayType\n");}
+    | PointerType						{fprintf(f, "LiteralType: PointerType\n");}
+    | M_lsqbracket DOTS M_rsqbracket Operand			{fprintf(f, "LiteralType: M_lsqbracket DOTS M_rsqbracket Operand\n");}
+    | SliceType							{fprintf(f, "LiteralType: SliceType\n");}
+    | MapType							{fprintf(f, "LiteralType: MapType\n");}
     ;
 
 Type:
-    LiteralType							{fprintf(f, " \n");}
-    | OperandName						{fprintf(f, " \n");}
+    LiteralType							{fprintf(f, "Type: LiteralType \n");}
+    | OperandName						{fprintf(f, "Type: OperandName \n");}
     ;
 
 Operand:
-    Literal							{fprintf(f, " \n");}
-    | OperandName						{fprintf(f, " \n");}
-    | M_lparan Expression M_rparan				{fprintf(f, " \n");}
+    Literal							{fprintf(f, "Operand: Literal \n");}
+    | OperandName						{fprintf(f, "Operand: OperandName \n");}
+    | M_lparan Expression M_rparan				{fprintf(f, "Operand: M_lparan Expression M_rparan\n");}
     ;
 
 OperandName:
-    Identifier							{fprintf(f, " \n");}
+    Identifier							{fprintf(f, "OperandName: Identifier \n");}
     ;
 
 LiteralValue:
-    M_lcurly M_rcurly						{fprintf(f, " \n");}
-    | M_semicolon M_rcurly					{fprintf(f, " \n");}
-    | M_lcurly ElementList M_rcurly				{fprintf(f, " \n");}
-    | M_semicolon ElementList M_rcurly				{fprintf(f, " \n");}
-    | M_lcurly ElementList M_comma M_rcurly			{fprintf(f, " \n");}
-    | M_semicolon ElementList M_comma M_rcurly			{fprintf(f, " \n");}
+    M_lcurly M_rcurly						{fprintf(f, "LiteralValue: M_lcurly M_rcurly \n");}
+    | M_semicolon M_rcurly					{fprintf(f, "LiteralValue: M_semicolon M_rcurly \n");}
+    | M_lcurly ElementList M_rcurly				{fprintf(f, "LiteralValue: M_lcurly ElementList M_rcurly \n");}
+    | M_semicolon ElementList M_rcurly				{fprintf(f, "LiteralValue: M_semicolon ElementList M_rcurly \n");}
+    | M_lcurly ElementList M_comma M_rcurly			{fprintf(f, "LiteralValue: M_lcurly ElementList M_comma M_rcurly \n");}
+    | M_semicolon ElementList M_comma M_rcurly			{fprintf(f, "LiteralValue: M_semicolon ElementList M_comma M_rcurly \n");}
     ;
 
 SliceType:
-    M_lsqbracket M_rsqbracket Type				{fprintf(f, " \n");}
+    M_lsqbracket M_rsqbracket Type				{fprintf(f, "SliceType: M_lsqbracket M_rsqbracket Type \n");}
     ;
 
 ElementList:
-    KeyedElement						{fprintf(f, " \n");}
-    | ElementList M_comma KeyedElement				{fprintf(f, " \n");}
+    KeyedElement						{fprintf(f, "ElementList: KeyedElement \n");}
+    | ElementList M_comma KeyedElement				{fprintf(f, "ElementList: ElementList M_comma KeyedElement \n");}
     ;
 
 KeyedElement:
-    Element							{fprintf(f, " \n");}
-    | Key M_colon Element					{fprintf(f, " \n");}
+    Element							{fprintf(f, "KeyedElement: Element \n");}
+    | Key M_colon Element					{fprintf(f, "KeyedElement: Key M_colon Element \n");}
     ;
 
 Key:
-    Expression							{fprintf(f, " \n");}
-    | LiteralValue						{fprintf(f, " \n");}
+    Expression							{fprintf(f, "Key: Expression \n");}
+    | LiteralValue						{fprintf(f, "Key: LiteralValue \n");}
     ;
 
 Element:
-    Expression							{fprintf(f, " \n");}
-    | LiteralValue						{fprintf(f, " \n");}
+    Expression							{fprintf(f, "Element: Expression \n");}
+    | LiteralValue						{fprintf(f, "Element: LiteralValue \n");}
     ;
 
 TopLevelDecl:
-    Declaration							{fprintf(f, " \n");}
-    | FunctionDecl						{fprintf(f, " \n");}
-    | MethodDecl						{fprintf(f, " \n");}
+    Declaration							{fprintf(f, "TopLevelDecl: Declaration \n");}
+    | FunctionDecl						{fprintf(f, "TopLevelDecl: FunctionDecl \n");}
+    | MethodDecl						{fprintf(f, "TopLevelDecl: MethodDecl \n");}
     ;
 
 LabeledStmt:
-    Identifier M_colon Statement				{fprintf(f, " \n");}
+    Identifier M_colon Statement				{fprintf(f, "LabeledStmt: Identifier M_colon Statement \n");}
     ;
 
 ReturnStmt:
-    Key_return							{fprintf(f, " \n");}
-    | Key_return ExpressionList					{fprintf(f, " \n");}
+    Key_return							{fprintf(f, "ReturnStmt: Key_return \n");}
+    | Key_return ExpressionList					{fprintf(f, "ReturnStmt: Key_return ExpressionList \n");}
     ;
 
 BreakStmt:
-    Key_break							{fprintf(f, " \n");}
-    | Key_break Identifier					{fprintf(f, " \n");}
+    Key_break							{fprintf(f, "BreakStmt: Key_break \n");}
+    | Key_break Identifier					{fprintf(f, "BreakStmt: Key_break Identifier \n");}
     ;
 
 ContinueStmt:
-    Key_continue						{fprintf(f, " \n");}
-    | Key_continue Identifier					{fprintf(f, " \n");}
+    Key_continue						{fprintf(f, "ContinueStmt: Key_continue \n");}
+    | Key_continue Identifier					{fprintf(f, "ContinueStmt: Key_continue Identifier \n");}
     ;
 
 IfStmt:
-    Key_if OPENB Expression Block CLOSEB				{fprintf(f, " \n");}
-    | Key_if OPENB SimpleStmt M_semicolon Expression Block CLOSEB	{fprintf(f, " \n");}
-    | Key_if OPENB Expression Block Key_else Block CLOSEB		{fprintf(f, " \n");}
-    | Key_if OPENB Expression Block Key_else IfStmt CLOSEB		{fprintf(f, " \n");}
-    | Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else IfStmt CLOSEB	{fprintf(f, " \n");}
-    | Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else Block CLOSEB	{fprintf(f, " \n");}
+    Key_if OPENB Expression Block CLOSEB				{fprintf(f, "IfStmt: Key_if OPENB Expression Block CLOSEB \n");}
+    | Key_if OPENB SimpleStmt M_semicolon Expression Block CLOSEB	{fprintf(f, "IfStmt: Key_if OPENB SimpleStmt M_semicolon Expression Block CLOSEB \n");}
+    | Key_if OPENB Expression Block Key_else Block CLOSEB		{fprintf(f, "IfStmt: Key_if OPENB Expression Block Key_else Block CLOSEB \n");}
+    | Key_if OPENB Expression Block Key_else IfStmt CLOSEB		{fprintf(f, "IfStmt: Key_if OPENB Expression Block Key_else IfStmt CLOSEB \n");}
+    | Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else IfStmt CLOSEB	{fprintf(f, "IfStmt: Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else IfStmt CLOSEB \n");}
+    | Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else Block CLOSEB	{fprintf(f, "IfStmt: Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else Block CLOSEB \n");}
     ;
 
 EmptyExpr:
@@ -283,236 +283,236 @@ Empty:
      
 ForStmt:
        Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB						{fprintf(f, " \n");}
-       | Key_for OPENB Expression BrkBlk Block BrkBlkEnd CLOSEB	{fprintf(f, " \n");}
-       | Key_for BrkBlk Block BrkBlkEnd				{fprintf(f, " \n");}
-       | Key_for OPENB SimpleStmt M_semicolon BrkBlk EmptyExpr M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB								{fprintf(f, " \n");}
-       | Key_for OPENB EmptyStmt Empty BrkBlk Expression Empty EmptyStmt Block BrkBlkEnd CLOSEB								{fprintf(f, " \n");}
+       | Key_for OPENB Expression BrkBlk Block BrkBlkEnd CLOSEB	{fprintf(f, "ForStmt: Key_if OPENB SimpleStmt M_semicolon Expression Block Key_else Block CLOSEB \n");}
+       | Key_for BrkBlk Block BrkBlkEnd				{fprintf(f, "ForStmt: Key_for BrkBlk Block BrkBlkEnd\n");}
+       | Key_for OPENB SimpleStmt M_semicolon BrkBlk EmptyExpr M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB								{fprintf(f, "ForStmt: Key_for OPENB SimpleStmt M_semicolon BrkBlk EmptyExpr M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB \n");}
+       | Key_for OPENB EmptyStmt Empty BrkBlk Expression Empty EmptyStmt Block BrkBlkEnd CLOSEB								{fprintf(f, "ForStmt: Key_for OPENB EmptyStmt Empty BrkBlk Expression Empty EmptyStmt Block BrkBlkEnd CLOSEB \n");}
        ;
 
 RangeClause:
-    Key_range Expression					{fprintf(f, " \n");}
-    | ExpressionList Op_equality Key_range Expression		{fprintf(f, " \n");}
-    | ExpressionList Op_assign Key_range Expression		{fprintf(f, " \n");}
+    Key_range Expression					{fprintf(f, "RangeClause: Key_range Expression \n");}
+    | ExpressionList Op_equality Key_range Expression		{fprintf(f, "RangeClause: ExpressionList Op_equality Key_range Expression\n");}
+    | ExpressionList Op_assign Key_range Expression		{fprintf(f, "RangeClause: ExpressionList Op_assign Key_range Expression \n");}
     ;
 
 Expression:
-    Expression1
+    Expression1							{fprintf(f, "Expression: Expression1 \n");}
     ;
 
 Expression1:
-    Expression1 Op_relational_or Expression2
-    | Expression2
+    Expression1 Op_relational_or Expression2			{fprintf(f, "Expression1: Expression1 Op_relational_or Expression2 \n");}
+    | Expression2						{fprintf(f, "Expression1: Expression2 \n");}
     ;
 
 Expression2:
-    Expression2 Op_relational_and Expression3
-    | Expression3
+    Expression2 Op_relational_and Expression3			{fprintf(f, "Expression2: Expression2 Op_relational_and Expression3 \n");}
+    | Expression3						{fprintf(f, "Expression2: Expression3 \n");}
     ;
 
 Expression3:
-    Expression3 REL_OP Expression4
-    | Expression4
+    Expression3 REL_OP Expression4				{fprintf(f, "Expression3: Expression3 REL_OP Expression4\n");}
+    | Expression4						{fprintf(f, "Expression3: Expression4 \n");}
     ;
 
 Expression4:
-    Expression4 Op_unary_or Expression5
-    | Expression4 D4 Expression5
-    | Expression5
+    Expression4 Op_unary_or Expression5				{fprintf(f, "Expression4: Expression4 Op_unary_or Expression5 \n");}
+    | Expression4 D4 Expression5				{fprintf(f, "Expression4: Expression4 D4 Expression5 \n");}
+    | Expression5						{fprintf(f, "Expression4: Expression5 \n");}
     ;
 
 Expression5:
-    Expression5 MUL_OP PrimaryExpr
-    | Expression5 Op_unary_and PrimaryExpr
-    | Expression5 Op_mult PrimaryExpr
-    | UnaryExpr
+    Expression5 MUL_OP PrimaryExpr				{fprintf(f, "Expression5: Expression5 MUL_OP PrimaryExpr \n");}
+    | Expression5 Op_unary_and PrimaryExpr			{fprintf(f, "Expression5: Expression5 Op_unary_and PrimaryExpr \n");}
+    | Expression5 Op_mult PrimaryExpr				{fprintf(f, "Expression5: Expression5 Op_mult PrimaryExpr \n");}
+    | UnaryExpr							{fprintf(f, "Expression5: UnaryExpr \n");}
     ;
 
 D4:
-	Op_add
-	|Op_sub
-	|Op_pow
+	Op_add							{fprintf(f, "D4: Op_add \n");}
+	|Op_sub							{fprintf(f, "D4: Op_sub\n");}
+	|Op_pow							{fprintf(f, "D4: Op_pow \n");}
 	;
 
 REL_OP:
-	Op_assign
-	|Op_not_equal
-	|Op_less
-	|Op_greater
-	|Op_greater_eq
-	|Op_less_eq
+	Op_assign						{fprintf(f, "REL_OP: Op_assign \n");}
+	|Op_not_equal						{fprintf(f, "REL_OP: Op_not_equal\n");}
+	|Op_less						{fprintf(f, "REL_OP: Op_less \n");}
+	|Op_greater						{fprintf(f, "REL_OP: Op_greater \n");}
+	|Op_greater_eq						{fprintf(f, "REL_OP: Op_greater_eq \n");}
+	|Op_less_eq						{fprintf(f, "REL_OP: Op_less_eq \n");}
 	;
 
 MUL_OP:
-	Op_mult
-	|Op_divide
-	|Op_mod
-	|Op_less_less
-	|Op_greater_greater
-	|Op_unary_and
+	Op_mult							{fprintf(f, "MUL_OP: Op_mult \n");}
+	|Op_divide						{fprintf(f, "MUL_OP: Op_divide \n");}
+	|Op_mod							{fprintf(f, "MUL_OP: Op_mod \n");}
+	|Op_less_less						{fprintf(f, "MUL_OP: Op_less_less \n");}
+	|Op_greater_greater					{fprintf(f, "MUL_OP: Op_greater_greater \n");}
+	|Op_unary_and						{fprintf(f, "MUL_OP: Op_unary_and \n");}
 	;
 
 
 UnaryExpr:
-    PrimaryExpr
-    | UnaryOp PrimaryExpr
+    PrimaryExpr							{fprintf(f, "UnaryExpr: PrimaryExpr \n");}
+    | UnaryOp PrimaryExpr					{fprintf(f, "UnaryExpr: UnaryOp PrimaryExpr \n");}
     ;
 
 PrimaryExpr:
-    Operand
-    | PrimaryExpr Selector
-    | PrimaryExpr Index
-    | PrimaryExpr Slice
-    | PrimaryExpr TypeAssertion
-    | PrimaryExpr Arguments
-    | OperandName StructLiteral
+    Operand							{fprintf(f, "PrimaryExpr: Operand \n");}
+    | PrimaryExpr Selector					{fprintf(f, "PrimaryExpr: PrimaryExpr Selector \n");}
+    | PrimaryExpr Index						{fprintf(f, "PrimaryExpr: PrimaryExpr Index \n");}
+    | PrimaryExpr Slice						{fprintf(f, "PrimaryExpr: PrimaryExpr Slice \n");}
+    | PrimaryExpr TypeAssertion					{fprintf(f, "PrimaryExpr: PrimaryExpr TypeAssertion \n");}
+    | PrimaryExpr Arguments					{fprintf(f, "PrimaryExpr: PrimaryExpr Arguments \n");}
+    | OperandName StructLiteral					{fprintf(f, "PrimaryExpr: OperandName StructLiteral \n");}
     ;
 
 StructLiteral:
-    M_lcurly KeyValList M_rcurly
+    M_lcurly KeyValList M_rcurly				{fprintf(f, "StructLiteral: M_lcurly KeyValList M_rcurly \n");}
     ;
 
 KeyValList:
-    /* empty */
-    | Expression M_colon Expression
-    | Expression M_colon Expression M_comma KeyValList
+    /* empty */							{fprintf(f, "KeyValList: \n");}
+    | Expression M_colon Expression				{fprintf(f, "KeyValList: Expression M_colon Expression \n");}
+    | Expression M_colon Expression M_comma KeyValList		{fprintf(f, "KeyValList: Expression M_colon Expression M_comma KeyValList \n");}
     ;
 
 Selector:
-    M_dot Identifier
+    M_dot Identifier						{fprintf(f, "Selector: M_dot Identifier \n");}
     ;
 
 Index:
-	M_lsqbracket Expression M_rsqbracket
+    M_lsqbracket Expression M_rsqbracket			{fprintf(f, "Index: M_lsqbracket Expression M_rsqbracket \n");}
     ;
 
 Slice:
-    M_lsqbracket M_colon M_rsqbracket
-    | M_lsqbracket M_colon Expression M_rsqbracket
-    | M_lsqbracket Expression M_colon M_rsqbracket
-    | M_lsqbracket Expression M_colon Expression M_rsqbracket
-    | M_lsqbracket M_colon Expression M_colon Expression M_rsqbracket
-    | M_lsqbracket Expression M_colon Expression M_colon Expression M_rsqbracket
+    M_lsqbracket M_colon M_rsqbracket				{fprintf(f, "Slice: M_lsqbracket M_colon M_rsqbracket \n");}
+    | M_lsqbracket M_colon Expression M_rsqbracket		{fprintf(f, "Slice: M_lsqbracket M_colon Expression M_rsqbracket \n");}
+    | M_lsqbracket Expression M_colon M_rsqbracket		{fprintf(f, "Slice: M_lsqbracket Expression M_colon M_rsqbracket \n");}
+    | M_lsqbracket Expression M_colon Expression M_rsqbracket	{fprintf(f, "Slice: M_lsqbracket Expression M_colon Expression M_rsqbracket \n");}
+    | M_lsqbracket M_colon Expression M_colon Expression M_rsqbracket	{fprintf(f, "Slice: M_lsqbracket M_colon Expression M_colon Expression M_rsqbracket \n");}
+    | M_lsqbracket Expression M_colon Expression M_colon Expression M_rsqbracket	{fprintf(f, "Slice: M_lsqbracket Expression M_colon Expression M_colon Expression M_rsqbracket \n");}
     ;
 
 TypeDecl:
-    Key_type TypeSpec
+    Key_type TypeSpec						{fprintf(f, "TypeDecl: Key_type TypeSpec \n");}
     ;
 
 TypeSpec:
-    Identifier Type
+    Identifier Type						{fprintf(f, "TypeSpec: Identifier Type \n");}
     ;
 
 TypeAssertion:
-    M_dot M_lparan Type M_rparan
+    M_dot M_lparan Type M_rparan				{fprintf(f, "TypeAssertion: M_dot M_lparan Type M_rparan \n");}
     ;
 
 Arguments:
-    M_lparan M_rparan
-    | M_lparan ExpressionList M_rparan
-    | M_lparan ExpressionList DOTS M_rparan
+    M_lparan M_rparan						{fprintf(f, "Arguments: M_lparan M_rparan \n");}
+    | M_lparan ExpressionList M_rparan				{fprintf(f, "Arguments: M_lparan ExpressionList M_rparan \n");}
+    | M_lparan ExpressionList DOTS M_rparan			{fprintf(f, "Arguments: M_lparan ExpressionList DOTS M_rparan \n");}
     ;
 
 DOTS:
-	M_dot M_dot M_dot
+	M_dot M_dot M_dot					{fprintf(f, "DOTS: M_dot M_dot M_dot \n");}
 	;
 
 ExpressionList:
-    Expression
-    | ExpressionList M_comma Expression
+    Expression							{fprintf(f, "ExpressionList: Expression \n");}
+    | ExpressionList M_comma Expression				{fprintf(f, "ExpressionList: ExpressionList M_comma Expression \n");}
     ;
 
 MapType:
-    Key_map M_lsqbracket Type M_rsqbracket Type
+    Key_map M_lsqbracket Type M_rsqbracket Type			{fprintf(f, "MapType: Key_map M_lsqbracket Type M_rsqbracket Type \n");}
     ;
 
 StructType:
-    Key_struct M_lcurly FieldDeclList M_rcurly
-    | Key_struct M_semicolon FieldDeclList M_rcurly
-    | Key_struct M_lcurly M_rcurly
-    | Key_struct M_semicolon M_rcurly
+    Key_struct M_lcurly FieldDeclList M_rcurly			{fprintf(f, "StructType: Key_struct M_lcurly FieldDeclList M_rcurly\n");}
+    | Key_struct M_semicolon FieldDeclList M_rcurly		{fprintf(f, "StructType: Key_struct M_semicolon FieldDeclList M_rcurly \n");}
+    | Key_struct M_lcurly M_rcurly				{fprintf(f, "StructType: Key_struct M_lcurly M_rcurly \n");}
+    | Key_struct M_semicolon M_rcurly				{fprintf(f, "StructType: Key_struct M_semicolon M_rcurly \n");}
     ;
 
 FieldDeclList:
-    FieldDecl M_semicolon
-    | FieldDeclList FieldDecl M_semicolon
+    FieldDecl M_semicolon					{fprintf(f, "FieldDeclList: FieldDecl M_semicolon \n");}
+    | FieldDeclList FieldDecl M_semicolon			{fprintf(f, "FieldDeclList: FieldDeclList FieldDecl M_semicolon \n");}
     ;
 
 FieldDecl:
-    IdentifierList Type String
-    | IdentifierList Type
+    IdentifierList Type String					{fprintf(f, "FieldDecl: IdentifierList Type String \n");}
+    | IdentifierList Type					{fprintf(f, "FieldDecl: IdentifierList Type \n");}
     ;
 
 PointerType:
-    Op_mult Type
+    Op_mult Type						{fprintf(f, "PointerType: Op_mult Type \n");}
     ;
 
 ArrayType:
-    M_lsqbracket Expression M_rsqbracket Type
+    M_lsqbracket Expression M_rsqbracket Type			{fprintf(f, "ArrayType: M_lsqbracket Expression M_rsqbracket Type \n");}
     ;
 
 Literal:
-    BasicLit
-    | CompositeLit
+    BasicLit							{fprintf(f, "Literal: BasicLit \n");}
+    | CompositeLit						{fprintf(f, "Literal: CompositeLit \n");}
     ;
 
 BasicLit:
-    Int_lit
-    |Float_lit
-    |String
-    |Bool_true
-    |Bool_false
-    |Imaginary_lit // this is the extra added support
+    Int_lit							{fprintf(f, "BasicLit: Int_lit \n");}
+    |Float_lit							{fprintf(f, "BasicLit: Float_lit \n");}
+    |String							{fprintf(f, "BasicLit: String \n");}
+    |Bool_true							{fprintf(f, "BasicLit: Bool_true \n");}
+    |Bool_false							{fprintf(f, "BasicLit: Bool_false \n");}
+    |Imaginary_lit						{fprintf(f, "BasicLit: Imaginary_lit \n");}
     ;
 
 UnaryOp:
-	UN_OP
-	| D4
-	| Op_unary_and
-	| Op_mult
+	UN_OP							{fprintf(f, "UnaryOp: UN_OP \n");}
+	| D4							{fprintf(f, "UnaryOp: D4 \n");}
+	| Op_unary_and						{fprintf(f, "UnaryOp: Op_unary_and \n");}
+	| Op_mult						{fprintf(f, "UnaryOp: Op_mult \n");}
 	;
 
 UN_OP:
-	Op_add
-	|Op_sub
-	|Op_unary_not
-	|Op_pow
-	|Op_mult
-	|Op_unary_and
+	Op_add							{fprintf(f, "UN_OP: Op_add \n");}
+	|Op_sub							{fprintf(f, "UN_OP: Op_sub \n");}
+	|Op_unary_not						{fprintf(f, "UN_OP: Op_unary_not \n");}
+	|Op_pow							{fprintf(f, "UN_OP: Op_pow \n");}
+	|Op_mult						{fprintf(f, "UN_OP: Op_mult \n");}
+	|Op_unary_and						{fprintf(f, "UN_OP: Op_unary_and \n");}
 	;
 	
 String:
-	String_lit
+	String_lit						{fprintf(f, "String: String_lit \n");}
 	;
 
 PackageClause:
-    Key_package Identifier
+    Key_package Identifier					{fprintf(f, "PackageClause: Key_package Identifier \n");}
     ;
 
 ImportDeclList:
-    /* empty */
-    | ImportDeclList ImportDecl M_semicolon
-    | ImportDecl M_semicolon
+    /* empty */							{fprintf(f, "ImportDeclList: \n");}
+    | ImportDeclList ImportDecl M_semicolon			{fprintf(f, "ImportDeclList: ImportDeclList ImportDecl M_semicolon \n");}
+    | ImportDecl M_semicolon					{fprintf(f, "ImportDeclList: ImportDecl M_semicolon \n");}
     ;
 
 ImportDecl:
-    Key_import M_lparan ImportSpecList M_rparan
-    | Key_import ImportSpec
+    Key_import M_lparan ImportSpecList M_rparan			{fprintf(f, "ImportDecl: Key_import M_lparan ImportSpecList M_rparan \n");}
+    | Key_import ImportSpec					{fprintf(f, "ImportDecl: Key_import ImportSpec \n");}
     ;
 
 ImportSpecList:
-    /* empty */
-    | ImportSpecList ImportSpec M_semicolon
-    | ImportSpec M_semicolon
+    /* empty */							{fprintf(f, "ImportSpecList: \n");}
+    | ImportSpecList ImportSpec M_semicolon			{fprintf(f, "ImportSpecList: ImportSpecList ImportSpec M_semicolon \n");}
+    | ImportSpec M_semicolon					{fprintf(f, "ImportSpecList: ImportSpec M_semicolon \n");}
     ;
 
 ImportSpec:
-    Identifier ImportPath
-    | M_dot ImportPath
-    | ImportPath
+    Identifier ImportPath					{fprintf(f, "ImportSpec: Identifier ImportPath \n");}
+    | M_dot ImportPath						{fprintf(f, "ImportSpec: M_dot ImportPath \n");}
+    | ImportPath						{fprintf(f, "ImportSpec: ImportPath \n");}
     ;
 
 ImportPath:
-    String
+    String							{fprintf(f, "ImportPath: String \n");}
     ;
 
 
