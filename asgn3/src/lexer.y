@@ -197,15 +197,35 @@ LiteralType:
     | MapType							{fprintf(f, "LiteralType: MapType\n");}
     ;
 
+VarType:
+	T_int16								{fprintf(f, "VarType: T_int16");}
+	|T_int8								{fprintf(f, "VarType: T_int8");}
+	|T_int32							{fprintf(f, "VarType: T_int32");}
+	|T_int64							{fprintf(f, "VarType: T_int64");}
+	|T_int								{fprintf(f, "VarType: T_int");}
+	|T_bool								{fprintf(f, "VarType: T_bool");}
+	|T_string							{fprintf(f, "VarType: T_string");}
+	|T_uint								{fprintf(f, "VarType: T_uint");}
+	|T_uint16							{fprintf(f, "VarType: T_uint16");}
+	|T_uint32							{fprintf(f, "VarType: T_uint32");}
+	|T_uint64							{fprintf(f, "VarType: T_uint64");}
+	|T_uintptr							{fprintf(f, "VarType: T_uintptr");}
+	|T_float32							{fprintf(f, "VarType: T_float32");}
+	|T_float64							{fprintf(f, "VarType: T_float64");}
+	|T_complex64						{fprintf(f, "VarType: T_complex64");}
+	|T_complex128						{fprintf(f, "VarType: T_complex128");}
+	;
+
 Type:
     LiteralType							{fprintf(f, "Type: LiteralType \n");}
     | OperandName						{fprintf(f, "Type: OperandName \n");}
+    |VarType							{fprintf(f, "Type: VarType \n");}
     ;
 
 Operand:
-    Literal							{fprintf(f, "Operand: Literal \n");}
+    Literal								{fprintf(f, "Operand: Literal \n");}
     | OperandName						{fprintf(f, "Operand: OperandName \n");}
-    | M_lparan Expression M_rparan				{fprintf(f, "Operand: M_lparan Expression M_rparan\n");}
+    | M_lparan Expression M_rparan		{fprintf(f, "Operand: M_lparan Expression M_rparan\n");}
     ;
 
 OperandName:
