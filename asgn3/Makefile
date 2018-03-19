@@ -2,7 +2,7 @@ default : program
 program : src/lexer.l src/lexer.y 
 	lex src/lexer.l
 	yacc -d src/lexer.y
-	gcc lex.yy.c y.tab.c -o bin/parser	
+	gcc lex.yy.c y.tab.c -o bin/parser 2>/dev/null
 
 clean : 
 	rm Rules.txt
