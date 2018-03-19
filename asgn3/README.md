@@ -3,10 +3,10 @@
 _____________________________________________________________
 
 To build and run our assignment, please follow the following steps :
-–cd asgn3
-–make
-–bin/parser test/test1.c (to execute the first test-case file test1.c)
-–firefox test1.htm          (To run test1, similarly change test1 to the desired file you want to run)
+1. cd asgn3               (If not already in asgn2, otherwise ignore this step.)
+2. make
+3. bin/parser test/test1.go             (To run test1, similarly change test1 to the desired file you want to run)
+4. firefox test1.html
 
 About the current parser build:
 1. We could not implement class (OOP) in our current parser build because it was giving a lot of reduce-reduce errors.
