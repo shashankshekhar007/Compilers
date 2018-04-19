@@ -1,0 +1,17 @@
+array,arr1,100
+input,n
+=,i,0
+=,sum,1
+ifgoto,=,i,n,l1
+input,t
+arr1,arr,i,t
++,i,i,1
+jump,5
+=,i,0
+if,eq,i,n,17
+=arr,t,arr,i
+print,t
++,sum,sum,t
++,i,i,1
+jump,11
+print,sum

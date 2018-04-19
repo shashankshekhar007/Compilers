@@ -1,0 +1,5415 @@
+Terminals unused in grammar
+
+   Single_line_comment
+   Multi_line_comment
+   Key_case
+   Key_const
+   Key_default
+   Key_fallthrough
+   Key_interface
+   Key_range
+   Key_select
+   Key_switch
+   Key_class
+   Key_private
+   Key_protected
+   Key_public
+   Key_static
+   Key_try
+   Key_catch
+   Key_finally
+   M_question
+   M_doublequotes
+   M_singlequotes
+   M_underscore
+
+
+State 6 conflicts: 1 shift/reduce
+State 12 conflicts: 3 shift/reduce
+State 116 conflicts: 5 shift/reduce
+State 126 conflicts: 1 shift/reduce
+State 134 conflicts: 1 shift/reduce
+State 192 conflicts: 1 shift/reduce
+State 227 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: SourceFile $end
+
+    1 SourceFile: PackageClause M_semicolon ImportDeclList TopLevelDeclList
+
+    2 Block: M_lcurly OPENB StatementList CLOSEB M_rcurly
+
+    3 OPENB: %empty
+
+    4 CLOSEB: %empty
+
+    5 BrkBlk: %empty
+
+    6 BrkBlkEnd: %empty
+
+    7 StatementList: StatementList Statement M_semicolon
+    8              | Statement M_semicolon
+
+    9 Statement: Declaration
+   10          | LabeledStmt
+   11          | SimpleStmt
+   12          | ReturnStmt
+   13          | BreakStmt
+   14          | ContinueStmt
+   15          | Block
+   16          | if_stmt
+   17          | ForStmt
+
+   18 SimpleStmt: EmptyStmt
+   19           | ExpressionStmt
+   20           | IncDecStmt
+   21           | Assignment
+   22           | ShortVarDecl
+
+   23 EmptyStmt: %empty
+
+   24 ExpressionStmt: Expression
+
+   25 IncDecStmt: Expression Op_unary_add
+   26           | Expression Op_unary_sub
+
+   27 Assignment: ExpressionList ASN_OP ExpressionList
+
+   28 ASN_OP: Op_AddAssign
+   29       | Op_SubAssign
+   30       | Op_unary_or_assign
+   31       | Op_unary_and_assign
+   32       | Op_MultAssign
+   33       | Op_DivAssign
+   34       | Op_ModAssign
+
+   35 ShortVarDecl: ExpressionList Op_assign ExpressionList
+
+   36 VarDecl: Key_var VarSpec
+
+   37 VarSpec: IdentifierList Type
+   38        | IdentifierList ArrayType
+   39        | IdentifierList Type ASN_OP ExpressionList
+   40        | IdentifierList ASN_OP ExpressionList
+
+   41 Declaration: TypeDecl
+   42            | VarDecl
+
+   43 $@1: %empty
+
+   44 FunctionDecl: Key_func Identifier $@1 OPENB Signature Block CLOSEB
+
+   45 Signature: Parameters
+   46          | Parameters Result
+
+   47 Result: M_lparan TypeList M_rparan
+   48       | Type
+
+   49 Parameters: M_lparan M_rparan
+   50           | M_lparan ParameterList M_rparan
+   51           | M_lparan ParameterList M_comma M_rparan
+
+   52 ParameterList: ParameterDecl
+   53              | ParameterList M_comma ParameterDecl
+
+   54 ParameterDecl: IdentifierList Type
+
+   55 TypeList: TypeList M_comma Type
+   56         | Type
+
+   57 IdentifierList: Identifier
+   58               | IdentifierList M_comma Identifier
+
+   59 MethodDecl: Key_func Receiver Identifier Signature
+
+   60 Receiver: Parameters
+
+   61 TopLevelDeclList: TopLevelDeclList TopLevelDecl M_semicolon
+   62                 | TopLevelDecl M_semicolon
+
+   63 CompositeLit: LiteralType LiteralValue
+
+   64 LiteralType: StructType
+   65            | PointerType
+   66            | M_lsqbracket DOTS M_rsqbracket Operand
+   67            | SliceType
+   68            | MapType
+
+   69 VarType: T_int16
+   70        | T_int8
+   71        | T_int32
+   72        | T_int64
+   73        | T_int
+   74        | T_bool
+   75        | T_string
+   76        | T_uint
+   77        | T_uint16
+   78        | T_uint32
+   79        | T_uint64
+   80        | T_uintptr
+   81        | T_float32
+   82        | T_float64
+   83        | T_complex64
+   84        | T_complex128
+
+   85 Type: LiteralType
+   86     | OperandName
+   87     | VarType
+
+   88 Operand: Literal
+   89        | OperandName
+   90        | M_lparan Expression M_rparan
+
+   91 OperandName: Identifier
+
+   92 LiteralValue: M_lcurly M_rcurly
+   93             | M_semicolon M_rcurly
+   94             | M_lcurly ElementList M_rcurly
+   95             | M_semicolon ElementList M_rcurly
+   96             | M_lcurly ElementList M_comma M_rcurly
+   97             | M_semicolon ElementList M_comma M_rcurly
+
+   98 SliceType: M_lsqbracket M_rsqbracket Type
+
+   99 ElementList: KeyedElement
+  100            | ElementList M_comma KeyedElement
+
+  101 KeyedElement: Element
+  102             | Key M_colon Element
+
+  103 Key: Expression
+  104    | LiteralValue
+
+  105 Element: Expression
+  106        | LiteralValue
+
+  107 TopLevelDecl: Declaration
+  108             | FunctionDecl
+  109             | MethodDecl
+
+  110 LabeledStmt: Identifier M_colon Statement
+
+  111 ReturnStmt: Key_return
+  112           | Key_return ExpressionList
+
+  113 BreakStmt: Key_break
+  114          | Key_break Identifier
+
+  115 ContinueStmt: Key_continue
+  116             | Key_continue Identifier
+
+  117 if_stmt: Key_if Expression OPENB Block elif_test_suite
+  118        | Key_if Expression OPENB Block elif_test_suite Key_else CLOSEB Block
+
+  119 elif_test_suite: %empty
+  120                | elif_test_suite Key_elif Expression OPENB Block
+
+  121 ForStmt: Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB
+
+  122 Expression: Expression1
+
+  123 Expression1: Expression1 Op_relational_or Expression2
+  124            | Expression2
+
+  125 Expression2: Expression2 Op_relational_and Expression3
+  126            | Expression3
+
+  127 Expression3: Expression3 REL_OP Expression4
+  128            | Expression4
+
+  129 Expression4: Expression4 Op_unary_or Expression5
+  130            | Expression4 Op_add Expression5
+  131            | Expression4 Op_sub Expression5
+  132            | Expression5
+
+  133 Expression5: Expression5 MUL_OP PrimaryExpr
+  134            | UnaryExpr
+
+  135 REL_OP: Op_equality
+  136       | Op_not_equal
+  137       | Op_less
+  138       | Op_greater
+  139       | Op_greater_eq
+  140       | Op_less_eq
+
+  141 MUL_OP: Op_mult
+  142       | Op_divide
+  143       | Op_mod
+  144       | Op_less_less
+  145       | Op_greater_greater
+  146       | Op_unary_and
+
+  147 UnaryExpr: PrimaryExpr
+  148          | UnaryOp PrimaryExpr
+
+  149 PrimaryExpr: Operand
+  150            | PrimaryExpr Selector
+  151            | PrimaryExpr Index
+  152            | PrimaryExpr Slice
+  153            | PrimaryExpr TypeAssertion
+  154            | PrimaryExpr Arguments
+  155            | OperandName StructLiteral
+
+  156 StructLiteral: M_lcurly KeyValList M_rcurly
+
+  157 KeyValList: %empty
+  158           | Expression M_colon Expression
+  159           | Expression M_colon Expression M_comma KeyValList
+
+  160 Selector: M_dot Identifier
+
+  161 Index: M_lsqbracket Expression M_rsqbracket
+
+  162 Slice: M_lsqbracket M_colon M_rsqbracket
+  163      | M_lsqbracket M_colon Expression M_rsqbracket
+  164      | M_lsqbracket Expression M_colon M_rsqbracket
+  165      | M_lsqbracket Expression M_colon Expression M_rsqbracket
+  166      | M_lsqbracket M_colon Expression M_colon Expression M_rsqbracket
+  167      | M_lsqbracket Expression M_colon Expression M_colon Expression M_rsqbracket
+
+  168 TypeDecl: Key_type TypeSpec
+
+  169 TypeSpec: Identifier Type
+
+  170 TypeAssertion: M_dot M_lparan Type M_rparan
+
+  171 Arguments: M_lparan M_rparan
+  172          | M_lparan ExpressionList M_rparan
+  173          | M_lparan ExpressionList DOTS M_rparan
+
+  174 DOTS: M_dot M_dot M_dot
+
+  175 ExpressionList: Expression
+  176               | ExpressionList M_comma Expression
+
+  177 MapType: Key_map M_lsqbracket Type M_rsqbracket Type
+
+  178 StructType: Key_struct M_lcurly FieldDeclList M_rcurly
+  179           | Key_struct M_semicolon FieldDeclList M_rcurly
+  180           | Key_struct M_lcurly M_rcurly
+  181           | Key_struct M_semicolon M_rcurly
+
+  182 FieldDeclList: FieldDecl M_semicolon
+  183              | FieldDeclList FieldDecl M_semicolon
+
+  184 FieldDecl: IdentifierList Type String
+  185          | IdentifierList Type
+
+  186 PointerType: Op_mult Type
+
+  187 ArrayType: M_lsqbracket Expression M_rsqbracket Type
+
+  188 Literal: BasicLit
+  189        | CompositeLit
+
+  190 BasicLit: Int_lit
+  191         | Float_lit
+  192         | String
+  193         | Bool_true
+  194         | Bool_false
+  195         | Imaginary_lit
+
+  196 UnaryOp: Op_add
+  197        | Op_sub
+  198        | Op_unary_not
+  199        | Op_pow
+  200        | Op_mult
+  201        | Op_unary_and
+
+  202 String: String_lit
+
+  203 PackageClause: Key_package Identifier
+
+  204 ImportDeclList: %empty
+  205               | ImportDeclList ImportDecl M_semicolon
+  206               | ImportDecl M_semicolon
+
+  207 ImportDecl: Key_import M_lparan ImportSpecList M_rparan
+  208           | Key_import ImportSpec
+
+  209 ImportSpecList: %empty
+  210               | ImportSpecList ImportSpec M_semicolon
+  211               | ImportSpec M_semicolon
+
+  212 ImportSpec: Identifier ImportPath
+  213           | M_dot ImportPath
+  214           | ImportPath
+
+  215 ImportPath: String
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+T_int64 (258) 72
+Identifier (259) 44 57 58 59 91 110 114 116 160 169 203 212
+T_string (260) 75
+Op_add (261) 130 196
+Single_line_comment (262)
+Multi_line_comment (263)
+T_bool (264) 74
+T_int (265) 73
+T_int8 (266) 70
+T_int16 (267) 69
+T_int32 (268) 71
+T_uint (269) 76
+T_uint16 (270) 77
+T_uint32 (271) 78
+T_uint64 (272) 79
+T_uintptr (273) 80
+T_float32 (274) 81
+T_float64 (275) 82
+T_complex64 (276) 83
+T_complex128 (277) 84
+Key_break (278) 113 114
+Key_case (279)
+Key_const (280)
+Key_continue (281) 115 116
+Key_default (282)
+Key_else (283) 118
+Key_fallthrough (284)
+Key_for (285) 121
+Key_func (286) 44 59
+Key_if (287) 117 118
+Key_elif (288) 120
+Key_import (289) 207 208
+Key_interface (290)
+Key_map (291) 177
+Key_package (292) 203
+Key_range (293)
+Key_return (294) 111 112
+Key_select (295)
+Key_struct (296) 178 179 180 181
+Key_switch (297)
+Key_type (298) 168
+Key_var (299) 36
+Key_class (300)
+Key_private (301)
+Key_protected (302)
+Key_public (303)
+Key_static (304)
+Key_try (305)
+Key_catch (306)
+Key_finally (307)
+Imaginary_lit (308) 195
+Float_lit (309) 191
+Int_lit (310) 190
+String_lit (311) 202
+Op_AddAssign (312) 28
+Op_SubAssign (313) 29
+Op_MultAssign (314) 32
+Op_DivAssign (315) 33
+Op_ModAssign (316) 34
+Op_unary_or_assign (317) 30
+Op_unary_and_assign (318) 31
+Op_greater_greater (319) 145
+Op_less_less (320) 144
+Op_greater (321) 138
+Op_less (322) 137
+Op_greater_eq (323) 139
+Op_less_eq (324) 140
+Op_not_equal (325) 136
+Op_equality (326) 135
+Op_assign (327) 35
+Op_unary_add (328) 25
+Op_unary_sub (329) 26
+Op_sub (330) 131 197
+Op_mult (331) 141 186 200
+Op_divide (332) 142
+Op_mod (333) 143
+Op_pow (334) 199
+Op_relational_and (335) 125
+Op_relational_or (336) 123
+Op_unary_and (337) 146 201
+Op_unary_or (338) 129
+Op_unary_not (339) 198
+M_question (340)
+M_semicolon (341) 1 7 8 61 62 93 95 97 121 179 181 182 183 205 206
+    210 211
+M_colon (342) 102 110 158 159 162 163 164 165 166 167
+M_comma (343) 51 53 55 58 96 97 100 159 176
+M_lcurly (344) 2 92 94 96 156 178 180
+M_rcurly (345) 2 92 93 94 95 96 97 156 178 179 180 181
+M_lparan (346) 47 49 50 51 90 170 171 172 173 207
+M_rparan (347) 47 49 50 51 90 170 171 172 173 207
+M_lsqbracket (348) 66 98 161 162 163 164 165 166 167 177 187
+M_rsqbracket (349) 66 98 161 162 163 164 165 166 167 177 187
+M_dot (350) 160 170 174 213
+M_doublequotes (351)
+M_singlequotes (352)
+M_underscore (353)
+Bool_true (354) 193
+Bool_false (355) 194
+
+
+Nonterminals, with rules where they appear
+
+$accept (101)
+    on left: 0
+SourceFile (102)
+    on left: 1, on right: 0
+Block (103)
+    on left: 2, on right: 15 44 117 118 120 121
+OPENB (104)
+    on left: 3, on right: 2 44 117 118 120 121
+CLOSEB (105)
+    on left: 4, on right: 2 44 118 121
+BrkBlk (106)
+    on left: 5, on right: 121
+BrkBlkEnd (107)
+    on left: 6, on right: 121
+StatementList (108)
+    on left: 7 8, on right: 2 7
+Statement (109)
+    on left: 9 10 11 12 13 14 15 16 17, on right: 7 8 110
+SimpleStmt (110)
+    on left: 18 19 20 21 22, on right: 11 121
+EmptyStmt (111)
+    on left: 23, on right: 18
+ExpressionStmt (112)
+    on left: 24, on right: 19 121
+IncDecStmt (113)
+    on left: 25 26, on right: 20
+Assignment (114)
+    on left: 27, on right: 21
+ASN_OP (115)
+    on left: 28 29 30 31 32 33 34, on right: 27 39 40
+ShortVarDecl (116)
+    on left: 35, on right: 22
+VarDecl (117)
+    on left: 36, on right: 42
+VarSpec (118)
+    on left: 37 38 39 40, on right: 36
+Declaration (119)
+    on left: 41 42, on right: 9 107
+FunctionDecl (120)
+    on left: 44, on right: 108
+$@1 (121)
+    on left: 43, on right: 44
+Signature (122)
+    on left: 45 46, on right: 44 59
+Result (123)
+    on left: 47 48, on right: 46
+Parameters (124)
+    on left: 49 50 51, on right: 45 46 60
+ParameterList (125)
+    on left: 52 53, on right: 50 51 53
+ParameterDecl (126)
+    on left: 54, on right: 52 53
+TypeList (127)
+    on left: 55 56, on right: 47 55
+IdentifierList (128)
+    on left: 57 58, on right: 37 38 39 40 54 58 184 185
+MethodDecl (129)
+    on left: 59, on right: 109
+Receiver (130)
+    on left: 60, on right: 59
+TopLevelDeclList (131)
+    on left: 61 62, on right: 1 61
+CompositeLit (132)
+    on left: 63, on right: 189
+LiteralType (133)
+    on left: 64 65 66 67 68, on right: 63 85
+VarType (134)
+    on left: 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84, on right:
+    87
+Type (135)
+    on left: 85 86 87, on right: 37 39 48 54 55 56 98 169 170 177 184
+    185 186 187
+Operand (136)
+    on left: 88 89 90, on right: 66 149
+OperandName (137)
+    on left: 91, on right: 86 89 155
+LiteralValue (138)
+    on left: 92 93 94 95 96 97, on right: 63 104 106
+SliceType (139)
+    on left: 98, on right: 67
+ElementList (140)
+    on left: 99 100, on right: 94 95 96 97 100
+KeyedElement (141)
+    on left: 101 102, on right: 99 100
+Key (142)
+    on left: 103 104, on right: 102
+Element (143)
+    on left: 105 106, on right: 101 102
+TopLevelDecl (144)
+    on left: 107 108 109, on right: 61 62
+LabeledStmt (145)
+    on left: 110, on right: 10
+ReturnStmt (146)
+    on left: 111 112, on right: 12
+BreakStmt (147)
+    on left: 113 114, on right: 13
+ContinueStmt (148)
+    on left: 115 116, on right: 14
+if_stmt (149)
+    on left: 117 118, on right: 16
+elif_test_suite (150)
+    on left: 119 120, on right: 117 118 120
+ForStmt (151)
+    on left: 121, on right: 17
+Expression (152)
+    on left: 122, on right: 24 25 26 90 103 105 117 118 120 158 159
+    161 163 164 165 166 167 175 176 187
+Expression1 (153)
+    on left: 123 124, on right: 122 123
+Expression2 (154)
+    on left: 125 126, on right: 123 124 125
+Expression3 (155)
+    on left: 127 128, on right: 125 126 127
+Expression4 (156)
+    on left: 129 130 131 132, on right: 127 128 129 130 131
+Expression5 (157)
+    on left: 133 134, on right: 129 130 131 132 133
+REL_OP (158)
+    on left: 135 136 137 138 139 140, on right: 127
+MUL_OP (159)
+    on left: 141 142 143 144 145 146, on right: 133
+UnaryExpr (160)
+    on left: 147 148, on right: 134
+PrimaryExpr (161)
+    on left: 149 150 151 152 153 154 155, on right: 133 147 148 150
+    151 152 153 154
+StructLiteral (162)
+    on left: 156, on right: 155
+KeyValList (163)
+    on left: 157 158 159, on right: 156 159
+Selector (164)
+    on left: 160, on right: 150
+Index (165)
+    on left: 161, on right: 151
+Slice (166)
+    on left: 162 163 164 165 166 167, on right: 152
+TypeDecl (167)
+    on left: 168, on right: 41
+TypeSpec (168)
+    on left: 169, on right: 168
+TypeAssertion (169)
+    on left: 170, on right: 153
+Arguments (170)
+    on left: 171 172 173, on right: 154
+DOTS (171)
+    on left: 174, on right: 66 173
+ExpressionList (172)
+    on left: 175 176, on right: 27 35 39 40 112 172 173 176
+MapType (173)
+    on left: 177, on right: 68
+StructType (174)
+    on left: 178 179 180 181, on right: 64
+FieldDeclList (175)
+    on left: 182 183, on right: 178 179 183
+FieldDecl (176)
+    on left: 184 185, on right: 182 183
+PointerType (177)
+    on left: 186, on right: 65
+ArrayType (178)
+    on left: 187, on right: 38
+Literal (179)
+    on left: 188 189, on right: 88
+BasicLit (180)
+    on left: 190 191 192 193 194 195, on right: 188
+UnaryOp (181)
+    on left: 196 197 198 199 200 201, on right: 148
+String (182)
+    on left: 202, on right: 184 192 215
+PackageClause (183)
+    on left: 203, on right: 1
+ImportDeclList (184)
+    on left: 204 205 206, on right: 1 205
+ImportDecl (185)
+    on left: 207 208, on right: 205 206
+ImportSpecList (186)
+    on left: 209 210 211, on right: 207 210
+ImportSpec (187)
+    on left: 212 213 214, on right: 208 210 211
+ImportPath (188)
+    on left: 215, on right: 212 213 214
+
+
+State 0
+
+    0 $accept: . SourceFile $end
+
+    Key_package  shift, and go to state 1
+
+    SourceFile     go to state 2
+    PackageClause  go to state 3
+
+
+State 1
+
+  203 PackageClause: Key_package . Identifier
+
+    Identifier  shift, and go to state 4
+
+
+State 2
+
+    0 $accept: SourceFile . $end
+
+    $end  shift, and go to state 5
+
+
+State 3
+
+    1 SourceFile: PackageClause . M_semicolon ImportDeclList TopLevelDeclList
+
+    M_semicolon  shift, and go to state 6
+
+
+State 4
+
+  203 PackageClause: Key_package Identifier .
+
+    $default  reduce using rule 203 (PackageClause)
+
+
+State 5
+
+    0 $accept: SourceFile $end .
+
+    $default  accept
+
+
+State 6
+
+    1 SourceFile: PackageClause M_semicolon . ImportDeclList TopLevelDeclList
+
+    Key_import  shift, and go to state 7
+
+    Key_import  [reduce using rule 204 (ImportDeclList)]
+    $default    reduce using rule 204 (ImportDeclList)
+
+    ImportDeclList  go to state 8
+    ImportDecl      go to state 9
+
+
+State 7
+
+  207 ImportDecl: Key_import . M_lparan ImportSpecList M_rparan
+  208           | Key_import . ImportSpec
+
+    Identifier  shift, and go to state 10
+    String_lit  shift, and go to state 11
+    M_lparan    shift, and go to state 12
+    M_dot       shift, and go to state 13
+
+    String      go to state 14
+    ImportSpec  go to state 15
+    ImportPath  go to state 16
+
+
+State 8
+
+    1 SourceFile: PackageClause M_semicolon ImportDeclList . TopLevelDeclList
+  205 ImportDeclList: ImportDeclList . ImportDecl M_semicolon
+
+    Key_func    shift, and go to state 17
+    Key_import  shift, and go to state 7
+    Key_type    shift, and go to state 18
+    Key_var     shift, and go to state 19
+
+    VarDecl           go to state 20
+    Declaration       go to state 21
+    FunctionDecl      go to state 22
+    MethodDecl        go to state 23
+    TopLevelDeclList  go to state 24
+    TopLevelDecl      go to state 25
+    TypeDecl          go to state 26
+    ImportDecl        go to state 27
+
+
+State 9
+
+  206 ImportDeclList: ImportDecl . M_semicolon
+
+    M_semicolon  shift, and go to state 28
+
+
+State 10
+
+  212 ImportSpec: Identifier . ImportPath
+
+    String_lit  shift, and go to state 11
+
+    String      go to state 14
+    ImportPath  go to state 29
+
+
+State 11
+
+  202 String: String_lit .
+
+    $default  reduce using rule 202 (String)
+
+
+State 12
+
+  207 ImportDecl: Key_import M_lparan . ImportSpecList M_rparan
+
+    Identifier  shift, and go to state 10
+    String_lit  shift, and go to state 11
+    M_dot       shift, and go to state 13
+
+    Identifier  [reduce using rule 209 (ImportSpecList)]
+    String_lit  [reduce using rule 209 (ImportSpecList)]
+    M_dot       [reduce using rule 209 (ImportSpecList)]
+    $default    reduce using rule 209 (ImportSpecList)
+
+    String          go to state 14
+    ImportSpecList  go to state 30
+    ImportSpec      go to state 31
+    ImportPath      go to state 16
+
+
+State 13
+
+  213 ImportSpec: M_dot . ImportPath
+
+    String_lit  shift, and go to state 11
+
+    String      go to state 14
+    ImportPath  go to state 32
+
+
+State 14
+
+  215 ImportPath: String .
+
+    $default  reduce using rule 215 (ImportPath)
+
+
+State 15
+
+  208 ImportDecl: Key_import ImportSpec .
+
+    $default  reduce using rule 208 (ImportDecl)
+
+
+State 16
+
+  214 ImportSpec: ImportPath .
+
+    $default  reduce using rule 214 (ImportSpec)
+
+
+State 17
+
+   44 FunctionDecl: Key_func . Identifier $@1 OPENB Signature Block CLOSEB
+   59 MethodDecl: Key_func . Receiver Identifier Signature
+
+    Identifier  shift, and go to state 33
+    M_lparan    shift, and go to state 34
+
+    Parameters  go to state 35
+    Receiver    go to state 36
+
+
+State 18
+
+  168 TypeDecl: Key_type . TypeSpec
+
+    Identifier  shift, and go to state 37
+
+    TypeSpec  go to state 38
+
+
+State 19
+
+   36 VarDecl: Key_var . VarSpec
+
+    Identifier  shift, and go to state 39
+
+    VarSpec         go to state 40
+    IdentifierList  go to state 41
+
+
+State 20
+
+   42 Declaration: VarDecl .
+
+    $default  reduce using rule 42 (Declaration)
+
+
+State 21
+
+  107 TopLevelDecl: Declaration .
+
+    $default  reduce using rule 107 (TopLevelDecl)
+
+
+State 22
+
+  108 TopLevelDecl: FunctionDecl .
+
+    $default  reduce using rule 108 (TopLevelDecl)
+
+
+State 23
+
+  109 TopLevelDecl: MethodDecl .
+
+    $default  reduce using rule 109 (TopLevelDecl)
+
+
+State 24
+
+    1 SourceFile: PackageClause M_semicolon ImportDeclList TopLevelDeclList .
+   61 TopLevelDeclList: TopLevelDeclList . TopLevelDecl M_semicolon
+
+    Key_func  shift, and go to state 17
+    Key_type  shift, and go to state 18
+    Key_var   shift, and go to state 19
+
+    $default  reduce using rule 1 (SourceFile)
+
+    VarDecl       go to state 20
+    Declaration   go to state 21
+    FunctionDecl  go to state 22
+    MethodDecl    go to state 23
+    TopLevelDecl  go to state 42
+    TypeDecl      go to state 26
+
+
+State 25
+
+   62 TopLevelDeclList: TopLevelDecl . M_semicolon
+
+    M_semicolon  shift, and go to state 43
+
+
+State 26
+
+   41 Declaration: TypeDecl .
+
+    $default  reduce using rule 41 (Declaration)
+
+
+State 27
+
+  205 ImportDeclList: ImportDeclList ImportDecl . M_semicolon
+
+    M_semicolon  shift, and go to state 44
+
+
+State 28
+
+  206 ImportDeclList: ImportDecl M_semicolon .
+
+    $default  reduce using rule 206 (ImportDeclList)
+
+
+State 29
+
+  212 ImportSpec: Identifier ImportPath .
+
+    $default  reduce using rule 212 (ImportSpec)
+
+
+State 30
+
+  207 ImportDecl: Key_import M_lparan ImportSpecList . M_rparan
+  210 ImportSpecList: ImportSpecList . ImportSpec M_semicolon
+
+    Identifier  shift, and go to state 10
+    String_lit  shift, and go to state 11
+    M_rparan    shift, and go to state 45
+    M_dot       shift, and go to state 13
+
+    String      go to state 14
+    ImportSpec  go to state 46
+    ImportPath  go to state 16
+
+
+State 31
+
+  211 ImportSpecList: ImportSpec . M_semicolon
+
+    M_semicolon  shift, and go to state 47
+
+
+State 32
+
+  213 ImportSpec: M_dot ImportPath .
+
+    $default  reduce using rule 213 (ImportSpec)
+
+
+State 33
+
+   44 FunctionDecl: Key_func Identifier . $@1 OPENB Signature Block CLOSEB
+
+    $default  reduce using rule 43 ($@1)
+
+    $@1  go to state 48
+
+
+State 34
+
+   49 Parameters: M_lparan . M_rparan
+   50           | M_lparan . ParameterList M_rparan
+   51           | M_lparan . ParameterList M_comma M_rparan
+
+    Identifier  shift, and go to state 39
+    M_rparan    shift, and go to state 49
+
+    ParameterList   go to state 50
+    ParameterDecl   go to state 51
+    IdentifierList  go to state 52
+
+
+State 35
+
+   60 Receiver: Parameters .
+
+    $default  reduce using rule 60 (Receiver)
+
+
+State 36
+
+   59 MethodDecl: Key_func Receiver . Identifier Signature
+
+    Identifier  shift, and go to state 53
+
+
+State 37
+
+  169 TypeSpec: Identifier . Type
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lsqbracket  shift, and go to state 74
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 77
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 38
+
+  168 TypeDecl: Key_type TypeSpec .
+
+    $default  reduce using rule 168 (TypeDecl)
+
+
+State 39
+
+   57 IdentifierList: Identifier .
+
+    $default  reduce using rule 57 (IdentifierList)
+
+
+State 40
+
+   36 VarDecl: Key_var VarSpec .
+
+    $default  reduce using rule 36 (VarDecl)
+
+
+State 41
+
+   37 VarSpec: IdentifierList . Type
+   38        | IdentifierList . ArrayType
+   39        | IdentifierList . Type ASN_OP ExpressionList
+   40        | IdentifierList . ASN_OP ExpressionList
+   58 IdentifierList: IdentifierList . M_comma Identifier
+
+    T_int64              shift, and go to state 54
+    Identifier           shift, and go to state 55
+    T_string             shift, and go to state 56
+    T_bool               shift, and go to state 57
+    T_int                shift, and go to state 58
+    T_int8               shift, and go to state 59
+    T_int16              shift, and go to state 60
+    T_int32              shift, and go to state 61
+    T_uint               shift, and go to state 62
+    T_uint16             shift, and go to state 63
+    T_uint32             shift, and go to state 64
+    T_uint64             shift, and go to state 65
+    T_uintptr            shift, and go to state 66
+    T_float32            shift, and go to state 67
+    T_float64            shift, and go to state 68
+    T_complex64          shift, and go to state 69
+    T_complex128         shift, and go to state 70
+    Key_map              shift, and go to state 71
+    Key_struct           shift, and go to state 72
+    Op_AddAssign         shift, and go to state 83
+    Op_SubAssign         shift, and go to state 84
+    Op_MultAssign        shift, and go to state 85
+    Op_DivAssign         shift, and go to state 86
+    Op_ModAssign         shift, and go to state 87
+    Op_unary_or_assign   shift, and go to state 88
+    Op_unary_and_assign  shift, and go to state 89
+    Op_mult              shift, and go to state 73
+    M_comma              shift, and go to state 90
+    M_lsqbracket         shift, and go to state 91
+
+    ASN_OP       go to state 92
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 93
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+    ArrayType    go to state 94
+
+
+State 42
+
+   61 TopLevelDeclList: TopLevelDeclList TopLevelDecl . M_semicolon
+
+    M_semicolon  shift, and go to state 95
+
+
+State 43
+
+   62 TopLevelDeclList: TopLevelDecl M_semicolon .
+
+    $default  reduce using rule 62 (TopLevelDeclList)
+
+
+State 44
+
+  205 ImportDeclList: ImportDeclList ImportDecl M_semicolon .
+
+    $default  reduce using rule 205 (ImportDeclList)
+
+
+State 45
+
+  207 ImportDecl: Key_import M_lparan ImportSpecList M_rparan .
+
+    $default  reduce using rule 207 (ImportDecl)
+
+
+State 46
+
+  210 ImportSpecList: ImportSpecList ImportSpec . M_semicolon
+
+    M_semicolon  shift, and go to state 96
+
+
+State 47
+
+  211 ImportSpecList: ImportSpec M_semicolon .
+
+    $default  reduce using rule 211 (ImportSpecList)
+
+
+State 48
+
+   44 FunctionDecl: Key_func Identifier $@1 . OPENB Signature Block CLOSEB
+
+    $default  reduce using rule 3 (OPENB)
+
+    OPENB  go to state 97
+
+
+State 49
+
+   49 Parameters: M_lparan M_rparan .
+
+    $default  reduce using rule 49 (Parameters)
+
+
+State 50
+
+   50 Parameters: M_lparan ParameterList . M_rparan
+   51           | M_lparan ParameterList . M_comma M_rparan
+   53 ParameterList: ParameterList . M_comma ParameterDecl
+
+    M_comma   shift, and go to state 98
+    M_rparan  shift, and go to state 99
+
+
+State 51
+
+   52 ParameterList: ParameterDecl .
+
+    $default  reduce using rule 52 (ParameterList)
+
+
+State 52
+
+   54 ParameterDecl: IdentifierList . Type
+   58 IdentifierList: IdentifierList . M_comma Identifier
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_comma       shift, and go to state 90
+    M_lsqbracket  shift, and go to state 74
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 100
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 53
+
+   59 MethodDecl: Key_func Receiver Identifier . Signature
+
+    M_lparan  shift, and go to state 34
+
+    Signature   go to state 101
+    Parameters  go to state 102
+
+
+State 54
+
+   72 VarType: T_int64 .
+
+    $default  reduce using rule 72 (VarType)
+
+
+State 55
+
+   91 OperandName: Identifier .
+
+    $default  reduce using rule 91 (OperandName)
+
+
+State 56
+
+   75 VarType: T_string .
+
+    $default  reduce using rule 75 (VarType)
+
+
+State 57
+
+   74 VarType: T_bool .
+
+    $default  reduce using rule 74 (VarType)
+
+
+State 58
+
+   73 VarType: T_int .
+
+    $default  reduce using rule 73 (VarType)
+
+
+State 59
+
+   70 VarType: T_int8 .
+
+    $default  reduce using rule 70 (VarType)
+
+
+State 60
+
+   69 VarType: T_int16 .
+
+    $default  reduce using rule 69 (VarType)
+
+
+State 61
+
+   71 VarType: T_int32 .
+
+    $default  reduce using rule 71 (VarType)
+
+
+State 62
+
+   76 VarType: T_uint .
+
+    $default  reduce using rule 76 (VarType)
+
+
+State 63
+
+   77 VarType: T_uint16 .
+
+    $default  reduce using rule 77 (VarType)
+
+
+State 64
+
+   78 VarType: T_uint32 .
+
+    $default  reduce using rule 78 (VarType)
+
+
+State 65
+
+   79 VarType: T_uint64 .
+
+    $default  reduce using rule 79 (VarType)
+
+
+State 66
+
+   80 VarType: T_uintptr .
+
+    $default  reduce using rule 80 (VarType)
+
+
+State 67
+
+   81 VarType: T_float32 .
+
+    $default  reduce using rule 81 (VarType)
+
+
+State 68
+
+   82 VarType: T_float64 .
+
+    $default  reduce using rule 82 (VarType)
+
+
+State 69
+
+   83 VarType: T_complex64 .
+
+    $default  reduce using rule 83 (VarType)
+
+
+State 70
+
+   84 VarType: T_complex128 .
+
+    $default  reduce using rule 84 (VarType)
+
+
+State 71
+
+  177 MapType: Key_map . M_lsqbracket Type M_rsqbracket Type
+
+    M_lsqbracket  shift, and go to state 103
+
+
+State 72
+
+  178 StructType: Key_struct . M_lcurly FieldDeclList M_rcurly
+  179           | Key_struct . M_semicolon FieldDeclList M_rcurly
+  180           | Key_struct . M_lcurly M_rcurly
+  181           | Key_struct . M_semicolon M_rcurly
+
+    M_semicolon  shift, and go to state 104
+    M_lcurly     shift, and go to state 105
+
+
+State 73
+
+  186 PointerType: Op_mult . Type
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lsqbracket  shift, and go to state 74
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 106
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 74
+
+   66 LiteralType: M_lsqbracket . DOTS M_rsqbracket Operand
+   98 SliceType: M_lsqbracket . M_rsqbracket Type
+
+    M_rsqbracket  shift, and go to state 107
+    M_dot         shift, and go to state 108
+
+    DOTS  go to state 109
+
+
+State 75
+
+   85 Type: LiteralType .
+
+    $default  reduce using rule 85 (Type)
+
+
+State 76
+
+   87 Type: VarType .
+
+    $default  reduce using rule 87 (Type)
+
+
+State 77
+
+  169 TypeSpec: Identifier Type .
+
+    $default  reduce using rule 169 (TypeSpec)
+
+
+State 78
+
+   86 Type: OperandName .
+
+    $default  reduce using rule 86 (Type)
+
+
+State 79
+
+   67 LiteralType: SliceType .
+
+    $default  reduce using rule 67 (LiteralType)
+
+
+State 80
+
+   68 LiteralType: MapType .
+
+    $default  reduce using rule 68 (LiteralType)
+
+
+State 81
+
+   64 LiteralType: StructType .
+
+    $default  reduce using rule 64 (LiteralType)
+
+
+State 82
+
+   65 LiteralType: PointerType .
+
+    $default  reduce using rule 65 (LiteralType)
+
+
+State 83
+
+   28 ASN_OP: Op_AddAssign .
+
+    $default  reduce using rule 28 (ASN_OP)
+
+
+State 84
+
+   29 ASN_OP: Op_SubAssign .
+
+    $default  reduce using rule 29 (ASN_OP)
+
+
+State 85
+
+   32 ASN_OP: Op_MultAssign .
+
+    $default  reduce using rule 32 (ASN_OP)
+
+
+State 86
+
+   33 ASN_OP: Op_DivAssign .
+
+    $default  reduce using rule 33 (ASN_OP)
+
+
+State 87
+
+   34 ASN_OP: Op_ModAssign .
+
+    $default  reduce using rule 34 (ASN_OP)
+
+
+State 88
+
+   30 ASN_OP: Op_unary_or_assign .
+
+    $default  reduce using rule 30 (ASN_OP)
+
+
+State 89
+
+   31 ASN_OP: Op_unary_and_assign .
+
+    $default  reduce using rule 31 (ASN_OP)
+
+
+State 90
+
+   58 IdentifierList: IdentifierList M_comma . Identifier
+
+    Identifier  shift, and go to state 110
+
+
+State 91
+
+   66 LiteralType: M_lsqbracket . DOTS M_rsqbracket Operand
+   98 SliceType: M_lsqbracket . M_rsqbracket Type
+  187 ArrayType: M_lsqbracket . Expression M_rsqbracket Type
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    M_rsqbracket   shift, and go to state 107
+    M_dot          shift, and go to state 108
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 127
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    DOTS          go to state 109
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 92
+
+   40 VarSpec: IdentifierList ASN_OP . ExpressionList
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    Expression      go to state 139
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    ExpressionList  go to state 140
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 93
+
+   37 VarSpec: IdentifierList Type .
+   39        | IdentifierList Type . ASN_OP ExpressionList
+
+    Op_AddAssign         shift, and go to state 83
+    Op_SubAssign         shift, and go to state 84
+    Op_MultAssign        shift, and go to state 85
+    Op_DivAssign         shift, and go to state 86
+    Op_ModAssign         shift, and go to state 87
+    Op_unary_or_assign   shift, and go to state 88
+    Op_unary_and_assign  shift, and go to state 89
+
+    $default  reduce using rule 37 (VarSpec)
+
+    ASN_OP  go to state 141
+
+
+State 94
+
+   38 VarSpec: IdentifierList ArrayType .
+
+    $default  reduce using rule 38 (VarSpec)
+
+
+State 95
+
+   61 TopLevelDeclList: TopLevelDeclList TopLevelDecl M_semicolon .
+
+    $default  reduce using rule 61 (TopLevelDeclList)
+
+
+State 96
+
+  210 ImportSpecList: ImportSpecList ImportSpec M_semicolon .
+
+    $default  reduce using rule 210 (ImportSpecList)
+
+
+State 97
+
+   44 FunctionDecl: Key_func Identifier $@1 OPENB . Signature Block CLOSEB
+
+    M_lparan  shift, and go to state 34
+
+    Signature   go to state 142
+    Parameters  go to state 102
+
+
+State 98
+
+   51 Parameters: M_lparan ParameterList M_comma . M_rparan
+   53 ParameterList: ParameterList M_comma . ParameterDecl
+
+    Identifier  shift, and go to state 39
+    M_rparan    shift, and go to state 143
+
+    ParameterDecl   go to state 144
+    IdentifierList  go to state 52
+
+
+State 99
+
+   50 Parameters: M_lparan ParameterList M_rparan .
+
+    $default  reduce using rule 50 (Parameters)
+
+
+State 100
+
+   54 ParameterDecl: IdentifierList Type .
+
+    $default  reduce using rule 54 (ParameterDecl)
+
+
+State 101
+
+   59 MethodDecl: Key_func Receiver Identifier Signature .
+
+    $default  reduce using rule 59 (MethodDecl)
+
+
+State 102
+
+   45 Signature: Parameters .
+   46          | Parameters . Result
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lparan      shift, and go to state 145
+    M_lsqbracket  shift, and go to state 74
+
+    $default  reduce using rule 45 (Signature)
+
+    Result       go to state 146
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 147
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 103
+
+  177 MapType: Key_map M_lsqbracket . Type M_rsqbracket Type
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lsqbracket  shift, and go to state 74
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 148
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 104
+
+  179 StructType: Key_struct M_semicolon . FieldDeclList M_rcurly
+  181           | Key_struct M_semicolon . M_rcurly
+
+    Identifier  shift, and go to state 39
+    M_rcurly    shift, and go to state 149
+
+    IdentifierList  go to state 150
+    FieldDeclList   go to state 151
+    FieldDecl       go to state 152
+
+
+State 105
+
+  178 StructType: Key_struct M_lcurly . FieldDeclList M_rcurly
+  180           | Key_struct M_lcurly . M_rcurly
+
+    Identifier  shift, and go to state 39
+    M_rcurly    shift, and go to state 153
+
+    IdentifierList  go to state 150
+    FieldDeclList   go to state 154
+    FieldDecl       go to state 152
+
+
+State 106
+
+  186 PointerType: Op_mult Type .
+
+    $default  reduce using rule 186 (PointerType)
+
+
+State 107
+
+   98 SliceType: M_lsqbracket M_rsqbracket . Type
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lsqbracket  shift, and go to state 74
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 155
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 108
+
+  174 DOTS: M_dot . M_dot M_dot
+
+    M_dot  shift, and go to state 156
+
+
+State 109
+
+   66 LiteralType: M_lsqbracket DOTS . M_rsqbracket Operand
+
+    M_rsqbracket  shift, and go to state 157
+
+
+State 110
+
+   58 IdentifierList: IdentifierList M_comma Identifier .
+
+    $default  reduce using rule 58 (IdentifierList)
+
+
+State 111
+
+  196 UnaryOp: Op_add .
+
+    $default  reduce using rule 196 (UnaryOp)
+
+
+State 112
+
+  195 BasicLit: Imaginary_lit .
+
+    $default  reduce using rule 195 (BasicLit)
+
+
+State 113
+
+  191 BasicLit: Float_lit .
+
+    $default  reduce using rule 191 (BasicLit)
+
+
+State 114
+
+  190 BasicLit: Int_lit .
+
+    $default  reduce using rule 190 (BasicLit)
+
+
+State 115
+
+  197 UnaryOp: Op_sub .
+
+    $default  reduce using rule 197 (UnaryOp)
+
+
+State 116
+
+  186 PointerType: Op_mult . Type
+  200 UnaryOp: Op_mult .
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lsqbracket  shift, and go to state 74
+
+    Identifier    [reduce using rule 200 (UnaryOp)]
+    Key_map       [reduce using rule 200 (UnaryOp)]
+    Key_struct    [reduce using rule 200 (UnaryOp)]
+    Op_mult       [reduce using rule 200 (UnaryOp)]
+    M_lsqbracket  [reduce using rule 200 (UnaryOp)]
+    $default      reduce using rule 200 (UnaryOp)
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 106
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 117
+
+  199 UnaryOp: Op_pow .
+
+    $default  reduce using rule 199 (UnaryOp)
+
+
+State 118
+
+  201 UnaryOp: Op_unary_and .
+
+    $default  reduce using rule 201 (UnaryOp)
+
+
+State 119
+
+  198 UnaryOp: Op_unary_not .
+
+    $default  reduce using rule 198 (UnaryOp)
+
+
+State 120
+
+   90 Operand: M_lparan . Expression M_rparan
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 158
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 121
+
+  193 BasicLit: Bool_true .
+
+    $default  reduce using rule 193 (BasicLit)
+
+
+State 122
+
+  194 BasicLit: Bool_false .
+
+    $default  reduce using rule 194 (BasicLit)
+
+
+State 123
+
+  189 Literal: CompositeLit .
+
+    $default  reduce using rule 189 (Literal)
+
+
+State 124
+
+   63 CompositeLit: LiteralType . LiteralValue
+
+    M_semicolon  shift, and go to state 159
+    M_lcurly     shift, and go to state 160
+
+    LiteralValue  go to state 161
+
+
+State 125
+
+  149 PrimaryExpr: Operand .
+
+    $default  reduce using rule 149 (PrimaryExpr)
+
+
+State 126
+
+   89 Operand: OperandName .
+  155 PrimaryExpr: OperandName . StructLiteral
+
+    M_lcurly  shift, and go to state 162
+
+    M_lcurly  [reduce using rule 89 (Operand)]
+    $default  reduce using rule 89 (Operand)
+
+    StructLiteral  go to state 163
+
+
+State 127
+
+  187 ArrayType: M_lsqbracket Expression . M_rsqbracket Type
+
+    M_rsqbracket  shift, and go to state 164
+
+
+State 128
+
+  122 Expression: Expression1 .
+  123 Expression1: Expression1 . Op_relational_or Expression2
+
+    Op_relational_or  shift, and go to state 165
+
+    $default  reduce using rule 122 (Expression)
+
+
+State 129
+
+  124 Expression1: Expression2 .
+  125 Expression2: Expression2 . Op_relational_and Expression3
+
+    Op_relational_and  shift, and go to state 166
+
+    $default  reduce using rule 124 (Expression1)
+
+
+State 130
+
+  126 Expression2: Expression3 .
+  127 Expression3: Expression3 . REL_OP Expression4
+
+    Op_greater     shift, and go to state 167
+    Op_less        shift, and go to state 168
+    Op_greater_eq  shift, and go to state 169
+    Op_less_eq     shift, and go to state 170
+    Op_not_equal   shift, and go to state 171
+    Op_equality    shift, and go to state 172
+
+    $default  reduce using rule 126 (Expression2)
+
+    REL_OP  go to state 173
+
+
+State 131
+
+  128 Expression3: Expression4 .
+  129 Expression4: Expression4 . Op_unary_or Expression5
+  130            | Expression4 . Op_add Expression5
+  131            | Expression4 . Op_sub Expression5
+
+    Op_add       shift, and go to state 174
+    Op_sub       shift, and go to state 175
+    Op_unary_or  shift, and go to state 176
+
+    $default  reduce using rule 128 (Expression3)
+
+
+State 132
+
+  132 Expression4: Expression5 .
+  133 Expression5: Expression5 . MUL_OP PrimaryExpr
+
+    Op_greater_greater  shift, and go to state 177
+    Op_less_less        shift, and go to state 178
+    Op_mult             shift, and go to state 179
+    Op_divide           shift, and go to state 180
+    Op_mod              shift, and go to state 181
+    Op_unary_and        shift, and go to state 182
+
+    $default  reduce using rule 132 (Expression4)
+
+    MUL_OP  go to state 183
+
+
+State 133
+
+  134 Expression5: UnaryExpr .
+
+    $default  reduce using rule 134 (Expression5)
+
+
+State 134
+
+  147 UnaryExpr: PrimaryExpr .
+  150 PrimaryExpr: PrimaryExpr . Selector
+  151            | PrimaryExpr . Index
+  152            | PrimaryExpr . Slice
+  153            | PrimaryExpr . TypeAssertion
+  154            | PrimaryExpr . Arguments
+
+    M_lparan      shift, and go to state 184
+    M_lsqbracket  shift, and go to state 185
+    M_dot         shift, and go to state 186
+
+    M_dot     [reduce using rule 147 (UnaryExpr)]
+    $default  reduce using rule 147 (UnaryExpr)
+
+    Selector       go to state 187
+    Index          go to state 188
+    Slice          go to state 189
+    TypeAssertion  go to state 190
+    Arguments      go to state 191
+
+
+State 135
+
+   88 Operand: Literal .
+
+    $default  reduce using rule 88 (Operand)
+
+
+State 136
+
+  188 Literal: BasicLit .
+
+    $default  reduce using rule 188 (Literal)
+
+
+State 137
+
+  148 UnaryExpr: UnaryOp . PrimaryExpr
+
+    Identifier     shift, and go to state 55
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_mult        shift, and go to state 73
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    PrimaryExpr   go to state 192
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    String        go to state 138
+
+
+State 138
+
+  192 BasicLit: String .
+
+    $default  reduce using rule 192 (BasicLit)
+
+
+State 139
+
+  175 ExpressionList: Expression .
+
+    $default  reduce using rule 175 (ExpressionList)
+
+
+State 140
+
+   40 VarSpec: IdentifierList ASN_OP ExpressionList .
+  176 ExpressionList: ExpressionList . M_comma Expression
+
+    M_comma  shift, and go to state 193
+
+    $default  reduce using rule 40 (VarSpec)
+
+
+State 141
+
+   39 VarSpec: IdentifierList Type ASN_OP . ExpressionList
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    Expression      go to state 139
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    ExpressionList  go to state 194
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 142
+
+   44 FunctionDecl: Key_func Identifier $@1 OPENB Signature . Block CLOSEB
+
+    M_lcurly  shift, and go to state 195
+
+    Block  go to state 196
+
+
+State 143
+
+   51 Parameters: M_lparan ParameterList M_comma M_rparan .
+
+    $default  reduce using rule 51 (Parameters)
+
+
+State 144
+
+   53 ParameterList: ParameterList M_comma ParameterDecl .
+
+    $default  reduce using rule 53 (ParameterList)
+
+
+State 145
+
+   47 Result: M_lparan . TypeList M_rparan
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lsqbracket  shift, and go to state 74
+
+    TypeList     go to state 197
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 198
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 146
+
+   46 Signature: Parameters Result .
+
+    $default  reduce using rule 46 (Signature)
+
+
+State 147
+
+   48 Result: Type .
+
+    $default  reduce using rule 48 (Result)
+
+
+State 148
+
+  177 MapType: Key_map M_lsqbracket Type . M_rsqbracket Type
+
+    M_rsqbracket  shift, and go to state 199
+
+
+State 149
+
+  181 StructType: Key_struct M_semicolon M_rcurly .
+
+    $default  reduce using rule 181 (StructType)
+
+
+State 150
+
+   58 IdentifierList: IdentifierList . M_comma Identifier
+  184 FieldDecl: IdentifierList . Type String
+  185          | IdentifierList . Type
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_comma       shift, and go to state 90
+    M_lsqbracket  shift, and go to state 74
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 200
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 151
+
+  179 StructType: Key_struct M_semicolon FieldDeclList . M_rcurly
+  183 FieldDeclList: FieldDeclList . FieldDecl M_semicolon
+
+    Identifier  shift, and go to state 39
+    M_rcurly    shift, and go to state 201
+
+    IdentifierList  go to state 150
+    FieldDecl       go to state 202
+
+
+State 152
+
+  182 FieldDeclList: FieldDecl . M_semicolon
+
+    M_semicolon  shift, and go to state 203
+
+
+State 153
+
+  180 StructType: Key_struct M_lcurly M_rcurly .
+
+    $default  reduce using rule 180 (StructType)
+
+
+State 154
+
+  178 StructType: Key_struct M_lcurly FieldDeclList . M_rcurly
+  183 FieldDeclList: FieldDeclList . FieldDecl M_semicolon
+
+    Identifier  shift, and go to state 39
+    M_rcurly    shift, and go to state 204
+
+    IdentifierList  go to state 150
+    FieldDecl       go to state 202
+
+
+State 155
+
+   98 SliceType: M_lsqbracket M_rsqbracket Type .
+
+    $default  reduce using rule 98 (SliceType)
+
+
+State 156
+
+  174 DOTS: M_dot M_dot . M_dot
+
+    M_dot  shift, and go to state 205
+
+
+State 157
+
+   66 LiteralType: M_lsqbracket DOTS M_rsqbracket . Operand
+
+    Identifier     shift, and go to state 55
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_mult        shift, and go to state 73
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 206
+    OperandName   go to state 207
+    SliceType     go to state 79
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    String        go to state 138
+
+
+State 158
+
+   90 Operand: M_lparan Expression . M_rparan
+
+    M_rparan  shift, and go to state 208
+
+
+State 159
+
+   93 LiteralValue: M_semicolon . M_rcurly
+   95             | M_semicolon . ElementList M_rcurly
+   97             | M_semicolon . ElementList M_comma M_rcurly
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_semicolon    shift, and go to state 159
+    M_lcurly       shift, and go to state 160
+    M_rcurly       shift, and go to state 209
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    LiteralValue  go to state 210
+    SliceType     go to state 79
+    ElementList   go to state 211
+    KeyedElement  go to state 212
+    Key           go to state 213
+    Element       go to state 214
+    Expression    go to state 215
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 160
+
+   92 LiteralValue: M_lcurly . M_rcurly
+   94             | M_lcurly . ElementList M_rcurly
+   96             | M_lcurly . ElementList M_comma M_rcurly
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_semicolon    shift, and go to state 159
+    M_lcurly       shift, and go to state 160
+    M_rcurly       shift, and go to state 216
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    LiteralValue  go to state 210
+    SliceType     go to state 79
+    ElementList   go to state 217
+    KeyedElement  go to state 212
+    Key           go to state 213
+    Element       go to state 214
+    Expression    go to state 215
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 161
+
+   63 CompositeLit: LiteralType LiteralValue .
+
+    $default  reduce using rule 63 (CompositeLit)
+
+
+State 162
+
+  156 StructLiteral: M_lcurly . KeyValList M_rcurly
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    $default  reduce using rule 157 (KeyValList)
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 218
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    KeyValList    go to state 219
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 163
+
+  155 PrimaryExpr: OperandName StructLiteral .
+
+    $default  reduce using rule 155 (PrimaryExpr)
+
+
+State 164
+
+  187 ArrayType: M_lsqbracket Expression M_rsqbracket . Type
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lsqbracket  shift, and go to state 74
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 220
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 165
+
+  123 Expression1: Expression1 Op_relational_or . Expression2
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression2   go to state 221
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 166
+
+  125 Expression2: Expression2 Op_relational_and . Expression3
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression3   go to state 222
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 167
+
+  138 REL_OP: Op_greater .
+
+    $default  reduce using rule 138 (REL_OP)
+
+
+State 168
+
+  137 REL_OP: Op_less .
+
+    $default  reduce using rule 137 (REL_OP)
+
+
+State 169
+
+  139 REL_OP: Op_greater_eq .
+
+    $default  reduce using rule 139 (REL_OP)
+
+
+State 170
+
+  140 REL_OP: Op_less_eq .
+
+    $default  reduce using rule 140 (REL_OP)
+
+
+State 171
+
+  136 REL_OP: Op_not_equal .
+
+    $default  reduce using rule 136 (REL_OP)
+
+
+State 172
+
+  135 REL_OP: Op_equality .
+
+    $default  reduce using rule 135 (REL_OP)
+
+
+State 173
+
+  127 Expression3: Expression3 REL_OP . Expression4
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression4   go to state 223
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 174
+
+  130 Expression4: Expression4 Op_add . Expression5
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression5   go to state 224
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 175
+
+  131 Expression4: Expression4 Op_sub . Expression5
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression5   go to state 225
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 176
+
+  129 Expression4: Expression4 Op_unary_or . Expression5
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression5   go to state 226
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 177
+
+  145 MUL_OP: Op_greater_greater .
+
+    $default  reduce using rule 145 (MUL_OP)
+
+
+State 178
+
+  144 MUL_OP: Op_less_less .
+
+    $default  reduce using rule 144 (MUL_OP)
+
+
+State 179
+
+  141 MUL_OP: Op_mult .
+
+    $default  reduce using rule 141 (MUL_OP)
+
+
+State 180
+
+  142 MUL_OP: Op_divide .
+
+    $default  reduce using rule 142 (MUL_OP)
+
+
+State 181
+
+  143 MUL_OP: Op_mod .
+
+    $default  reduce using rule 143 (MUL_OP)
+
+
+State 182
+
+  146 MUL_OP: Op_unary_and .
+
+    $default  reduce using rule 146 (MUL_OP)
+
+
+State 183
+
+  133 Expression5: Expression5 MUL_OP . PrimaryExpr
+
+    Identifier     shift, and go to state 55
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_mult        shift, and go to state 73
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    PrimaryExpr   go to state 227
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    String        go to state 138
+
+
+State 184
+
+  171 Arguments: M_lparan . M_rparan
+  172          | M_lparan . ExpressionList M_rparan
+  173          | M_lparan . ExpressionList DOTS M_rparan
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_rparan       shift, and go to state 228
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    Expression      go to state 139
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    ExpressionList  go to state 229
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 185
+
+  161 Index: M_lsqbracket . Expression M_rsqbracket
+  162 Slice: M_lsqbracket . M_colon M_rsqbracket
+  163      | M_lsqbracket . M_colon Expression M_rsqbracket
+  164      | M_lsqbracket . Expression M_colon M_rsqbracket
+  165      | M_lsqbracket . Expression M_colon Expression M_rsqbracket
+  166      | M_lsqbracket . M_colon Expression M_colon Expression M_rsqbracket
+  167      | M_lsqbracket . Expression M_colon Expression M_colon Expression M_rsqbracket
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_colon        shift, and go to state 230
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 231
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 186
+
+  160 Selector: M_dot . Identifier
+  170 TypeAssertion: M_dot . M_lparan Type M_rparan
+
+    Identifier  shift, and go to state 232
+    M_lparan    shift, and go to state 233
+
+
+State 187
+
+  150 PrimaryExpr: PrimaryExpr Selector .
+
+    $default  reduce using rule 150 (PrimaryExpr)
+
+
+State 188
+
+  151 PrimaryExpr: PrimaryExpr Index .
+
+    $default  reduce using rule 151 (PrimaryExpr)
+
+
+State 189
+
+  152 PrimaryExpr: PrimaryExpr Slice .
+
+    $default  reduce using rule 152 (PrimaryExpr)
+
+
+State 190
+
+  153 PrimaryExpr: PrimaryExpr TypeAssertion .
+
+    $default  reduce using rule 153 (PrimaryExpr)
+
+
+State 191
+
+  154 PrimaryExpr: PrimaryExpr Arguments .
+
+    $default  reduce using rule 154 (PrimaryExpr)
+
+
+State 192
+
+  148 UnaryExpr: UnaryOp PrimaryExpr .
+  150 PrimaryExpr: PrimaryExpr . Selector
+  151            | PrimaryExpr . Index
+  152            | PrimaryExpr . Slice
+  153            | PrimaryExpr . TypeAssertion
+  154            | PrimaryExpr . Arguments
+
+    M_lparan      shift, and go to state 184
+    M_lsqbracket  shift, and go to state 185
+    M_dot         shift, and go to state 186
+
+    M_dot     [reduce using rule 148 (UnaryExpr)]
+    $default  reduce using rule 148 (UnaryExpr)
+
+    Selector       go to state 187
+    Index          go to state 188
+    Slice          go to state 189
+    TypeAssertion  go to state 190
+    Arguments      go to state 191
+
+
+State 193
+
+  176 ExpressionList: ExpressionList M_comma . Expression
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 234
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 194
+
+   39 VarSpec: IdentifierList Type ASN_OP ExpressionList .
+  176 ExpressionList: ExpressionList . M_comma Expression
+
+    M_comma  shift, and go to state 193
+
+    $default  reduce using rule 39 (VarSpec)
+
+
+State 195
+
+    2 Block: M_lcurly . OPENB StatementList CLOSEB M_rcurly
+
+    $default  reduce using rule 3 (OPENB)
+
+    OPENB  go to state 235
+
+
+State 196
+
+   44 FunctionDecl: Key_func Identifier $@1 OPENB Signature Block . CLOSEB
+
+    $default  reduce using rule 4 (CLOSEB)
+
+    CLOSEB  go to state 236
+
+
+State 197
+
+   47 Result: M_lparan TypeList . M_rparan
+   55 TypeList: TypeList . M_comma Type
+
+    M_comma   shift, and go to state 237
+    M_rparan  shift, and go to state 238
+
+
+State 198
+
+   56 TypeList: Type .
+
+    $default  reduce using rule 56 (TypeList)
+
+
+State 199
+
+  177 MapType: Key_map M_lsqbracket Type M_rsqbracket . Type
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lsqbracket  shift, and go to state 74
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 239
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 200
+
+  184 FieldDecl: IdentifierList Type . String
+  185          | IdentifierList Type .
+
+    String_lit  shift, and go to state 11
+
+    $default  reduce using rule 185 (FieldDecl)
+
+    String  go to state 240
+
+
+State 201
+
+  179 StructType: Key_struct M_semicolon FieldDeclList M_rcurly .
+
+    $default  reduce using rule 179 (StructType)
+
+
+State 202
+
+  183 FieldDeclList: FieldDeclList FieldDecl . M_semicolon
+
+    M_semicolon  shift, and go to state 241
+
+
+State 203
+
+  182 FieldDeclList: FieldDecl M_semicolon .
+
+    $default  reduce using rule 182 (FieldDeclList)
+
+
+State 204
+
+  178 StructType: Key_struct M_lcurly FieldDeclList M_rcurly .
+
+    $default  reduce using rule 178 (StructType)
+
+
+State 205
+
+  174 DOTS: M_dot M_dot M_dot .
+
+    $default  reduce using rule 174 (DOTS)
+
+
+State 206
+
+   66 LiteralType: M_lsqbracket DOTS M_rsqbracket Operand .
+
+    $default  reduce using rule 66 (LiteralType)
+
+
+State 207
+
+   89 Operand: OperandName .
+
+    $default  reduce using rule 89 (Operand)
+
+
+State 208
+
+   90 Operand: M_lparan Expression M_rparan .
+
+    $default  reduce using rule 90 (Operand)
+
+
+State 209
+
+   93 LiteralValue: M_semicolon M_rcurly .
+
+    $default  reduce using rule 93 (LiteralValue)
+
+
+State 210
+
+  104 Key: LiteralValue .
+  106 Element: LiteralValue .
+
+    M_colon   reduce using rule 104 (Key)
+    $default  reduce using rule 106 (Element)
+
+
+State 211
+
+   95 LiteralValue: M_semicolon ElementList . M_rcurly
+   97             | M_semicolon ElementList . M_comma M_rcurly
+  100 ElementList: ElementList . M_comma KeyedElement
+
+    M_comma   shift, and go to state 242
+    M_rcurly  shift, and go to state 243
+
+
+State 212
+
+   99 ElementList: KeyedElement .
+
+    $default  reduce using rule 99 (ElementList)
+
+
+State 213
+
+  102 KeyedElement: Key . M_colon Element
+
+    M_colon  shift, and go to state 244
+
+
+State 214
+
+  101 KeyedElement: Element .
+
+    $default  reduce using rule 101 (KeyedElement)
+
+
+State 215
+
+  103 Key: Expression .
+  105 Element: Expression .
+
+    M_colon   reduce using rule 103 (Key)
+    $default  reduce using rule 105 (Element)
+
+
+State 216
+
+   92 LiteralValue: M_lcurly M_rcurly .
+
+    $default  reduce using rule 92 (LiteralValue)
+
+
+State 217
+
+   94 LiteralValue: M_lcurly ElementList . M_rcurly
+   96             | M_lcurly ElementList . M_comma M_rcurly
+  100 ElementList: ElementList . M_comma KeyedElement
+
+    M_comma   shift, and go to state 245
+    M_rcurly  shift, and go to state 246
+
+
+State 218
+
+  158 KeyValList: Expression . M_colon Expression
+  159           | Expression . M_colon Expression M_comma KeyValList
+
+    M_colon  shift, and go to state 247
+
+
+State 219
+
+  156 StructLiteral: M_lcurly KeyValList . M_rcurly
+
+    M_rcurly  shift, and go to state 248
+
+
+State 220
+
+  187 ArrayType: M_lsqbracket Expression M_rsqbracket Type .
+
+    $default  reduce using rule 187 (ArrayType)
+
+
+State 221
+
+  123 Expression1: Expression1 Op_relational_or Expression2 .
+  125 Expression2: Expression2 . Op_relational_and Expression3
+
+    Op_relational_and  shift, and go to state 166
+
+    $default  reduce using rule 123 (Expression1)
+
+
+State 222
+
+  125 Expression2: Expression2 Op_relational_and Expression3 .
+  127 Expression3: Expression3 . REL_OP Expression4
+
+    Op_greater     shift, and go to state 167
+    Op_less        shift, and go to state 168
+    Op_greater_eq  shift, and go to state 169
+    Op_less_eq     shift, and go to state 170
+    Op_not_equal   shift, and go to state 171
+    Op_equality    shift, and go to state 172
+
+    $default  reduce using rule 125 (Expression2)
+
+    REL_OP  go to state 173
+
+
+State 223
+
+  127 Expression3: Expression3 REL_OP Expression4 .
+  129 Expression4: Expression4 . Op_unary_or Expression5
+  130            | Expression4 . Op_add Expression5
+  131            | Expression4 . Op_sub Expression5
+
+    Op_add       shift, and go to state 174
+    Op_sub       shift, and go to state 175
+    Op_unary_or  shift, and go to state 176
+
+    $default  reduce using rule 127 (Expression3)
+
+
+State 224
+
+  130 Expression4: Expression4 Op_add Expression5 .
+  133 Expression5: Expression5 . MUL_OP PrimaryExpr
+
+    Op_greater_greater  shift, and go to state 177
+    Op_less_less        shift, and go to state 178
+    Op_mult             shift, and go to state 179
+    Op_divide           shift, and go to state 180
+    Op_mod              shift, and go to state 181
+    Op_unary_and        shift, and go to state 182
+
+    $default  reduce using rule 130 (Expression4)
+
+    MUL_OP  go to state 183
+
+
+State 225
+
+  131 Expression4: Expression4 Op_sub Expression5 .
+  133 Expression5: Expression5 . MUL_OP PrimaryExpr
+
+    Op_greater_greater  shift, and go to state 177
+    Op_less_less        shift, and go to state 178
+    Op_mult             shift, and go to state 179
+    Op_divide           shift, and go to state 180
+    Op_mod              shift, and go to state 181
+    Op_unary_and        shift, and go to state 182
+
+    $default  reduce using rule 131 (Expression4)
+
+    MUL_OP  go to state 183
+
+
+State 226
+
+  129 Expression4: Expression4 Op_unary_or Expression5 .
+  133 Expression5: Expression5 . MUL_OP PrimaryExpr
+
+    Op_greater_greater  shift, and go to state 177
+    Op_less_less        shift, and go to state 178
+    Op_mult             shift, and go to state 179
+    Op_divide           shift, and go to state 180
+    Op_mod              shift, and go to state 181
+    Op_unary_and        shift, and go to state 182
+
+    $default  reduce using rule 129 (Expression4)
+
+    MUL_OP  go to state 183
+
+
+State 227
+
+  133 Expression5: Expression5 MUL_OP PrimaryExpr .
+  150 PrimaryExpr: PrimaryExpr . Selector
+  151            | PrimaryExpr . Index
+  152            | PrimaryExpr . Slice
+  153            | PrimaryExpr . TypeAssertion
+  154            | PrimaryExpr . Arguments
+
+    M_lparan      shift, and go to state 184
+    M_lsqbracket  shift, and go to state 185
+    M_dot         shift, and go to state 186
+
+    M_dot     [reduce using rule 133 (Expression5)]
+    $default  reduce using rule 133 (Expression5)
+
+    Selector       go to state 187
+    Index          go to state 188
+    Slice          go to state 189
+    TypeAssertion  go to state 190
+    Arguments      go to state 191
+
+
+State 228
+
+  171 Arguments: M_lparan M_rparan .
+
+    $default  reduce using rule 171 (Arguments)
+
+
+State 229
+
+  172 Arguments: M_lparan ExpressionList . M_rparan
+  173          | M_lparan ExpressionList . DOTS M_rparan
+  176 ExpressionList: ExpressionList . M_comma Expression
+
+    M_comma   shift, and go to state 193
+    M_rparan  shift, and go to state 249
+    M_dot     shift, and go to state 108
+
+    DOTS  go to state 250
+
+
+State 230
+
+  162 Slice: M_lsqbracket M_colon . M_rsqbracket
+  163      | M_lsqbracket M_colon . Expression M_rsqbracket
+  166      | M_lsqbracket M_colon . Expression M_colon Expression M_rsqbracket
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    M_rsqbracket   shift, and go to state 251
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 252
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 231
+
+  161 Index: M_lsqbracket Expression . M_rsqbracket
+  164 Slice: M_lsqbracket Expression . M_colon M_rsqbracket
+  165      | M_lsqbracket Expression . M_colon Expression M_rsqbracket
+  167      | M_lsqbracket Expression . M_colon Expression M_colon Expression M_rsqbracket
+
+    M_colon       shift, and go to state 253
+    M_rsqbracket  shift, and go to state 254
+
+
+State 232
+
+  160 Selector: M_dot Identifier .
+
+    $default  reduce using rule 160 (Selector)
+
+
+State 233
+
+  170 TypeAssertion: M_dot M_lparan . Type M_rparan
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lsqbracket  shift, and go to state 74
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 255
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 234
+
+  176 ExpressionList: ExpressionList M_comma Expression .
+
+    $default  reduce using rule 176 (ExpressionList)
+
+
+State 235
+
+    2 Block: M_lcurly OPENB . StatementList CLOSEB M_rcurly
+
+    Identifier     shift, and go to state 256
+    Op_add         shift, and go to state 111
+    Key_break      shift, and go to state 257
+    Key_continue   shift, and go to state 258
+    Key_for        shift, and go to state 259
+    Key_if         shift, and go to state 260
+    Key_map        shift, and go to state 71
+    Key_return     shift, and go to state 261
+    Key_struct     shift, and go to state 72
+    Key_type       shift, and go to state 18
+    Key_var        shift, and go to state 19
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lcurly       shift, and go to state 195
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    $default  reduce using rule 23 (EmptyStmt)
+
+    Block           go to state 262
+    StatementList   go to state 263
+    Statement       go to state 264
+    SimpleStmt      go to state 265
+    EmptyStmt       go to state 266
+    ExpressionStmt  go to state 267
+    IncDecStmt      go to state 268
+    Assignment      go to state 269
+    ShortVarDecl    go to state 270
+    VarDecl         go to state 20
+    Declaration     go to state 271
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    LabeledStmt     go to state 272
+    ReturnStmt      go to state 273
+    BreakStmt       go to state 274
+    ContinueStmt    go to state 275
+    if_stmt         go to state 276
+    ForStmt         go to state 277
+    Expression      go to state 278
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    TypeDecl        go to state 26
+    ExpressionList  go to state 279
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 236
+
+   44 FunctionDecl: Key_func Identifier $@1 OPENB Signature Block CLOSEB .
+
+    $default  reduce using rule 44 (FunctionDecl)
+
+
+State 237
+
+   55 TypeList: TypeList M_comma . Type
+
+    T_int64       shift, and go to state 54
+    Identifier    shift, and go to state 55
+    T_string      shift, and go to state 56
+    T_bool        shift, and go to state 57
+    T_int         shift, and go to state 58
+    T_int8        shift, and go to state 59
+    T_int16       shift, and go to state 60
+    T_int32       shift, and go to state 61
+    T_uint        shift, and go to state 62
+    T_uint16      shift, and go to state 63
+    T_uint32      shift, and go to state 64
+    T_uint64      shift, and go to state 65
+    T_uintptr     shift, and go to state 66
+    T_float32     shift, and go to state 67
+    T_float64     shift, and go to state 68
+    T_complex64   shift, and go to state 69
+    T_complex128  shift, and go to state 70
+    Key_map       shift, and go to state 71
+    Key_struct    shift, and go to state 72
+    Op_mult       shift, and go to state 73
+    M_lsqbracket  shift, and go to state 74
+
+    LiteralType  go to state 75
+    VarType      go to state 76
+    Type         go to state 280
+    OperandName  go to state 78
+    SliceType    go to state 79
+    MapType      go to state 80
+    StructType   go to state 81
+    PointerType  go to state 82
+
+
+State 238
+
+   47 Result: M_lparan TypeList M_rparan .
+
+    $default  reduce using rule 47 (Result)
+
+
+State 239
+
+  177 MapType: Key_map M_lsqbracket Type M_rsqbracket Type .
+
+    $default  reduce using rule 177 (MapType)
+
+
+State 240
+
+  184 FieldDecl: IdentifierList Type String .
+
+    $default  reduce using rule 184 (FieldDecl)
+
+
+State 241
+
+  183 FieldDeclList: FieldDeclList FieldDecl M_semicolon .
+
+    $default  reduce using rule 183 (FieldDeclList)
+
+
+State 242
+
+   97 LiteralValue: M_semicolon ElementList M_comma . M_rcurly
+  100 ElementList: ElementList M_comma . KeyedElement
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_semicolon    shift, and go to state 159
+    M_lcurly       shift, and go to state 160
+    M_rcurly       shift, and go to state 281
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    LiteralValue  go to state 210
+    SliceType     go to state 79
+    KeyedElement  go to state 282
+    Key           go to state 213
+    Element       go to state 214
+    Expression    go to state 215
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 243
+
+   95 LiteralValue: M_semicolon ElementList M_rcurly .
+
+    $default  reduce using rule 95 (LiteralValue)
+
+
+State 244
+
+  102 KeyedElement: Key M_colon . Element
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_semicolon    shift, and go to state 159
+    M_lcurly       shift, and go to state 160
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    LiteralValue  go to state 283
+    SliceType     go to state 79
+    Element       go to state 284
+    Expression    go to state 285
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 245
+
+   96 LiteralValue: M_lcurly ElementList M_comma . M_rcurly
+  100 ElementList: ElementList M_comma . KeyedElement
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_semicolon    shift, and go to state 159
+    M_lcurly       shift, and go to state 160
+    M_rcurly       shift, and go to state 286
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    LiteralValue  go to state 210
+    SliceType     go to state 79
+    KeyedElement  go to state 282
+    Key           go to state 213
+    Element       go to state 214
+    Expression    go to state 215
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 246
+
+   94 LiteralValue: M_lcurly ElementList M_rcurly .
+
+    $default  reduce using rule 94 (LiteralValue)
+
+
+State 247
+
+  158 KeyValList: Expression M_colon . Expression
+  159           | Expression M_colon . Expression M_comma KeyValList
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 287
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 248
+
+  156 StructLiteral: M_lcurly KeyValList M_rcurly .
+
+    $default  reduce using rule 156 (StructLiteral)
+
+
+State 249
+
+  172 Arguments: M_lparan ExpressionList M_rparan .
+
+    $default  reduce using rule 172 (Arguments)
+
+
+State 250
+
+  173 Arguments: M_lparan ExpressionList DOTS . M_rparan
+
+    M_rparan  shift, and go to state 288
+
+
+State 251
+
+  162 Slice: M_lsqbracket M_colon M_rsqbracket .
+
+    $default  reduce using rule 162 (Slice)
+
+
+State 252
+
+  163 Slice: M_lsqbracket M_colon Expression . M_rsqbracket
+  166      | M_lsqbracket M_colon Expression . M_colon Expression M_rsqbracket
+
+    M_colon       shift, and go to state 289
+    M_rsqbracket  shift, and go to state 290
+
+
+State 253
+
+  164 Slice: M_lsqbracket Expression M_colon . M_rsqbracket
+  165      | M_lsqbracket Expression M_colon . Expression M_rsqbracket
+  167      | M_lsqbracket Expression M_colon . Expression M_colon Expression M_rsqbracket
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    M_rsqbracket   shift, and go to state 291
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 292
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 254
+
+  161 Index: M_lsqbracket Expression M_rsqbracket .
+
+    $default  reduce using rule 161 (Index)
+
+
+State 255
+
+  170 TypeAssertion: M_dot M_lparan Type . M_rparan
+
+    M_rparan  shift, and go to state 293
+
+
+State 256
+
+   91 OperandName: Identifier .
+  110 LabeledStmt: Identifier . M_colon Statement
+
+    M_colon  shift, and go to state 294
+
+    $default  reduce using rule 91 (OperandName)
+
+
+State 257
+
+  113 BreakStmt: Key_break .
+  114          | Key_break . Identifier
+
+    Identifier  shift, and go to state 295
+
+    $default  reduce using rule 113 (BreakStmt)
+
+
+State 258
+
+  115 ContinueStmt: Key_continue .
+  116             | Key_continue . Identifier
+
+    Identifier  shift, and go to state 296
+
+    $default  reduce using rule 115 (ContinueStmt)
+
+
+State 259
+
+  121 ForStmt: Key_for . OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB
+
+    $default  reduce using rule 3 (OPENB)
+
+    OPENB  go to state 297
+
+
+State 260
+
+  117 if_stmt: Key_if . Expression OPENB Block elif_test_suite
+  118        | Key_if . Expression OPENB Block elif_test_suite Key_else CLOSEB Block
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 298
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 261
+
+  111 ReturnStmt: Key_return .
+  112           | Key_return . ExpressionList
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    $default  reduce using rule 111 (ReturnStmt)
+
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    Expression      go to state 139
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    ExpressionList  go to state 299
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 262
+
+   15 Statement: Block .
+
+    $default  reduce using rule 15 (Statement)
+
+
+State 263
+
+    2 Block: M_lcurly OPENB StatementList . CLOSEB M_rcurly
+    7 StatementList: StatementList . Statement M_semicolon
+
+    Identifier     shift, and go to state 256
+    Op_add         shift, and go to state 111
+    Key_break      shift, and go to state 257
+    Key_continue   shift, and go to state 258
+    Key_for        shift, and go to state 259
+    Key_if         shift, and go to state 260
+    Key_map        shift, and go to state 71
+    Key_return     shift, and go to state 261
+    Key_struct     shift, and go to state 72
+    Key_type       shift, and go to state 18
+    Key_var        shift, and go to state 19
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lcurly       shift, and go to state 195
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    M_semicolon  reduce using rule 23 (EmptyStmt)
+    $default     reduce using rule 4 (CLOSEB)
+
+    Block           go to state 262
+    CLOSEB          go to state 300
+    Statement       go to state 301
+    SimpleStmt      go to state 265
+    EmptyStmt       go to state 266
+    ExpressionStmt  go to state 267
+    IncDecStmt      go to state 268
+    Assignment      go to state 269
+    ShortVarDecl    go to state 270
+    VarDecl         go to state 20
+    Declaration     go to state 271
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    LabeledStmt     go to state 272
+    ReturnStmt      go to state 273
+    BreakStmt       go to state 274
+    ContinueStmt    go to state 275
+    if_stmt         go to state 276
+    ForStmt         go to state 277
+    Expression      go to state 278
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    TypeDecl        go to state 26
+    ExpressionList  go to state 279
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 264
+
+    8 StatementList: Statement . M_semicolon
+
+    M_semicolon  shift, and go to state 302
+
+
+State 265
+
+   11 Statement: SimpleStmt .
+
+    $default  reduce using rule 11 (Statement)
+
+
+State 266
+
+   18 SimpleStmt: EmptyStmt .
+
+    $default  reduce using rule 18 (SimpleStmt)
+
+
+State 267
+
+   19 SimpleStmt: ExpressionStmt .
+
+    $default  reduce using rule 19 (SimpleStmt)
+
+
+State 268
+
+   20 SimpleStmt: IncDecStmt .
+
+    $default  reduce using rule 20 (SimpleStmt)
+
+
+State 269
+
+   21 SimpleStmt: Assignment .
+
+    $default  reduce using rule 21 (SimpleStmt)
+
+
+State 270
+
+   22 SimpleStmt: ShortVarDecl .
+
+    $default  reduce using rule 22 (SimpleStmt)
+
+
+State 271
+
+    9 Statement: Declaration .
+
+    $default  reduce using rule 9 (Statement)
+
+
+State 272
+
+   10 Statement: LabeledStmt .
+
+    $default  reduce using rule 10 (Statement)
+
+
+State 273
+
+   12 Statement: ReturnStmt .
+
+    $default  reduce using rule 12 (Statement)
+
+
+State 274
+
+   13 Statement: BreakStmt .
+
+    $default  reduce using rule 13 (Statement)
+
+
+State 275
+
+   14 Statement: ContinueStmt .
+
+    $default  reduce using rule 14 (Statement)
+
+
+State 276
+
+   16 Statement: if_stmt .
+
+    $default  reduce using rule 16 (Statement)
+
+
+State 277
+
+   17 Statement: ForStmt .
+
+    $default  reduce using rule 17 (Statement)
+
+
+State 278
+
+   24 ExpressionStmt: Expression .
+   25 IncDecStmt: Expression . Op_unary_add
+   26           | Expression . Op_unary_sub
+  175 ExpressionList: Expression .
+
+    Op_unary_add  shift, and go to state 303
+    Op_unary_sub  shift, and go to state 304
+
+    M_semicolon  reduce using rule 24 (ExpressionStmt)
+    M_lcurly     reduce using rule 24 (ExpressionStmt)
+    $default     reduce using rule 175 (ExpressionList)
+
+
+State 279
+
+   27 Assignment: ExpressionList . ASN_OP ExpressionList
+   35 ShortVarDecl: ExpressionList . Op_assign ExpressionList
+  176 ExpressionList: ExpressionList . M_comma Expression
+
+    Op_AddAssign         shift, and go to state 83
+    Op_SubAssign         shift, and go to state 84
+    Op_MultAssign        shift, and go to state 85
+    Op_DivAssign         shift, and go to state 86
+    Op_ModAssign         shift, and go to state 87
+    Op_unary_or_assign   shift, and go to state 88
+    Op_unary_and_assign  shift, and go to state 89
+    Op_assign            shift, and go to state 305
+    M_comma              shift, and go to state 193
+
+    ASN_OP  go to state 306
+
+
+State 280
+
+   55 TypeList: TypeList M_comma Type .
+
+    $default  reduce using rule 55 (TypeList)
+
+
+State 281
+
+   97 LiteralValue: M_semicolon ElementList M_comma M_rcurly .
+
+    $default  reduce using rule 97 (LiteralValue)
+
+
+State 282
+
+  100 ElementList: ElementList M_comma KeyedElement .
+
+    $default  reduce using rule 100 (ElementList)
+
+
+State 283
+
+  106 Element: LiteralValue .
+
+    $default  reduce using rule 106 (Element)
+
+
+State 284
+
+  102 KeyedElement: Key M_colon Element .
+
+    $default  reduce using rule 102 (KeyedElement)
+
+
+State 285
+
+  105 Element: Expression .
+
+    $default  reduce using rule 105 (Element)
+
+
+State 286
+
+   96 LiteralValue: M_lcurly ElementList M_comma M_rcurly .
+
+    $default  reduce using rule 96 (LiteralValue)
+
+
+State 287
+
+  158 KeyValList: Expression M_colon Expression .
+  159           | Expression M_colon Expression . M_comma KeyValList
+
+    M_comma  shift, and go to state 307
+
+    $default  reduce using rule 158 (KeyValList)
+
+
+State 288
+
+  173 Arguments: M_lparan ExpressionList DOTS M_rparan .
+
+    $default  reduce using rule 173 (Arguments)
+
+
+State 289
+
+  166 Slice: M_lsqbracket M_colon Expression M_colon . Expression M_rsqbracket
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 308
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 290
+
+  163 Slice: M_lsqbracket M_colon Expression M_rsqbracket .
+
+    $default  reduce using rule 163 (Slice)
+
+
+State 291
+
+  164 Slice: M_lsqbracket Expression M_colon M_rsqbracket .
+
+    $default  reduce using rule 164 (Slice)
+
+
+State 292
+
+  165 Slice: M_lsqbracket Expression M_colon Expression . M_rsqbracket
+  167      | M_lsqbracket Expression M_colon Expression . M_colon Expression M_rsqbracket
+
+    M_colon       shift, and go to state 309
+    M_rsqbracket  shift, and go to state 310
+
+
+State 293
+
+  170 TypeAssertion: M_dot M_lparan Type M_rparan .
+
+    $default  reduce using rule 170 (TypeAssertion)
+
+
+State 294
+
+  110 LabeledStmt: Identifier M_colon . Statement
+
+    Identifier     shift, and go to state 256
+    Op_add         shift, and go to state 111
+    Key_break      shift, and go to state 257
+    Key_continue   shift, and go to state 258
+    Key_for        shift, and go to state 259
+    Key_if         shift, and go to state 260
+    Key_map        shift, and go to state 71
+    Key_return     shift, and go to state 261
+    Key_struct     shift, and go to state 72
+    Key_type       shift, and go to state 18
+    Key_var        shift, and go to state 19
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lcurly       shift, and go to state 195
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    $default  reduce using rule 23 (EmptyStmt)
+
+    Block           go to state 262
+    Statement       go to state 311
+    SimpleStmt      go to state 265
+    EmptyStmt       go to state 266
+    ExpressionStmt  go to state 267
+    IncDecStmt      go to state 268
+    Assignment      go to state 269
+    ShortVarDecl    go to state 270
+    VarDecl         go to state 20
+    Declaration     go to state 271
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    LabeledStmt     go to state 272
+    ReturnStmt      go to state 273
+    BreakStmt       go to state 274
+    ContinueStmt    go to state 275
+    if_stmt         go to state 276
+    ForStmt         go to state 277
+    Expression      go to state 278
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    TypeDecl        go to state 26
+    ExpressionList  go to state 279
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 295
+
+  114 BreakStmt: Key_break Identifier .
+
+    $default  reduce using rule 114 (BreakStmt)
+
+
+State 296
+
+  116 ContinueStmt: Key_continue Identifier .
+
+    $default  reduce using rule 116 (ContinueStmt)
+
+
+State 297
+
+  121 ForStmt: Key_for OPENB . SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    $default  reduce using rule 23 (EmptyStmt)
+
+    SimpleStmt      go to state 312
+    EmptyStmt       go to state 266
+    ExpressionStmt  go to state 267
+    IncDecStmt      go to state 268
+    Assignment      go to state 269
+    ShortVarDecl    go to state 270
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    Expression      go to state 278
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    ExpressionList  go to state 279
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 298
+
+  117 if_stmt: Key_if Expression . OPENB Block elif_test_suite
+  118        | Key_if Expression . OPENB Block elif_test_suite Key_else CLOSEB Block
+
+    $default  reduce using rule 3 (OPENB)
+
+    OPENB  go to state 313
+
+
+State 299
+
+  112 ReturnStmt: Key_return ExpressionList .
+  176 ExpressionList: ExpressionList . M_comma Expression
+
+    M_comma  shift, and go to state 193
+
+    $default  reduce using rule 112 (ReturnStmt)
+
+
+State 300
+
+    2 Block: M_lcurly OPENB StatementList CLOSEB . M_rcurly
+
+    M_rcurly  shift, and go to state 314
+
+
+State 301
+
+    7 StatementList: StatementList Statement . M_semicolon
+
+    M_semicolon  shift, and go to state 315
+
+
+State 302
+
+    8 StatementList: Statement M_semicolon .
+
+    $default  reduce using rule 8 (StatementList)
+
+
+State 303
+
+   25 IncDecStmt: Expression Op_unary_add .
+
+    $default  reduce using rule 25 (IncDecStmt)
+
+
+State 304
+
+   26 IncDecStmt: Expression Op_unary_sub .
+
+    $default  reduce using rule 26 (IncDecStmt)
+
+
+State 305
+
+   35 ShortVarDecl: ExpressionList Op_assign . ExpressionList
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    Expression      go to state 139
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    ExpressionList  go to state 316
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 306
+
+   27 Assignment: ExpressionList ASN_OP . ExpressionList
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    Expression      go to state 139
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    ExpressionList  go to state 317
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 307
+
+  159 KeyValList: Expression M_colon Expression M_comma . KeyValList
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    $default  reduce using rule 157 (KeyValList)
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 218
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    KeyValList    go to state 318
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 308
+
+  166 Slice: M_lsqbracket M_colon Expression M_colon Expression . M_rsqbracket
+
+    M_rsqbracket  shift, and go to state 319
+
+
+State 309
+
+  167 Slice: M_lsqbracket Expression M_colon Expression M_colon . Expression M_rsqbracket
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 320
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 310
+
+  165 Slice: M_lsqbracket Expression M_colon Expression M_rsqbracket .
+
+    $default  reduce using rule 165 (Slice)
+
+
+State 311
+
+  110 LabeledStmt: Identifier M_colon Statement .
+
+    $default  reduce using rule 110 (LabeledStmt)
+
+
+State 312
+
+  121 ForStmt: Key_for OPENB SimpleStmt . M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB
+
+    M_semicolon  shift, and go to state 321
+
+
+State 313
+
+  117 if_stmt: Key_if Expression OPENB . Block elif_test_suite
+  118        | Key_if Expression OPENB . Block elif_test_suite Key_else CLOSEB Block
+
+    M_lcurly  shift, and go to state 195
+
+    Block  go to state 322
+
+
+State 314
+
+    2 Block: M_lcurly OPENB StatementList CLOSEB M_rcurly .
+
+    $default  reduce using rule 2 (Block)
+
+
+State 315
+
+    7 StatementList: StatementList Statement M_semicolon .
+
+    $default  reduce using rule 7 (StatementList)
+
+
+State 316
+
+   35 ShortVarDecl: ExpressionList Op_assign ExpressionList .
+  176 ExpressionList: ExpressionList . M_comma Expression
+
+    M_comma  shift, and go to state 193
+
+    $default  reduce using rule 35 (ShortVarDecl)
+
+
+State 317
+
+   27 Assignment: ExpressionList ASN_OP ExpressionList .
+  176 ExpressionList: ExpressionList . M_comma Expression
+
+    M_comma  shift, and go to state 193
+
+    $default  reduce using rule 27 (Assignment)
+
+
+State 318
+
+  159 KeyValList: Expression M_colon Expression M_comma KeyValList .
+
+    $default  reduce using rule 159 (KeyValList)
+
+
+State 319
+
+  166 Slice: M_lsqbracket M_colon Expression M_colon Expression M_rsqbracket .
+
+    $default  reduce using rule 166 (Slice)
+
+
+State 320
+
+  167 Slice: M_lsqbracket Expression M_colon Expression M_colon Expression . M_rsqbracket
+
+    M_rsqbracket  shift, and go to state 323
+
+
+State 321
+
+  121 ForStmt: Key_for OPENB SimpleStmt M_semicolon . BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB
+
+    $default  reduce using rule 5 (BrkBlk)
+
+    BrkBlk  go to state 324
+
+
+State 322
+
+  117 if_stmt: Key_if Expression OPENB Block . elif_test_suite
+  118        | Key_if Expression OPENB Block . elif_test_suite Key_else CLOSEB Block
+
+    $default  reduce using rule 119 (elif_test_suite)
+
+    elif_test_suite  go to state 325
+
+
+State 323
+
+  167 Slice: M_lsqbracket Expression M_colon Expression M_colon Expression M_rsqbracket .
+
+    $default  reduce using rule 167 (Slice)
+
+
+State 324
+
+  121 ForStmt: Key_for OPENB SimpleStmt M_semicolon BrkBlk . ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    ExpressionStmt  go to state 326
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    Expression      go to state 327
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 325
+
+  117 if_stmt: Key_if Expression OPENB Block elif_test_suite .
+  118        | Key_if Expression OPENB Block elif_test_suite . Key_else CLOSEB Block
+  120 elif_test_suite: elif_test_suite . Key_elif Expression OPENB Block
+
+    Key_else  shift, and go to state 328
+    Key_elif  shift, and go to state 329
+
+    $default  reduce using rule 117 (if_stmt)
+
+
+State 326
+
+  121 ForStmt: Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt . M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB
+
+    M_semicolon  shift, and go to state 330
+
+
+State 327
+
+   24 ExpressionStmt: Expression .
+
+    $default  reduce using rule 24 (ExpressionStmt)
+
+
+State 328
+
+  118 if_stmt: Key_if Expression OPENB Block elif_test_suite Key_else . CLOSEB Block
+
+    $default  reduce using rule 4 (CLOSEB)
+
+    CLOSEB  go to state 331
+
+
+State 329
+
+  120 elif_test_suite: elif_test_suite Key_elif . Expression OPENB Block
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    CompositeLit  go to state 123
+    LiteralType   go to state 124
+    Operand       go to state 125
+    OperandName   go to state 126
+    SliceType     go to state 79
+    Expression    go to state 332
+    Expression1   go to state 128
+    Expression2   go to state 129
+    Expression3   go to state 130
+    Expression4   go to state 131
+    Expression5   go to state 132
+    UnaryExpr     go to state 133
+    PrimaryExpr   go to state 134
+    MapType       go to state 80
+    StructType    go to state 81
+    PointerType   go to state 82
+    Literal       go to state 135
+    BasicLit      go to state 136
+    UnaryOp       go to state 137
+    String        go to state 138
+
+
+State 330
+
+  121 ForStmt: Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon . SimpleStmt Block BrkBlkEnd CLOSEB
+
+    Identifier     shift, and go to state 55
+    Op_add         shift, and go to state 111
+    Key_map        shift, and go to state 71
+    Key_struct     shift, and go to state 72
+    Imaginary_lit  shift, and go to state 112
+    Float_lit      shift, and go to state 113
+    Int_lit        shift, and go to state 114
+    String_lit     shift, and go to state 11
+    Op_sub         shift, and go to state 115
+    Op_mult        shift, and go to state 116
+    Op_pow         shift, and go to state 117
+    Op_unary_and   shift, and go to state 118
+    Op_unary_not   shift, and go to state 119
+    M_lparan       shift, and go to state 120
+    M_lsqbracket   shift, and go to state 74
+    Bool_true      shift, and go to state 121
+    Bool_false     shift, and go to state 122
+
+    $default  reduce using rule 23 (EmptyStmt)
+
+    SimpleStmt      go to state 333
+    EmptyStmt       go to state 266
+    ExpressionStmt  go to state 267
+    IncDecStmt      go to state 268
+    Assignment      go to state 269
+    ShortVarDecl    go to state 270
+    CompositeLit    go to state 123
+    LiteralType     go to state 124
+    Operand         go to state 125
+    OperandName     go to state 126
+    SliceType       go to state 79
+    Expression      go to state 278
+    Expression1     go to state 128
+    Expression2     go to state 129
+    Expression3     go to state 130
+    Expression4     go to state 131
+    Expression5     go to state 132
+    UnaryExpr       go to state 133
+    PrimaryExpr     go to state 134
+    ExpressionList  go to state 279
+    MapType         go to state 80
+    StructType      go to state 81
+    PointerType     go to state 82
+    Literal         go to state 135
+    BasicLit        go to state 136
+    UnaryOp         go to state 137
+    String          go to state 138
+
+
+State 331
+
+  118 if_stmt: Key_if Expression OPENB Block elif_test_suite Key_else CLOSEB . Block
+
+    M_lcurly  shift, and go to state 195
+
+    Block  go to state 334
+
+
+State 332
+
+  120 elif_test_suite: elif_test_suite Key_elif Expression . OPENB Block
+
+    $default  reduce using rule 3 (OPENB)
+
+    OPENB  go to state 335
+
+
+State 333
+
+  121 ForStmt: Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt . Block BrkBlkEnd CLOSEB
+
+    M_lcurly  shift, and go to state 195
+
+    Block  go to state 336
+
+
+State 334
+
+  118 if_stmt: Key_if Expression OPENB Block elif_test_suite Key_else CLOSEB Block .
+
+    $default  reduce using rule 118 (if_stmt)
+
+
+State 335
+
+  120 elif_test_suite: elif_test_suite Key_elif Expression OPENB . Block
+
+    M_lcurly  shift, and go to state 195
+
+    Block  go to state 337
+
+
+State 336
+
+  121 ForStmt: Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block . BrkBlkEnd CLOSEB
+
+    $default  reduce using rule 6 (BrkBlkEnd)
+
+    BrkBlkEnd  go to state 338
+
+
+State 337
+
+  120 elif_test_suite: elif_test_suite Key_elif Expression OPENB Block .
+
+    $default  reduce using rule 120 (elif_test_suite)
+
+
+State 338
+
+  121 ForStmt: Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd . CLOSEB
+
+    $default  reduce using rule 4 (CLOSEB)
+
+    CLOSEB  go to state 339
+
+
+State 339
+
+  121 ForStmt: Key_for OPENB SimpleStmt M_semicolon BrkBlk ExpressionStmt M_semicolon SimpleStmt Block BrkBlkEnd CLOSEB .
+
+    $default  reduce using rule 121 (ForStmt)
