@@ -1,0 +1,9 @@
+label,main
+=,a,2
+<,t1,a,3
+ifgoto,==,t1,0,L1
+=,x,54
+goto,L2
+label,L1
+=,jofa,32
+label,L2

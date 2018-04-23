@@ -1,0 +1,9 @@
+	.data
+newline: .asciiz "\n"
+not match.4:	.word	0
+
+	.text
+	.globl main
+	li $v0,10
+	syscall
+

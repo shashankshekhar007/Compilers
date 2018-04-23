@@ -1,0 +1,10 @@
+Headers = 0
+	.data
+newline: .asciiz "\n"
+Unable to open file :	.word	0
+
+	.text
+	.globl main
+	li $v0,10
+	syscall
+
