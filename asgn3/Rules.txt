@@ -1,0 +1,37 @@
+PackageClause: Key_package Identifier 
+String: String_lit 
+ImportPath: String 
+ImportSpec: ImportPath 
+ImportDecl: Key_import ImportSpec 
+ImportDeclList: ImportDecl M_semicolon 
+OPENB: 
+IdentifierList: Identifier 
+VarType: T_intType: VarType 
+VarSpec: IdentifierList Type 
+VarDecl: Key_var VarSpec 
+Declaration: VarDecl 
+Statement: Declaration 
+StatementList: Statement M_semicolon 
+CLOSEB: 
+Block: M_lcurly OPENB StatementList CLOSEB M_rcurly 
+ClassDecl : Key_class Identifier Block
+TopLevelDecl : ClassDecl 
+TopLevelDeclList: TopLevelDecl M_semicolon 
+OPENB: 
+Parameters: M_lparan M_rparan 
+Signature: Parameters
+OPENB: 
+IdentifierList: Identifier 
+VarType: T_intType: VarType 
+VarSpec: IdentifierList Type 
+VarDecl: Key_var VarSpec 
+Declaration: VarDecl 
+Statement: Declaration 
+StatementList: Statement M_semicolon 
+CLOSEB: 
+Block: M_lcurly OPENB StatementList CLOSEB M_rcurly 
+CLOSEB: 
+FunctionDecl: Key_func Identifier OPENB Signature Block CLOSEB 
+TopLevelDecl: FunctionDecl 
+TopLevelDeclList: TopLevelDeclList TopLevelDecl M_semicolon 
+SourceFile: PackageClause M_semicolon ImportDeclList TopLevelDeclList 

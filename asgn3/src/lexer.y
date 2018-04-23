@@ -132,6 +132,10 @@ FunctionDecl:
     | Key_func Identifier OPENB Signature Block CLOSEB		{fprintf(f, "FunctionDecl: Key_func Identifier OPENB Signature Block CLOSEB \n");}
     ;
 
+ClassDecl:
+    Key_class Identifier Block  {fprintf(f, "ClassDecl : Key_class Identifier Block\n");}
+    ;
+
 Signature:
     Parameters							{fprintf(f, "Signature: Parameters\n");}
     | Parameters Result						{fprintf(f, "Signature: Parameters Result \n");}
@@ -269,6 +273,7 @@ TopLevelDecl:
     Declaration							{fprintf(f, "TopLevelDecl: Declaration \n");}
     | FunctionDecl						{fprintf(f, "TopLevelDecl: FunctionDecl \n");}
     | MethodDecl						{fprintf(f, "TopLevelDecl: MethodDecl \n");}
+    | ClassDecl                         {fprintf(f, "TopLevelDecl : ClassDecl \n");}
     ;
 
 LabeledStmt:
@@ -712,7 +717,7 @@ int main(int argc, char **argv){
 	yyparse();
 	fclose(yyin);
 	fclose(f);
-	char a[] = "tail -r Rules.txt > Penultimate.txt";
+	char a[] = "tac Rules.txt > Penultimate.txt";
 	system(a);
 	printing();
 	return 0;

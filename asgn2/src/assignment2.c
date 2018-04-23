@@ -843,7 +843,7 @@ int main(int argc, char** argv){
 		else
 			fprintf(fp1,"%s:	.space	%d\n", variables[i].name, symboltable[i].size*4);
 	}
-	fprintf(fp1,"\n	.text\n	.globl main\n\nmain:\n");
+	fprintf(fp1,"\n	.text\n	.globl main\n");
 	for(i=0;i<number_of_lines;i++){
 		int ij;
 		for(ij=0;ij<header_count;ij++){
