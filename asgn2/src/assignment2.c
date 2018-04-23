@@ -95,6 +95,29 @@ int get_variable_index(VL* variablelist, char* variable, int length){
 	return -1;
 }
 
+
+void flushAllRegisters(RD* reg_desc, AD* addr_desc, int numOfVars, FILE* fpFunc){
+	int i,j;
+	for(i=0;i<numOfVars;i++){
+		for(j=0;j<32;j++){
+			if(addr_desc[i].location[j]==PRESENT){
+				fprintf(fpFunc,"	sw $s%d, %s\n", j, addr_desc[i].name);
+				break;
+			}
+		}
+		for(j=0;j<32;j++){
+			addr_desc[i].location[j]=NOTPRESENT;
+		}
+		addr_desc[i].location[MEM]=PRESENT;
+	}
+	for(i=0;i<8;i++){
+		reg_desc[i].status = EMPTY;
+		for(j=0;j<numOfVars;j++){
+			reg_desc[i].variableindex[j] = NOTPRESENT;
+		}
+	}
+}
+
 //copied from internet :p
 int cmpfnc (const void * a, const void * b) {
    return ( *(int*)a - *(int*)b );
@@ -391,7 +414,7 @@ int main(int argc, char** argv){
 	int header_count = 1;
 	headers[0]=0;
 	for(i=0;i<number_of_lines;i++){
-		if(strcmp(words[i][0],"goto")!=0 && strcmp(words[i][0],"ifgoto")!=0 && strcmp(words[i][0],"label")!=0 && strcmp(words[i][0],"func")!=0){
+		if(strcmp(words[i][0],"goto")!=0 && strcmp(words[i][0],"ifgoto")!=0 && strcmp(words[i][0],"label")!=0 && strcmp(words[i][0],"func")!=0 && strcmp(words[i][0],"call")!=0){
 			continue;
 		}
 		else{
@@ -400,9 +423,8 @@ int main(int argc, char** argv){
 				if(headers[j]==i+1)
 					flag=1;
 			}
-			if (flag ==1)
-				continue;
-			headers[header_count++]=i+1;
+			if (flag != 1)
+				headers[header_count++]=i+1;
 			if(strcmp(words[i][0],"goto")==0){
 				int flag2=0;
 				for(j=0;j<header_count;j++){
@@ -428,8 +450,8 @@ int main(int argc, char** argv){
 	qsort(headers, header_count, sizeof(int), cmpfnc);
 	//all header lines have now been captured
 	
-	//for(i=0;i<header_count;i++)
-		//printf("Headers = %d\n",headers[i]);
+	for(i=0;i<header_count;i++)
+		printf("Headers = %d\n",headers[i]);
 
 	//Now we move on to identifying the types of instructions.
 	int type_of_instruction[number_of_lines];
@@ -823,6 +845,14 @@ int main(int argc, char** argv){
 	}
 	fprintf(fp1,"\n	.text\n	.globl main\n\nmain:\n");
 	for(i=0;i<number_of_lines;i++){
+		int ij;
+		for(ij=0;ij<header_count;ij++){
+			if(i==0 || i==number_of_lines-1)
+				break;
+			if(i+1==headers[ij]){
+				flushAllRegisters(registerdescriptor, addressdescriptor, number_of_variables, fp1);
+			}
+		}
 		switch (ir[i].instructiontype){
 			int var_index_out;
 			int reg_index_out;
@@ -1464,6 +1494,8 @@ int main(int argc, char** argv){
 				//printf("%d\t%d\n",var_index_out,reg_index_out);
 				update(var_index_out,reg_index_out,registerdescriptor,addressdescriptor,number_of_variables,fp1,ir[i].out->name,0,0);
 				fprintf(fp1,"	move $s%d,$v0\n", reg_index_out);
+				fprintf(fp1,"	sw $v0,%s\n", ir[i].out->name);
+				addressdescriptor[var_index_out].location[32]=PRESENT;
 				break;
 			case FUNCTIONDECLARATION:
 				if(flagforending==0){

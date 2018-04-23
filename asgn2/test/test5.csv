@@ -1,4 +1,4 @@
-=,a,1
+=,a,0
 call,foo
 func,foo
 print,a
