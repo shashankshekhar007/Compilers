@@ -57,19 +57,37 @@ struct symtable* global_head=NULL;
 void enter (struct symtable* table,char* name,char* type,int offset){
 	//printf("entered insert\n");
 	struct symtable_entry *new=malloc(sizeof(struct symtable_entry));
+	//printf("DEBUG: inside enter: new symbol entry created\n");
 	new->name=malloc(sizeof(char)*strlen(name));
 	strcpy(new->name,name);
 	strcpy(new->type,type);
+	//printf("DEBUG: inside enter: new symbol entry name given\n");
+//	printf("DEBUG: inside enter: new symbol entry type given. printing name and type here name-%s, type-%s\n",new->name,new->type);
+
 	new->next=NULL;
 	new->fn=NULL;
+//	printf("DEBUG: inside enter: new symbol entry next = NULL and its fn = NULL\n");
 
     if( table->head == NULL ) {
+  //  	    		printf("DEBUG: inside enter:if the table(top()) head is NULL\n");
+
 	i++;
+	//		printf("DEBUG: inside enter: Printing the value of number of symbol entries in the table %d\n",i);
+
 	table->head=new;table->tail=new;}
-	else {table->tail->next=new;
-	table->tail=new;}
-	if(i==1)
+	else {
+	//	printf("DEBUG: inside enter:if the table(top()) head is _NOT_ NULL\n");
+		table->tail->next=new;
+	table->tail=new;
+	//printf("DEBUG: inside enter:we made table->tail->next=new and then table->tail=new\n");
+	}
+	if(i==1){
 	global_head=table;
+	//printf("DEBUG: we definitely came here\n");
+}
+	//printf("DEBUG: inside enter: exiting the enterproc\n");
+	//printf("DEBUG: global_head->head->name = %s\n",global_head->tail->name);
+
 } 
 
 struct symtable* mktable(struct symtable_entry* previous)
@@ -85,22 +103,33 @@ void enterproc(struct symtable* table, char* name,struct symtable* newtable)
 {
 	//printf("entered insert for proc\n");
 	struct symtable_entry *new=malloc(sizeof(struct symtable_entry));
+	//printf("DEBUG: inside enterproc: new symbol entry created\n");
 	new->name=malloc(sizeof(char)*strlen(name));
+	//printf("DEBUG: inside enterproc: new symbol entry name given\n");
 	strcpy(new->name,name);
 	strcpy(new->type,"proc");
+	//printf("DEBUG: inside enterproc: new symbol entry type given. printing name and type here name-%s, type-%s\n",new->name,new->type);
 	new->next=NULL;
 	new->fn=newtable;
-
+	//printf("DEBUG: inside enterproc: new symbol entry next = NULL and its fn = newtable or t here\n");
     if( table->head == NULL ) {
+    //		printf("DEBUG: inside enterproc: checking if the table(top()) head is NULL or not\n");
 	i++;
+		//printf("DEBUG: inside enterproc: Printing the value of number of symbol entries in the table %d\n",i);
 	table->head=new;table->tail=new;}
-	else {table->tail->next=new;
-	table->tail=new;}
+	else {
+		//printf("DEBUG: inside enterproc:if the table(top()) head is _NOT_ NULL\n");
+		table->tail->next=new;
+	table->tail=new;
+		//printf("DEBUG: inside enter:we made table->tail->next=new and then table->tail=new\n");
+
+	}
 	if(i==1)
 	global_head=table;
+	//printf("DEBUG: inside enterproc: exiting the enterproc\n");
 }
 void delete (struct symtable* table,char * var){
-	printf("entered delete\n");
+	//printf("DEBUG: entered delete\n");
 	struct symtable_entry* iterator=table->head;
 	if(!strcmp(var,table->head->name)){
 		struct symtable_entry* temp=table->head->next;
@@ -118,7 +147,7 @@ void delete (struct symtable* table,char * var){
 
 		struct symtable_entry* temp=iterator->next;
 
-		if(iterator->next == table->tail ){printf("done\n");
+		if(iterator->next == table->tail ){
 			table->tail=iterator;}
 
 
@@ -133,24 +162,57 @@ void delete (struct symtable* table,char * var){
 
 
 struct symtable_entry* lookup (struct symtable* table,char * var){
-	printf("entered lookup for %s\n",var);
+	//printf("DEBUG: entered lookup for %s\n",var);
 	struct symtable_entry* iterator=table->head;
-	if (table->head==NULL) return NULL;
-	while(iterator!=NULL) { if (!strcmp(var,iterator->name))break;printf("hello"); iterator=iterator->next; }
+	if (table->head==NULL){ 
+		return NULL;
+	}
+	while(iterator!=NULL) { if (!strcmp(var,iterator->name))break;iterator=iterator->next; }
 	if (iterator!=NULL) 
-	if(!strcmp(var,iterator->name)) 
-		return iterator;
+	if(!strcmp(var,iterator->name)){ 
+			return iterator;
+		}
 	iterator=global_head->head;
-	if (table->head==NULL) {printf("null");return NULL;}
-	while(iterator!=NULL) { if (!strcmp(var,iterator->name))break;printf("hello"); iterator=iterator->next; }
-	if (iterator==NULL) return NULL;
-	if(!strcmp(var,iterator->name)) 
-		return iterator;
-	
+	if (table->head==NULL) {
+		//printf("null\n");
+		return NULL;
+	}
+	while(iterator!=NULL) { if (!strcmp(var,iterator->name))break; iterator=iterator->next; }
+	if (iterator==NULL) {		
+return NULL;}
+	if(!strcmp(var,iterator->name)) {
+			
 
+		return iterator;
+	}
 }
 
-
+struct symtable_entry* isDefined(struct symtable* table,char *name, char* type){
+	//printf("DEBUG: entered isDefined for %s\n",name);
+	struct symtable_entry* iterator=table->head;
+	if (table->head==NULL) return NULL;
+	while(iterator!=NULL) {
+		if (!strcmp(type,iterator->name)&&!strcmp(type,iterator->type))
+			break;
+		iterator=iterator->next; 
+	}
+	if (iterator!=NULL){
+		if(!strcmp(name,iterator->name)&&!strcmp(type,iterator->type)) 
+			return iterator;
+	}
+	iterator=global_head->head;
+	if (table->head==NULL) {//printf("null");
+	return NULL;}
+	while(iterator!=NULL) {
+		if (!strcmp(type,iterator->name)&&!strcmp(type,iterator->type))
+			break;
+		//printf("hello");
+		iterator=iterator->next;
+	}
+	if (iterator==NULL) return NULL;
+	if(!strcmp(name,iterator->name)&&!strcmp(type,iterator->type)) 
+		return iterator;
+}
 /*char buffer[100]="";
 
 
@@ -196,7 +258,7 @@ char* newlabel(){
 extern int nl;
 
 TAC* rev (){
-	printf("entered rev\n");
+	//printf("entered rev\n");
 	TAC* current=list->next;
 	TAC* prev=NULL;
 	TAC* next=NULL;
@@ -207,14 +269,14 @@ TAC* rev (){
         	prev = current;
         	current = next;
         }
-	printf("exited rev\n");	
+	//printf("exited rev\n");	
 	return prev;
 }
 
 TAC* iterator=NULL;
 
 void push_to_rev(TAC* node){
-	printf("entered push\n");
+	//printf("entered push\n");
 	static int flag=0;
 	if(flag==0) iterator=list;
 	flag++;
@@ -249,7 +311,7 @@ TAC* append(TAC* a, TAC* b){
 	return a;
 }
 
-int size (Attr *a)
+int size (VarAttr *a)
 {
 int m;
 TAC* iterator =a->code;
@@ -272,12 +334,12 @@ m++;
 }
 void printsymtable(struct symtable* table){
 	struct symtable_entry *iterator=table->head;
-	// printf("printing symbol table\n--------------------------\n");
+	//printf("printing symbol table\n--------------------------\n");
 	while(iterator!=NULL){
 		printf("%s,%s\n",iterator->name,iterator->type);
 		if(iterator->fn)
 		{
-			printf("NEW TABLE\n");			
+	//		printf("NEW TABLE\n");			
 			printsymtable(iterator->fn);
 		}
 		iterator=iterator->next;

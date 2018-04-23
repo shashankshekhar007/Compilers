@@ -1,0 +1,20 @@
+label,main
+array,a,10
+=,a[2],3
+=,i,1
+<,t1,i,5
+label,L4
+ifgoto,==,t1,0,L1
+=,a[i],1
+==,t2,a[i],3
+ifgoto,==,t2,0,L2
+goto,L1
+goto L3
+label,L2
+=,b,5
+label,L3
++,i,i,1
+<,t1,i,5
+goto L4
+label,L1
+return

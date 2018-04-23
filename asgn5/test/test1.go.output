@@ -1,0 +1,65 @@
+Headers = 0
+Headers = 1
+Headers = 6
+Headers = 7
+Headers = 10
+Headers = 11
+Headers = 13
+Headers = 15
+Headers = 19
+	.data
+newline: .asciiz "\n"
+a:	.space	40
+a[2]:	.word	0
+i:	.word	0
+t1:	.word	0
+a[i]:	.word	0
+t2:	.word	0
+goto L3:	.word	0
+b:	.word	0
+goto L4:	.word	0
+
+	.text
+	.globl main
+
+main:
+	li $s0,3
+	li $s1,1
+	sw $s0, a[2]
+	sw $s1, i
+	sw $s2, t1
+
+L4:
+	lw $s0, t1
+	li $s1,0
+	beq $s0,$s1,L1
+	sll $0,$0,0
+	li $s1,1
+	sw $s0, t1
+	sw $s1, a[i]
+	sw $s2, t2
+	lw $s0, t2
+	li $s1,0
+	beq $s0,$s1,L2
+	sll $0,$0,0
+	sw $s0, t2
+	j L1
+	sll $0,$0,0
+
+L2:
+	li $s0,5
+	sw $s0, b
+
+L3:
+	addiu $s0,$s0,1
+	sw $s0, i
+	sw $s1, t1
+
+L1:
+	move $v0, $s0
+	lw $ra, ($sp)
+	addiu $sp, $sp, 4
+	jr $ra
+	li $v0,10
+	syscall
+

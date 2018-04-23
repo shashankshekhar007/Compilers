@@ -1,7 +1,7 @@
 package main;
 import "fmt";
 func main(){
-	a = b + c - d / e *b%10;
+	a = b1 + c - d / e *b1%10;
 
 };
 
